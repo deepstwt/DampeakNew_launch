@@ -1,0 +1,111 @@
+@import "tailwindcss";
+
+@theme {
+  /* The four colours. Solid, unmixed, never tinted. */
+  --color-blue: #1f3cff;
+  --color-orange: #ff5c16;
+  --color-yellow: #ffce00;
+  --color-white: #ffffff;
+
+  --color-ink: #0b0b0f;
+
+  --font-sans: var(--font-sans);
+}
+
+@layer base {
+  html {
+    background: var(--color-white);
+    color: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    font-family: var(--font-sans), system-ui, sans-serif;
+    overscroll-behavior-y: none;
+  }
+
+  /* Visible focus for every interactive element, in the brand's own colour. */
+  :focus-visible {
+    outline: 3px solid var(--color-blue);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: var(--color-yellow);
+    color: var(--color-ink);
+  }
+
+  /* Lenis */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* Display: heavy, tight, optical-sized. The weight is the design. */
+@utility text-display {
+  font-weight: 900;
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+}
+
+@utility text-heavy {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/**
+ * Buttons are squeezed, not stamped. Uneven corner radii on both axes read as
+ * a pressed shape rather than a default pill — the brand sells things you hold.
+ */
+@utility rounded-squish {
+  border-radius: 36px 26px 40px 28px / 30px 40px 26px 36px;
+}
+
+@utility rounded-squish-alt {
+  border-radius: 26px 38px 28px 42px / 40px 28px 38px 26px;
+}
+
+/* Outlined type. One word only — it stops being a device if it's everywhere. */
+@utility text-outline {
+  color: transparent;
+  -webkit-text-stroke: 2px var(--color-ink);
+
+  @media (width >= 768px) {
+    -webkit-text-stroke: 3px var(--color-ink);
+  }
+}
+
+@utility text-outline-white {
+  color: transparent;
+  -webkit-text-stroke: 2px var(--color-white);
+
+  @media (width >= 768px) {
+    -webkit-text-stroke: 4px var(--color-white);
+  }
+}
+
+@utility text-marker {
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 700;
+}

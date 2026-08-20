@@ -1,0 +1,23 @@
+{
+  "name": "@oscar/backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "db:indexes": "node --env-file=../.env.local scripts/sync-indexes.mjs",
+    "typecheck": "tsc --noEmit",
+    "db:ping": "node --env-file=../.env.local scripts/ping.mjs"
+  },
+  "dependencies": {
+    "better-auth": "^1.6.30",
+    "mongoose": "^9.9.2",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "typescript": "^5"
+  }
+}
