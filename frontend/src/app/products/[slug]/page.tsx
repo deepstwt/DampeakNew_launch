@@ -130,6 +130,7 @@ export default async function ProductPage({
               <ProductPhoto
                 image={product.image}
                 name={product.name}
+                slug={product.slug}
                 swatch={product.swatch}
                 priority
               />
@@ -290,13 +291,17 @@ export default async function ProductPage({
                       <ProductPhoto
                         image={p.image}
                         name={p.name}
+                        slug={p.slug}
                         swatch={p.swatch}
                         showLabel={false}
                         className="transition-transform duration-500 group-hover:scale-[1.03]"
                       />
                     </div>
                     <div className="mt-3 flex items-baseline gap-2.5">
-                      <span className={`size-3 shrink-0 self-center rounded-full ${p.accent}`} />
+                      <span
+                        className="size-3 shrink-0 self-center rounded-full"
+                        style={{ background: p.swatch }}
+                      />
                       <span className="text-[15px] font-extrabold">{p.name}</span>
                       {p.price ? (
                         <span className="text-display ml-auto text-[17px]">{p.price}</span>

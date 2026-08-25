@@ -19,8 +19,11 @@ type Props = {
  * is the labelled one. A card that offers the same destination twice to a screen
  * reader is noise, not affordance.
  *
- * No state and no handlers, so this is a Server Component — the card ships no
- * JavaScript at all.
+ * No state and no handlers, so the card itself is a Server Component. It is no
+ * longer free of JavaScript, though: until there are photographs, the image is
+ * drawn on a canvas by ProductRender, which is a client component. That is one
+ * paint per card at mount and nothing after it — no loop, no listeners — and it
+ * disappears the day a real photograph is set on the product.
  */
 /**
  * Four layers, each roughly tripling the blur of the one before it. Real shadows
@@ -51,6 +54,7 @@ export function ProductCard({ item, priority }: Props) {
             <ProductPhoto
               image={item.image}
               name={item.name}
+              slug={item.slug}
               swatch={item.swatch}
               priority={priority}
             />
@@ -60,9 +64,14 @@ export function ProductCard({ item, priority }: Props) {
 
       <figcaption className="mt-4">
         <span className="flex items-center gap-2.5">
-          {/* One brand colour per product, so the palette is still taught across
-              the row now that there are no ranges to carry it. */}
-          <span className={`size-3 shrink-0 rounded-full ${item.accent}`} />
+          {/* The product's own colour, not its brand accent. The accents were
+              assigned when the tile beside them was a flat block and nothing on
+              screen contradicted them; now that the card shows the product, an
+              orange dot next to a pink squishy is just wrong. */}
+          <span
+            className="size-3 shrink-0 rounded-full"
+            style={{ background: item.swatch }}
+          />
           <span className="text-[15px] font-extrabold">{item.name}</span>
         </span>
         {/* Price only renders once there is one. See the TODO in site.ts. */}
