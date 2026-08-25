@@ -33,8 +33,12 @@ export function Hero() {
 
       <div className="relative px-4 pt-8 pb-16 md:px-6 md:pt-12 md:pb-24">
         {/* Type, bleeding to the edges. Spongy: it gives under the cursor and
-            under a fast scroll, the same as the object it is selling. */}
-        <h1 className="text-display text-[17vw] leading-[0.78] lg:text-[13vw]">
+            under a fast scroll, the same as the object it is selling.
+
+            Capped in px as well as vw: past roughly 1500px the viewport unit
+            alone keeps growing the headline until it is the only thing on the
+            screen, and this is a hero, not a splash. */}
+        <h1 className="text-display text-[13.5vw] leading-[0.82] lg:text-[min(10vw,164px)]">
           <SpongyText
             className="block"
             segments={[{ text: hero.headline[0] }]}
