@@ -91,10 +91,13 @@ export const site = {
      * collection and in every link already shared, so renaming the product does
      * not renumber the URL.
      *
+     * `swatch` is sampled from the photograph rather than taken off the spec
+     * sheet. It is what the colour dot beside each name is set from, and that
+     * dot now sits next to the picture — so the picture is what it has to agree
+     * with. It also tints the drawn product in the hero.
+     *
      * TODO — needs real data before launch:
      *   price:  no figures supplied yet, so no price renders anywhere.
-     *   image:  placeholder tiles show each product's real colour. Drop in
-     *           photographs and they replace the tiles automatically.
      */
     showcase: [
       {
@@ -115,9 +118,12 @@ export const site = {
           colour: "Solid colour",
           edge: "Rounded",
         },
-        swatch: "#1f3cff",
-        // Fill these two in and the UI picks them up with no code change.
-        image: null as ProductPhoto | null,
+        swatch: "#33b6d6",
+        // Photographed. The price is still outstanding.
+        image: {
+          src: "/products/blue-block.png",
+          alt: "The Rounded Cube squishy: a translucent blue cube with softly rounded corners.",
+        } as ProductPhoto | null,
         price: null as string | null,
       },
       {
@@ -138,9 +144,12 @@ export const site = {
           colour: "Pastel",
           edge: "Rounded",
         },
-        swatch: "#f7b6c2",
-        // Fill these two in and the UI picks them up with no code change.
-        image: null as ProductPhoto | null,
+        swatch: "#f0aeba",
+        // Photographed. The price is still outstanding.
+        image: {
+          src: "/products/pillow-squish.png",
+          alt: "The Toasted Bread squishy beside its retail box, and a second one being squeezed in one hand.",
+        } as ProductPhoto | null,
         price: null as string | null,
       },
       {
@@ -161,9 +170,12 @@ export const site = {
           colour: "Bright yellow",
           edge: "Soft edges",
         },
-        swatch: "#ffce00",
-        // Fill these two in and the UI picks them up with no code change.
-        image: null as ProductPhoto | null,
+        swatch: "#eeba3c",
+        // Photographed. The price is still outstanding.
+        image: {
+          src: "/products/cheese-cube.png",
+          alt: "The Cheese Cube squishy, moulded with holes on every face, with four miniature cheese cubes in front of it.",
+        } as ProductPhoto | null,
         price: null as string | null,
       },
       {
@@ -184,9 +196,12 @@ export const site = {
           colour: "Marble swirl",
           edge: "Rounded",
         },
-        swatch: "#8b5cf6",
-        // Fill these two in and the UI picks them up with no code change.
-        image: null as ProductPhoto | null,
+        swatch: "#b743bd",
+        // Photographed. The price is still outstanding.
+        image: {
+          src: "/products/marble-cube.png",
+          alt: "Marbled Cube squishies in five colourways beside the retail box, and one being squeezed in one hand.",
+        } as ProductPhoto | null,
         price: null as string | null,
       },
     ],

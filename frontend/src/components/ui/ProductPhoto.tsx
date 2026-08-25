@@ -42,14 +42,23 @@ export function ProductPhoto({
 }) {
   if (image) {
     return (
-      <Image
-        src={image.src}
-        alt={image.alt}
-        fill
-        priority={priority}
-        sizes="(max-width: 1024px) 100vw, 50vw"
-        className={`object-cover ${className}`}
-      />
+      // White behind, and contained rather than cropped.
+      //
+      // These are packshots, not lifestyle photography: two of the four include
+      // the retail box and a hand alongside the product, and the frames are 4:3
+      // while every slot on this site is square. Cropping to fill would cut the
+      // box in half on a card and take the hand off at the wrist. Contained on
+      // white, the photograph's own background disappears into the tile.
+      <div className="absolute inset-0 bg-white">
+        <Image
+          src={image.src}
+          alt={image.alt}
+          fill
+          priority={priority}
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 100vw, 50vw"
+          className={`object-contain ${className}`}
+        />
+      </div>
     );
   }
 
