@@ -29,7 +29,7 @@ import { createSoftBody, squircleRest, type RestShape, type Tuning } from "@/lib
  *   6. subsurface + bounce— soft plastic is slightly translucent at its edges, and
  *                           the surface it sits on throws light back up at it
  *   7. seam               — moulded in two halves, like the real thing
- *   8. compression        — the dent under your finger darkens, because it does
+ *   8. compression        — the dent under the press darkens, because it does
  *   9. grain              — a few percent of noise. Without it, every gradient
  *                           reads as vector art no matter how correct it is
  *
@@ -61,9 +61,41 @@ const TUNING: Tuning = {
   passes: 3,
 };
 
-/** Dent depth: passing over it, versus holding it down. */
-const HOVER_PUSH = 3;
-const HOLD_PUSH = 17;
+/**
+ * Dent depth: a fingertip resting on it, versus a thumb-and-finger squeeze.
+ *
+ * Lower than the point-press values these replaced. A finger pad spreads its
+ * load over a wide contact, so the same visible dent needs less depth — and
+ * there are two contacts once you hold, pressing from opposite sides.
+ */
+const HOVER_PUSH = 2.4;
+const HOLD_PUSH = 12;
+
+/**
+ * Contact radius as a fraction of the body: a pad, not a point.
+ *
+ * A drawn hand used to sit on top of these contacts and explain them. It is gone
+ * — it read as a second cursor on the one object the page wants you to touch —
+ * but the two-sided contact stays, because that is what a squeeze is. You press
+ * one side, the grip answers from the other, and the body flattens between them.
+ */
+const FINGER_REACH = 0.46;
+const THUMB_REACH = 0.5;
+
+/** How much of the finger's movement the surface is dragged along by. */
+const HOVER_GRIP = 0.1;
+const HOLD_GRIP = 0.42;
+
+/**
+ * Recovery, in seconds, and how soft the shape memory goes while it lasts.
+ *
+ * "Soft slow rising" is on the product page, and a body that springs back at the
+ * rate it gave way is a rubber band instead. Memory drops on release and ramps
+ * back over this window, so the surface rises slowly and arrives without the
+ * overshoot a spring would give it.
+ */
+const RISE = 0.85;
+const RISE_MEMORY = 0.018;
 
 /**
  * A rounded cube, sitting very slightly squashed.
@@ -292,10 +324,24 @@ export function SqueezeToy({ className = "" }: { className?: string }) {
 
     /** Where the finger is, and how hard it is pushing right now. */
     const finger = { x: 0, y: 0, over: false, down: false };
+    /** Last step's position, so the drag term has something to measure. */
+    let prevX = 0;
+    let prevY = 0;
     /** Eased, so grabbing and letting go are not two instant jumps. */
     let depth = 0;
-    /** What the last solver step was told, so the shading can agree with it. */
-    let shown: { x: number; y: number; depth: number } | null = null;
+    /** Seconds left of the slow rise after a release. */
+    let rising = 0;
+    let wasDown = false;
+
+    /**
+     * What the last solver step was told, so the shading agrees with the
+     * deformation instead of guessing at it.
+     */
+    type Contact = { x: number; y: number; depth: number; reach: number };
+    let touch: Contact | null = null;
+    let thumb: Contact | null = null;
+    /** The unprompted squeeze, kept apart from the two the pointer drives. */
+    let invite: Contact | null = null;
 
     const path = (scale = 1) => {
       ctx.beginPath();
@@ -557,10 +603,11 @@ export function SqueezeToy({ className = "" }: { className?: string }) {
       /* 8. Compression. The silhouette already dents; without this the dent has
             no shading in it and the squeeze reads as a shape change rather than
             as material being displaced. */
-      if (shown) {
-        const r = radius * TUNING.reach;
-        const strength = Math.min(shown.depth / HOLD_PUSH, 1);
-        const dent = ctx.createRadialGradient(shown.x, shown.y, 0, shown.x, shown.y, r);
+      for (const c of [touch, thumb, invite]) {
+        if (!c) continue;
+        const r = c.reach;
+        const strength = Math.min(c.depth / HOLD_PUSH, 1);
+        const dent = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, r);
         dent.addColorStop(0, `rgba(11,11,15,${0.26 * strength})`);
         dent.addColorStop(0.55, `rgba(11,11,15,${0.1 * strength})`);
         dent.addColorStop(1, "rgba(11,11,15,0)");
@@ -568,7 +615,7 @@ export function SqueezeToy({ className = "" }: { className?: string }) {
 
         // The material has to go somewhere: a soft bulge of light just outside
         // the dent, which is what makes it look full rather than dented in.
-        const bulge = ctx.createRadialGradient(shown.x, shown.y, r * 0.8, shown.x, shown.y, r * 1.5);
+        const bulge = ctx.createRadialGradient(c.x, c.y, r * 0.8, c.x, c.y, r * 1.5);
         bulge.addColorStop(0, "rgba(255,255,255,0)");
         bulge.addColorStop(0.5, `rgba(255,255,255,${0.16 * strength})`);
         bulge.addColorStop(1, "rgba(255,255,255,0)");
@@ -654,27 +701,74 @@ export function SqueezeToy({ className = "" }: { className?: string }) {
       const target = finger.over ? (finger.down ? HOLD_PUSH : HOVER_PUSH) : 0;
       depth += (target - depth) * 0.22;
 
+      // Release: go soft, then firm up over RISE seconds. Applied to the active
+      // body only, which is correct — an unselected body is at rest anyway.
+      if (wasDown && !finger.down) rising = RISE;
+      wasDown = finger.down;
+      if (rising > 0) {
+        rising = Math.max(0, rising - STEP);
+        const t = 1 - rising / RISE;
+        body.tune({ memory: RISE_MEMORY + (TUNING.memory - RISE_MEMORY) * t * t });
+      }
+
       // Breathing, so it does not look like a still image waiting for a cursor.
       const restR = reduced ? radius : radius * (1 + Math.sin(elapsed * 0.9) * 0.012);
 
-      let press = null;
+      // Drag, clamped: a cursor that jumps across the canvas in one frame must
+      // not hand the solver a displacement bigger than the body.
+      const cap = radius * 0.18;
+      let dx = finger.x - prevX;
+      let dy = finger.y - prevY;
+      const moved = Math.hypot(dx, dy);
+      if (moved > cap) {
+        dx = (dx / moved) * cap;
+        dy = (dy / moved) * cap;
+      }
+      prevX = finger.x;
+      prevY = finger.y;
+
+      touch = null;
+      thumb = null;
+      invite = null;
+
       if (depth > 0.15 && finger.over) {
-        press = { x: finger.x, y: finger.y, depth };
+        touch = { x: finger.x, y: finger.y, depth, reach: radius * FINGER_REACH };
+
+        // The thumb, mirrored through the centre — which is where a thumb
+        // actually is when you pinch something. It arrives with the squeeze
+        // rather than being there all along, and it presses a little softer
+        // than the finger, the same as a real grip.
+        const grip = Math.min(depth / HOLD_PUSH, 1);
+        if (grip > 0.06) {
+          thumb = {
+            x: cx - (finger.x - cx),
+            y: cy - (finger.y - cy),
+            depth: depth * 0.82,
+            reach: radius * THUMB_REACH,
+          };
+        }
       } else if (!pressedRef.current && !reduced) {
         // The invitation: one slow squeeze from the upper left every ~3.6s,
         // until someone takes the hint.
         const t = elapsed % 3.6;
         if (t < 0.9) {
-          press = {
+          invite = {
             x: cx - radius * 0.45,
             y: cy - radius * 0.35,
             depth: Math.sin((t / 0.9) * Math.PI) * 9,
+            reach: radius * TUNING.reach,
           };
         }
       }
 
-      shown = press;
-      body.step(cx, cy, restR, press);
+      const grip = finger.down ? HOLD_GRIP : HOVER_GRIP;
+      body.step(cx, cy, restR, [
+        touch ? { ...touch, radius: touch.reach, dx, dy, grip } : null,
+        // The thumb is the still hand: you move the finger against it, so it
+        // gets no drag of its own.
+        thumb ? { ...thumb, radius: thumb.reach } : null,
+        invite ? { ...invite, radius: invite.reach } : null,
+      ]);
     };
 
     let acc = 0;
@@ -719,8 +813,11 @@ export function SqueezeToy({ className = "" }: { className?: string }) {
       if (e.pointerType !== "mouse") e.preventDefault();
       if (!pressedRef.current) setPressed(true);
     };
-    const onUp = () => {
+    const onUp = (e: PointerEvent) => {
       finger.down = false;
+      // There is no such thing as hovering on glass: lifting a finger ends the
+      // contact entirely, or the dent would stay pressed into the product.
+      if (e.pointerType !== "mouse") finger.over = false;
     };
     const onLeave = () => {
       finger.over = false;
@@ -777,7 +874,7 @@ export function SqueezeToy({ className = "" }: { className?: string }) {
             pressed ? "opacity-0" : "opacity-100"
           }`}
         >
-          Press and hold
+          Press and hold to squeeze
         </p>
       </div>
 
