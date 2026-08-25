@@ -47,6 +47,61 @@ export const DEFAULT_TUNING: Tuning = {
   passes: 4,
 };
 
+/**
+ * The shape a body remembers, as a unit outline.
+ *
+ * The solver held a circle before this: rest positions came off `Math.cos/sin`
+ * and the pressure term compared against `π·r²`. Three of the four products are
+ * cubes, so the rest shape had to become a parameter — and the area had to come
+ * with it, because pressure measures the enclosed area against this number. Hand
+ * the solver a squircle while it still believes the area is π·r² and it reads the
+ * surplus as over-inflation and squeezes the corners off.
+ */
+export type RestShape = {
+  /** Unit outline, walked with t in [0, 1). */
+  at(t: number): { x: number; y: number };
+  /** Area that outline encloses at unit radius. π for a circle. */
+  area: number;
+};
+
+export const CIRCLE_REST: RestShape = {
+  at: (t) => {
+    const a = t * Math.PI * 2;
+    return { x: Math.cos(a), y: Math.sin(a) };
+  },
+  area: Math.PI,
+};
+
+/**
+ * Superellipse — |x|^n + |y|^n = 1. n=4 is a rounded cube, which is the
+ * silhouette on the spec sheet for three of the four products; n=2 is the circle.
+ *
+ * The area is integrated once, at call time, rather than looked up: the closed
+ * form needs the gamma function, and a shoelace over a few hundred samples is
+ * exact enough for a term that is already scaled by a tuning constant.
+ */
+export function squircleRest(n = 4, samples = 720): RestShape {
+  const at = (t: number) => {
+    const a = t * Math.PI * 2;
+    const c = Math.cos(a);
+    const s = Math.sin(a);
+    const e = 2 / n;
+    return {
+      x: Math.sign(c) * Math.abs(c) ** e,
+      y: Math.sign(s) * Math.abs(s) ** e,
+    };
+  };
+
+  let area = 0;
+  for (let i = 0; i < samples; i++) {
+    const p = at(i / samples);
+    const q = at((i + 1) / samples);
+    area += p.x * q.y - q.x * p.y;
+  }
+
+  return { at, area: Math.abs(area) / 2 };
+}
+
 export type Point = {
   x: number;
   y: number;
@@ -74,10 +129,14 @@ export type SoftBody = {
   trace(ctx: CanvasRenderingContext2D): void;
 };
 
-export function createSoftBody(count = 48, tuning: Tuning = DEFAULT_TUNING): SoftBody {
+export function createSoftBody(
+  count = 48,
+  tuning: Tuning = DEFAULT_TUNING,
+  rest: RestShape = CIRCLE_REST,
+): SoftBody {
   const points: Point[] = Array.from({ length: count }, (_, i) => {
-    const a = (i / count) * Math.PI * 2;
-    return { x: 0, y: 0, px: 0, py: 0, ux: Math.cos(a), uy: Math.sin(a) };
+    const u = rest.at(i / count);
+    return { x: 0, y: 0, px: 0, py: 0, ux: u.x, uy: u.y };
   });
 
   /** Shoelace. Sign is dropped — winding direction is not interesting here. */
@@ -103,10 +162,11 @@ export function createSoftBody(count = 48, tuning: Tuning = DEFAULT_TUNING): Sof
     },
 
     step(cx, cy, restR, press) {
-      // The target area has to track the target radius. Pin it to a fixed
-      // radius while restR moves and the pressure term — an order of magnitude
-      // stronger than shape memory — silently cancels that movement out.
-      const restArea = Math.PI * restR * restR;
+      // The target area has to track the target radius, and the rest shape's own
+      // area, not the circle's. Pin it to a fixed radius while restR moves and
+      // the pressure term — an order of magnitude stronger than shape memory —
+      // silently cancels that movement out.
+      const restArea = rest.area * restR * restR;
       const reach = restR * tuning.reach;
 
       for (const p of points) {
