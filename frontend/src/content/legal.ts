@@ -39,26 +39,36 @@ export type Doc = {
   /** FAQ renders as native disclosure widgets instead of headed sections. */
   format?: "sections" | "faq";
   sections: Section[];
+  /**
+   * One way onward from the bottom of the page. Only the About page has one —
+   * a policy document ending in a Buy button would be reading the room wrong.
+   */
+  cta?: { label: string; href: string };
 };
 
 export const DOCS: Doc[] = [
   {
     slug: "about",
     title: "About Dampeak",
-    summary: "Small things that make the day easier.",
+    summary: "Made for Better Everyday.",
     updated: "August 2026",
+    cta: { label: "Shop Dampeak", href: "/products" },
     sections: [
       {
-        heading: "What we make",
+        heading: "Made for everyday living.",
         body: [
-          `${COMPANY.trading} makes squishies — small, soft things built to be squeezed while you are doing something else.`,
-          "Not gadgets. Nothing that needs charging, updating or explaining. You pick one up, press it flat, and put it down again without really thinking about it.",
+          `${COMPANY.trading} started with a simple idea: the things we live with every day should make our daily lives better, more comfortable, relaxing, and fun.`,
+          "We create products designed to bring a little more comfort, convenience, personality, and fun into everyday life.",
+          "From something that makes you smile to something that makes a moment more comfortable to something that makes tasks easier, we look for ideas that have a place in the way people live.",
+          `We work with production partners to bring our products to life, thoughtfully developing the details that make each one feel like ${COMPANY.trading}.`,
+          "We're starting small, with a growing collection of products made for everyday moments. As we grow, we'll continue exploring new ideas, new ways of living, and new products that we think are worth bringing into your world.",
+          "Because everyday living doesn't have to be ordinary.",
         ],
       },
       {
         heading: "Our one rule",
         body: [
-          "If it doesn't help, we don't make it.",
+          "If it doesn't make life easier, we don't make it.",
           "That sounds obvious. It isn't. Most things exist because they can be manufactured and sold, not because anyone needed them. So we kill far more ideas than we ship, and the test never changes: is an ordinary day actually better with this in it?",
         ],
       },
@@ -68,10 +78,10 @@ export const DOCS: Doc[] = [
           "We launch with four. Not four ranges with gaps in them, and not a catalogue padded out to look established — four squishies, each one different enough to be worth having.",
         ],
         list: [
-          "Blue Block — a rounded cube, smooth and minimal, big enough to need a whole hand.",
-          "Pillow Squish — a pastel pillow square in matte foam, the softest of the four.",
+          "Rounded Cube — smooth and minimal, big enough to need a whole hand.",
+          "Toasted Bread — a pastel pillow square in matte foam, the softest of the four.",
           "Cheese Cube — moulded texture in bright yellow, with holes your fingers find on their own.",
-          "Marble Cube — smooth rounded cube, marbled so no two are alike.",
+          "Marbled Cube — smooth rounded cube, marbled so no two are alike.",
         ],
       },
       {

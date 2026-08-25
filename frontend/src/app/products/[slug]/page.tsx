@@ -24,7 +24,12 @@ export async function generateMetadata({
   const product = getProduct(slug);
   if (!product) return {};
 
-  const title = product.name;
+  /**
+   * The listing title, not the shelf name. "Cheese cube stress squeeze squish
+   * Toy" is what someone types into a search box; "Cheese Cube" is what we call
+   * it once you already know what it is.
+   */
+  const title = product.fullName;
 
   return {
     title,
@@ -49,6 +54,7 @@ export default async function ProductPage({
   if (!product) notFound();
 
   const amazonUrl = getAmazonUrl(product.slug);
+  const copy = product.description;
 
   /**
    * Product structured data.
@@ -68,8 +74,8 @@ export default async function ProductPage({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
-    name: product.name,
-    description: product.fact,
+    name: product.fullName,
+    description: copy.body,
     ...(product.image ? { image: product.image.src } : {}),
     brand: { "@type": "Brand", name: site.name },
     // Every spec from the manufacturing sheet, in the form search engines read.
@@ -140,9 +146,19 @@ export default async function ProductPage({
                 {product.specs.theme}
               </span>
 
+              {/**
+               * The shelf name is the display heading; the full listing title
+               * sits under it, small. Set at this size the full name wraps to
+               * three lines and stops being a heading — but it still has to be on
+               * the page, because it is the name on the box and on the listing.
+               */}
               <h1 className="text-display mt-5 text-[12vw] leading-[0.9] sm:text-[7vw] lg:text-[3.6vw]">
                 {product.name}
               </h1>
+
+              <p className="mt-3 text-[15px] font-bold text-ink/45">
+                {product.fullName}
+              </p>
 
               {product.price ? (
                 <p className="text-display mt-4 text-[28px]">{product.price}</p>
@@ -185,6 +201,49 @@ export default async function ProductPage({
               <SaveButton slug={product.slug} className="mt-6" />
             </div>
           </div>
+
+          {/**
+           * The description, full width under the fold.
+           *
+           * Two columns rather than one long list: the paragraph and the reasons
+           * are read in either order, and stacking them makes the page look
+           * longer than it is.
+           */}
+          <section className="mt-20 border-t border-ink/10 pt-12">
+            <div className="grid gap-10 lg:grid-cols-[5fr_6fr] lg:gap-16">
+              <div>
+                <h2 className="text-display max-w-[16ch] text-[9vw] leading-[0.92] sm:text-[5.5vw] lg:text-[2.9vw]">
+                  {copy.headline}
+                </h2>
+                <p className="mt-7 max-w-[52ch] text-[18px] leading-relaxed font-medium text-ink/70">
+                  {copy.body}
+                </p>
+              </div>
+
+              <div className="lg:pt-3">
+                <h3 className="text-[22px] font-extrabold tracking-tight">
+                  {copy.reasonsTitle}
+                </h3>
+
+                <ul className="mt-6 space-y-5">
+                  {copy.reasons.map((reason) => (
+                    <li key={reason.title} className="flex gap-4">
+                      <span
+                        aria-hidden
+                        className={`mt-2 size-2.5 shrink-0 rounded-full ${product.accent}`}
+                      />
+                      <p className="text-[17px] leading-relaxed text-ink/65">
+                        <strong className="font-extrabold text-ink">
+                          {reason.title}:
+                        </strong>{" "}
+                        {reason.text}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </section>
 
           {/**
            * Product details, straight off the manufacturing sheet.

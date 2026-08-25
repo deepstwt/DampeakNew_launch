@@ -1,15 +1,14 @@
 import { ArrowRight } from "lucide-react";
 import { site } from "@/content/site";
-import { ProductCard } from "@/components/ui/ProductCard";
 import { HeroBlobs } from "@/components/scenes/HeroBlobs";
 import { SpongyText } from "@/components/ui/SpongyText";
 
 /**
- * Brand-led poster hero.
+ * Brand-led poster hero: the promise, one sentence of what that means, one way in.
  *
- * Dampeak sells a collection, not one object, so the hero shows a spread of
- * products across the ranges rather than a single hero product. The squishy is
- * simply the one carrying the "New" tag.
+ * The four-product spread used to live here. It now has its own section beneath
+ * ("Shop Your Relaxation") because the deck gives it its own heading — a grid
+ * under a headline it doesn't belong to reads as part of the headline's argument.
  *
  * Static — the scale of the type and the colour coding do the work.
  */
@@ -21,7 +20,7 @@ export function Hero() {
     <section className="relative overflow-hidden border-b border-ink/10 bg-white">
       {/* Background: decorative, and only ever seen through a white scrim */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
-        {/* The four ranges as four drifting soft bodies. Replaces a photograph
+        {/* The four products as four drifting soft bodies. Replaces a photograph
             because it does something a photograph cannot — it teaches the
             colour system before a word is read. */}
         <HeroBlobs className="absolute inset-0" />
@@ -32,7 +31,7 @@ export function Hero() {
         <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-b from-transparent to-white" />
       </div>
 
-      <div className="relative px-4 pt-8 md:px-6 md:pt-12">
+      <div className="relative px-4 pt-8 pb-16 md:px-6 md:pt-12 md:pb-24">
         {/* Type, bleeding to the edges. Spongy: it gives under the cursor and
             under a fast scroll, the same as the object it is selling. */}
         <h1 className="text-display text-[17vw] leading-[0.78] lg:text-[13vw]">
@@ -46,34 +45,23 @@ export function Hero() {
           />
           <SpongyText
             className="block"
-            segments={[
-              { text: "made " },
-              { text: "easier.", className: "text-orange" },
-            ]}
+            segments={[{ text: hero.headline[2], className: "text-orange" }]}
           />
         </h1>
 
-        {/* The spread: four products, colour-coded by range */}
-        <div className="mt-24 grid grid-cols-2 gap-x-4 gap-y-8 md:mt-36 lg:mt-44 lg:grid-cols-4 lg:gap-6">
-          {hero.showcase.map((item, i) => (
-            <ProductCard key={item.id} item={item} priority={i === 0} />
-          ))}
-        </div>
+        {/* Held to ~46 characters a line. The sentence is long; the measure is
+            what keeps it readable at this size. */}
+        <p className="mt-10 max-w-[46ch] text-[19px] leading-relaxed font-semibold text-ink/70 md:mt-14 md:text-[22px]">
+          {hero.sub}
+        </p>
 
-        {/* Actions */}
-        <div className="mt-14 flex flex-wrap items-center gap-3 pb-12">
+        <div className="mt-10 flex flex-wrap items-center gap-3">
           <a
             href={hero.primary.href}
             className="rounded-squish inline-flex items-center gap-3 bg-blue px-8 py-5 text-[17px] font-extrabold text-white transition-transform active:scale-[0.97]"
           >
             {hero.primary.label}
             <ArrowRight className="size-5" strokeWidth={3} />
-          </a>
-          <a
-            href={hero.secondary.href}
-            className="rounded-squish-alt bg-yellow px-8 py-5 text-[17px] font-extrabold text-ink transition-transform active:scale-[0.97]"
-          >
-            {hero.secondary.label}
           </a>
         </div>
       </div>

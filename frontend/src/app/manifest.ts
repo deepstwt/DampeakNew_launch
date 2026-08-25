@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Dampeak",
     short_name: "Dampeak",
-    description: "Small things that make the day easier.",
+    description: "Made for Better Everyday.",
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",
