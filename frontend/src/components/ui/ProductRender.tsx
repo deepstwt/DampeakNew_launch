@@ -54,9 +54,9 @@ export function ProductRender({
       ctx.clearRect(0, 0, rect.width, rect.height);
 
       const cx = rect.width / 2;
-      // Above centre, and smaller than the hero's, because the ground shadow
-      // has to fit inside the tile rather than run off the bottom of it.
-      const cy = rect.height * 0.46;
+      // Centred, and smaller than the hero's, because the ground shadow has to
+      // fit inside the tile rather than run off the bottom of it.
+      const cy = rect.height * 0.5;
       const radius = Math.min(rect.width, rect.height) * 0.34;
 
       body.seed(cx, cy, radius);

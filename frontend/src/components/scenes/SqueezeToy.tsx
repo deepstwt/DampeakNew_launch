@@ -195,9 +195,13 @@ export function SqueezeToy({ className = "" }: { className?: string }) {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       cx = w / 2;
-      // Above centre: the two ground shadows need room under it.
-      cy = h * 0.44;
-      radius = Math.min(w, h) * 0.39;
+      // Dead centre of its box, and small enough that the ground shadow still
+      // fits underneath. It used to sit above centre with a bigger radius, which
+      // meant the optical centre of the product and the geometric centre of the
+      // box were 6% apart — and anything aligned to the box, the rail beside it
+      // included, lined up with nothing.
+      cy = h * 0.5;
+      radius = Math.min(w, h) * 0.36;
       for (const b of bodies.values()) b.seed(cx, cy, radius);
       draw();
     };
@@ -365,13 +369,18 @@ export function SqueezeToy({ className = "" }: { className?: string }) {
 
   return (
     <div className={`w-full ${className}`}>
-      {/* The product, and the four to choose from beside it.
+      {/* Three cells, placed rather than nested.
           
-          Column on a wide screen, row underneath on a phone: a vertical rail
-          next to a product that is already only as wide as the screen would take
-          a quarter of it away from the thing it is advertising. */}
-      <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-center sm:justify-center sm:gap-6">
-        <div className="relative aspect-square w-full max-w-[440px] sm:flex-1 lg:max-w-[480px]">
+          The product and the rail share the first row, so the rail centres on
+          the product and not on some box that contains both of them. The two
+          lines of text take the second row of the product's column alone, so
+          they centre under the product rather than under product-plus-rail —
+          which is what had the caption sitting a rail's width to the right of
+          the line above it.
+          
+          Stacked on a phone it is DOM order: product, rail, text. */}
+      <div className="grid justify-center gap-x-6 gap-y-5 sm:grid-cols-[minmax(0,1fr)_auto]">
+        <div className="relative aspect-square w-full max-w-[440px] sm:col-start-1 sm:row-start-1 lg:max-w-[480px]">
           {/* Lifts the body off the drifting backdrop without a hard edge. Kept
               weak: the backdrop field is composed to leave this side clear, so
               this only has to soften what drifts through, not white it out. */}
@@ -387,16 +396,6 @@ export function SqueezeToy({ className = "" }: { className?: string }) {
               className="size-full cursor-grab touch-none active:cursor-grabbing"
             />
           </div>
-
-          {/* Asks once, then gets out of the way. */}
-          <p
-            aria-hidden
-            className={`text-marker pointer-events-none absolute inset-x-0 bottom-1 text-center text-ink/45 transition-opacity duration-500 ${
-              pressed ? "opacity-0" : "opacity-100"
-            }`}
-          >
-            Press and hold to squeeze
-          </p>
         </div>
 
         {/* The rail. Each one is the product itself, drawn by the same paint as
@@ -407,7 +406,7 @@ export function SqueezeToy({ className = "" }: { className?: string }) {
             objects this distinct do not need labelling to be told apart, and the
             captions were three lines of type competing with a headline; a screen
             reader still hears every name. */}
-        <ul className="flex shrink-0 gap-3 sm:flex-col">
+        <ul className="flex shrink-0 gap-3 sm:col-start-2 sm:row-start-1 sm:flex-col sm:self-center">
           {PRODUCTS.map((p, i) => (
             <li key={p.slug}>
               <button
@@ -426,18 +425,31 @@ export function SqueezeToy({ className = "" }: { className?: string }) {
             </li>
           ))}
         </ul>
-      </div>
 
-      <p className="mt-5 text-center text-[15px] font-semibold text-ink/50">
-        <span className="font-extrabold text-ink">{product.name}</span> ·{" "}
-        {product.specs.finish} · {product.specs.colour} ·{" "}
-        <Link
-          href={`/products/${product.slug}`}
-          className="font-extrabold text-ink underline decoration-2 underline-offset-4 transition-colors hover:text-blue"
-        >
-          See it
-        </Link>
-      </p>
+        <div className="text-center sm:col-start-1 sm:row-start-2">
+          {/* Asks once, then gets out of the way. It holds its line whether or
+              not it is showing, so the caption under it never moves. */}
+          <p
+            aria-hidden
+            className={`text-marker text-ink/45 transition-opacity duration-500 ${
+              pressed ? "opacity-0" : "opacity-100"
+            }`}
+          >
+            Press and hold to squeeze
+          </p>
+
+          <p className="mt-3 text-[15px] font-semibold text-ink/50">
+            <span className="font-extrabold text-ink">{product.name}</span> ·{" "}
+            {product.specs.finish} · {product.specs.colour} ·{" "}
+            <Link
+              href={`/products/${product.slug}`}
+              className="font-extrabold text-ink underline decoration-2 underline-offset-4 transition-colors hover:text-blue"
+            >
+              See it
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
