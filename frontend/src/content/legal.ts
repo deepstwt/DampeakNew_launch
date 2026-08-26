@@ -44,77 +44,34 @@ export type Doc = {
    * a policy document ending in a Buy button would be reading the room wrong.
    */
   cta?: { label: string; href: string };
+  /**
+   * Whether this is a legal document. Everything under /[doc] was one when the
+   * route was written, so the draft notice went on all of them; About is a brand
+   * page that happens to live at the same level, and telling a visitor that our
+   * company story has not been reviewed by a lawyer reads as a mistake, because
+   * it is one.
+   */
+  legal?: boolean;
 };
 
 export const DOCS: Doc[] = [
   {
     slug: "about",
-    title: "About Dampeak",
+    title: "About Us",
+    legal: false,
     summary: "Made for Better Everyday.",
     updated: "August 2026",
-    cta: { label: "Shop Dampeak", href: "/products" },
+    cta: { label: "SHOP DAMPEAK.", href: "/products" },
     sections: [
       {
         heading: "Made for everyday living.",
         body: [
-          `${COMPANY.trading} started with a simple idea: the things we live with every day should make our daily lives better, more comfortable, relaxing, and fun.`,
+          "DAMPEAK started with a simple idea: the things we live with every day should make our daily lives better, more comfortable, relaxing, and fun.",
           "We create products designed to bring a little more comfort, convenience, personality, and fun into everyday life.",
           "From something that makes you smile to something that makes a moment more comfortable to something that makes tasks easier, we look for ideas that have a place in the way people live.",
-          `We work with production partners to bring our products to life, thoughtfully developing the details that make each one feel like ${COMPANY.trading}.`,
+          "We work with production partners to bring our products to life, thoughtfully developing the details that make each one feel like DAMPEAK.",
           "We're starting small, with a growing collection of products made for everyday moments. As we grow, we'll continue exploring new ideas, new ways of living, and new products that we think are worth bringing into your world.",
           "Because everyday living doesn't have to be ordinary.",
-        ],
-      },
-      {
-        heading: "Our one rule",
-        body: [
-          "If it doesn't make life easier, we don't make it.",
-          "That sounds obvious. It isn't. Most things exist because they can be manufactured and sold, not because anyone needed them. So we kill far more ideas than we ship, and the test never changes: is an ordinary day actually better with this in it?",
-        ],
-      },
-      {
-        heading: "Four, and only four",
-        body: [
-          "We launch with four. Not four ranges with gaps in them, and not a catalogue padded out to look established — four squishies, each one different enough to be worth having.",
-        ],
-        list: [
-          "Rounded Cube — smooth and minimal, big enough to need a whole hand.",
-          "Toasted Bread — a pastel pillow square in matte foam, the softest of the four.",
-          "Cheese Cube — moulded texture in bright yellow, with holes your fingers find on their own.",
-          "Marbled Cube — smooth rounded cube, marbled so no two are alike.",
-        ],
-      },
-      {
-        heading: "How we choose",
-        body: [
-          "Shape, surface and give are the whole product. A squishy that is too firm gets put down; one that is too soft never comes back to shape. Everything on our spec sheet — the edge profile, the finish, the density — exists to get that one thing right.",
-          "If an idea needs a new habit, an app or a subscription, it isn't the answer.",
-        ],
-      },
-      {
-        heading: "What we won't do",
-        list: [
-          "We don't make medical or therapeutic claims. These are made to be good to hold, not to treat anything. If something is wrong, please talk to a doctor.",
-          "We don't write our own reviews, and we don't present stock or generated imagery as photographs of real customers.",
-          "We don't launch a product because the season needs one.",
-          "We don't add a feature to justify a higher price.",
-        ],
-      },
-      {
-        heading: "Where to buy",
-        body: [
-          "We sell through Amazon rather than running our own checkout, so payment, delivery and returns are handled somewhere you already trust rather than somewhere you have to take a chance on.",
-        ],
-      },
-      {
-        heading: "Company details",
-        list: [
-          `Registered name: ${COMPANY.legalName}`,
-          `Trading as: ${COMPANY.trading}`,
-          `Registered address: ${COMPANY.address}`,
-          `Registration number: ${COMPANY.cin}`,
-          `GSTIN: ${COMPANY.gstin}`,
-          `Email: ${COMPANY.email}`,
         ],
       },
     ],
@@ -265,6 +222,12 @@ export const DOCS: Doc[] = [
         heading: "Intellectual property",
         body: [
           `The ${COMPANY.trading} name, logo, product designs, photography and site content are owned by us or our licensors and may not be used without permission.`,
+        ],
+      },
+      {
+        heading: "No medical claims",
+        body: [
+          "We don't make medical or therapeutic claims. These are made to be good to hold, not to treat anything. Anything we quote from published research describes what that research observed, not what our products do. If something is wrong, please talk to a doctor.",
         ],
       },
       {
@@ -478,6 +441,17 @@ export const DOCS: Doc[] = [
           `Privacy requests: ${COMPANY.privacyEmail}`,
           `Phone: ${COMPANY.phone}`,
           `Post: ${COMPANY.address}`,
+        ],
+      },
+      {
+        heading: "Company details",
+        list: [
+          `Registered name: ${COMPANY.legalName}`,
+          `Trading as: ${COMPANY.trading}`,
+          `Registered address: ${COMPANY.address}`,
+          `Registration number: ${COMPANY.cin}`,
+          `GSTIN: ${COMPANY.gstin}`,
+          `Email: ${COMPANY.email}`,
         ],
       },
       {
