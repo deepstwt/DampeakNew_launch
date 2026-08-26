@@ -44,23 +44,32 @@ export type Doc = {
    * a policy document ending in a Buy button would be reading the room wrong.
    */
   cta?: { label: string; href: string };
+  /**
+   * Whether this is a legal document. Everything under /[doc] was one when the
+   * route was written, so the draft notice went on all of them; About is a brand
+   * page that happens to live at the same level, and telling a visitor that our
+   * company story has not been reviewed by a lawyer reads as a mistake, because
+   * it is one.
+   */
+  legal?: boolean;
 };
 
 export const DOCS: Doc[] = [
   {
     slug: "about",
-    title: "About Dampeak",
+    title: "About Us",
+    legal: false,
     summary: "Made for Better Everyday.",
     updated: "August 2026",
-    cta: { label: "Shop Dampeak", href: "/products" },
+    cta: { label: "SHOP DAMPEAK.", href: "/products" },
     sections: [
       {
         heading: "Made for everyday living.",
         body: [
-          `${COMPANY.trading} started with a simple idea: the things we live with every day should make our daily lives better, more comfortable, relaxing, and fun.`,
+          "DAMPEAK started with a simple idea: the things we live with every day should make our daily lives better, more comfortable, relaxing, and fun.",
           "We create products designed to bring a little more comfort, convenience, personality, and fun into everyday life.",
           "From something that makes you smile to something that makes a moment more comfortable to something that makes tasks easier, we look for ideas that have a place in the way people live.",
-          `We work with production partners to bring our products to life, thoughtfully developing the details that make each one feel like ${COMPANY.trading}.`,
+          "We work with production partners to bring our products to life, thoughtfully developing the details that make each one feel like DAMPEAK.",
           "We're starting small, with a growing collection of products made for everyday moments. As we grow, we'll continue exploring new ideas, new ways of living, and new products that we think are worth bringing into your world.",
           "Because everyday living doesn't have to be ordinary.",
         ],

@@ -202,7 +202,7 @@ Reference layout (competitor: "chubie" pick pad) — split image/copy block:
 
 ---
 
-## About Page
+## About Us
 
 ### Made for everyday living.
 

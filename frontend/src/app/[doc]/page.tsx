@@ -53,7 +53,7 @@ export default async function DocPage({ params }: PageProps<"/[doc]">) {
           <p className="mt-5 text-[18px] leading-relaxed text-ink/55">{doc.summary}</p>
           <p className="text-marker mt-6 text-ink/35">Last updated {doc.updated}</p>
 
-          {LEGAL_DRAFT ? (
+          {LEGAL_DRAFT && doc.legal !== false ? (
             <p className="mt-8 rounded-2xl bg-yellow px-5 py-4 text-[14px] font-bold text-ink">
               Draft — placeholder text in brackets still needs completing, and this
               document has not yet been reviewed by a lawyer.
