@@ -11,7 +11,17 @@
  * file for MATERIAL_TBD to find them all.
  */
 
-/** A real photograph. null until one exists for that product. */
+/**
+ * A real photograph. null until one exists for that product.
+ *
+ * What is in public/products is not the file that was handed over — it is that
+ * file trimmed of its white border, scaled into a square and re-padded to a
+ * fixed margin. The originals arrive at four different aspect ratios with four
+ * different amounts of air around the product, and every slot on this site is
+ * square: dropped in as they came, one product sat small in the middle of a tile
+ * while the next one filled it. Squaring them is what makes a row of four look
+ * like one shoot. The untouched originals stay in the repo root.
+ */
 export type ProductPhoto = { src: string; alt: string };
 
 const u = (id: string, w = 1400) =>
@@ -121,7 +131,7 @@ export const site = {
         swatch: "#33b6d6",
         // Photographed. The price is still outstanding.
         image: {
-          src: "/products/blue-block.png",
+          src: "/products/blue-block.webp",
           alt: "The Rounded Cube squishy: a translucent blue cube with softly rounded corners.",
         } as ProductPhoto | null,
         price: null as string | null,
@@ -147,7 +157,7 @@ export const site = {
         swatch: "#f0aeba",
         // Photographed. The price is still outstanding.
         image: {
-          src: "/products/pillow-squish.png",
+          src: "/products/pillow-squish.webp",
           alt: "The Toasted Bread squishy beside its retail box, and a second one being squeezed in one hand.",
         } as ProductPhoto | null,
         price: null as string | null,
@@ -173,7 +183,7 @@ export const site = {
         swatch: "#eeba3c",
         // Photographed. The price is still outstanding.
         image: {
-          src: "/products/cheese-cube.png",
+          src: "/products/cheese-cube.webp",
           alt: "The Cheese Cube squishy, moulded with holes on every face, with four miniature cheese cubes in front of it.",
         } as ProductPhoto | null,
         price: null as string | null,
@@ -199,7 +209,7 @@ export const site = {
         swatch: "#b743bd",
         // Photographed. The price is still outstanding.
         image: {
-          src: "/products/marble-cube.png",
+          src: "/products/marble-cube.webp",
           alt: "Marbled Cube squishies in five colourways beside the retail box, and one being squeezed in one hand.",
         } as ProductPhoto | null,
         price: null as string | null,
