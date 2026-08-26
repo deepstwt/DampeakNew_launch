@@ -50,8 +50,21 @@ export default async function DocPage({ params }: PageProps<"/[doc]">) {
           <h1 className="text-display mt-8 text-[13vw] leading-[0.9] sm:text-[8vw] lg:text-[4.6vw]">
             {doc.title}
           </h1>
-          <p className="mt-5 text-[18px] leading-relaxed text-ink/55">{doc.summary}</p>
-          <p className="text-marker mt-6 text-ink/35">Last updated {doc.updated}</p>
+          {/* Both of these are policy-document furniture. `summary` still feeds
+              the page's meta description; it just does not render on a brand
+              page, where it sat directly above a heading that says the same
+              thing in better words. And a company story is not something a
+              visitor needs a revision date for. */}
+          {doc.legal !== false ? (
+            <>
+              <p className="mt-5 text-[18px] leading-relaxed text-ink/55">
+                {doc.summary}
+              </p>
+              <p className="text-marker mt-6 text-ink/35">
+                Last updated {doc.updated}
+              </p>
+            </>
+          ) : null}
 
           {LEGAL_DRAFT && doc.legal !== false ? (
             <p className="mt-8 rounded-2xl bg-yellow px-5 py-4 text-[14px] font-bold text-ink">
