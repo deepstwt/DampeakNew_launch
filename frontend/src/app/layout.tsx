@@ -15,20 +15,20 @@ const sans = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Dampeak — Small things that make the day easier",
+    default: "Dampeak — Made for Better Everyday",
     template: "%s — Dampeak",
   },
   description:
-    "Dampeak makes squishies — small, soft things built to be squeezed while you are doing something else. Four of them: Blue Block, Pillow Squish, Cheese Cube and Marble Cube.",
+    "Thoughtfully designed products that make everyday life easier and better — from comfort, to relaxation, to fun. Four stress squeeze squish toys: Rounded Cube, Toasted Bread, Cheese Cube and Marbled Cube.",
   applicationName: "Dampeak",
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     siteName: "Dampeak",
     url: SITE_URL,
-    title: "Dampeak — Small things that make the day easier",
+    title: "Dampeak — Made for Better Everyday",
     description:
-      "Four squishies. Small, soft things built to be squeezed while you are doing something else.",
+      "Four stress squeeze squish toys, made for the moments your hands need something to do.",
   },
   // TODO: drop a 1200x630 PNG at public/og.png and add
   //   openGraph.images / twitter.images pointing at it.
@@ -36,9 +36,9 @@ export const metadata: Metadata = {
   //   format"), and a 500ing image endpoint is worse for crawlers than none.
   twitter: {
     card: "summary",
-    title: "Dampeak — Small things that make the day easier",
+    title: "Dampeak — Made for Better Everyday",
     description:
-      "Four squishies. Small, soft things built to be squeezed while you are doing something else.",
+      "Four stress squeeze squish toys, made for the moments your hands need something to do.",
   },
   robots: {
     index: true,
@@ -62,7 +62,7 @@ const ORG_JSONLD = {
   "@type": "Organization",
   name: "Dampeak",
   url: SITE_URL,
-  description: "Small things that make the day easier.",
+  description: "Made for Better Everyday.",
   email: COMPANY.email,
   contactPoint: [
     {

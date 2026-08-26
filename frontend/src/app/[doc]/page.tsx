@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, ChevronDown } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronDown } from "lucide-react";
 import { DOCS, LEGAL_DRAFT, getDoc } from "@/content/legal";
 import { Nav } from "@/components/ui/Nav";
 import { Footer } from "@/components/ui/Footer";
@@ -110,6 +110,17 @@ export default async function DocPage({ params }: PageProps<"/[doc]">) {
                   </section>
                 ))}
           </div>
+
+          {/* One way onward, where the document has one. About only. */}
+          {doc.cta ? (
+            <Link
+              href={doc.cta.href}
+              className="rounded-squish mt-14 inline-flex items-center gap-3 bg-blue px-8 py-5 text-[17px] font-extrabold text-white transition-transform active:scale-[0.97]"
+            >
+              {doc.cta.label}
+              <ArrowRight className="size-5" strokeWidth={3} />
+            </Link>
+          ) : null}
 
           {/* Cross-links: policies are useless if you can't get between them */}
           <nav aria-label="Other pages" className="mt-16 border-t border-ink/10 pt-8">

@@ -41,7 +41,13 @@ const PUSH = 3.2;
  * on a desktop, so the middle is the one region whose occupancy changes with the
  * viewport. Edges and corners stay free at every width.
  *
- * Two constraints the placement has to respect:
+ * A third region is now spoken for: the squeezable product sits in the right
+ * half from a large breakpoint up. Bodies drifting behind it turned a saturated
+ * blue product into two overlapping blues, so the field keeps to the top-right
+ * corner above it and to the bottom edge below the copy. Nothing sits in the
+ * band the product occupies.
+ *
+ * Two further constraints the placement has to respect:
  *
  *   - Nothing saturated behind "easier.", which is set in orange. Orange type on
  *     an orange body is the one combination here that genuinely fails to read.
@@ -52,9 +58,9 @@ const PUSH = 3.2;
  * strongest contrast of any in the palette.
  */
 const RANGES = [
-  { color: "#ff5c16", x: 0.88, y: 0.1, r: 0.16, sx: 0.16, sy: 0.23, phase: 1.9 },
+  { color: "#ff5c16", x: 0.95, y: 0.04, r: 0.11, sx: 0.16, sy: 0.23, phase: 1.9 },
   { color: "#ffce00", x: 0.06, y: 0.52, r: 0.14, sx: 0.21, sy: 0.17, phase: 0 },
-  { color: "#1f3cff", x: 0.92, y: 0.5, r: 0.1, sx: 0.25, sy: 0.15, phase: 3.4 },
+  { color: "#1f3cff", x: 0.36, y: 1.08, r: 0.1, sx: 0.25, sy: 0.15, phase: 3.4 },
   { color: "#0b0b0f", x: 0.04, y: 0.9, r: 0.07, sx: 0.19, sy: 0.27, phase: 5.1 },
 ];
 

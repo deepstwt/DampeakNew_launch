@@ -47,6 +47,61 @@ export const DEFAULT_TUNING: Tuning = {
   passes: 4,
 };
 
+/**
+ * The shape a body remembers, as a unit outline.
+ *
+ * The solver held a circle before this: rest positions came off `Math.cos/sin`
+ * and the pressure term compared against `π·r²`. Three of the four products are
+ * cubes, so the rest shape had to become a parameter — and the area had to come
+ * with it, because pressure measures the enclosed area against this number. Hand
+ * the solver a squircle while it still believes the area is π·r² and it reads the
+ * surplus as over-inflation and squeezes the corners off.
+ */
+export type RestShape = {
+  /** Unit outline, walked with t in [0, 1). */
+  at(t: number): { x: number; y: number };
+  /** Area that outline encloses at unit radius. π for a circle. */
+  area: number;
+};
+
+export const CIRCLE_REST: RestShape = {
+  at: (t) => {
+    const a = t * Math.PI * 2;
+    return { x: Math.cos(a), y: Math.sin(a) };
+  },
+  area: Math.PI,
+};
+
+/**
+ * Superellipse — |x|^n + |y|^n = 1. n=4 is a rounded cube, which is the
+ * silhouette on the spec sheet for three of the four products; n=2 is the circle.
+ *
+ * The area is integrated once, at call time, rather than looked up: the closed
+ * form needs the gamma function, and a shoelace over a few hundred samples is
+ * exact enough for a term that is already scaled by a tuning constant.
+ */
+export function squircleRest(n = 4, samples = 720): RestShape {
+  const at = (t: number) => {
+    const a = t * Math.PI * 2;
+    const c = Math.cos(a);
+    const s = Math.sin(a);
+    const e = 2 / n;
+    return {
+      x: Math.sign(c) * Math.abs(c) ** e,
+      y: Math.sign(s) * Math.abs(s) ** e,
+    };
+  };
+
+  let area = 0;
+  for (let i = 0; i < samples; i++) {
+    const p = at(i / samples);
+    const q = at((i + 1) / samples);
+    area += p.x * q.y - q.x * p.y;
+  }
+
+  return { at, area: Math.abs(area) / 2 };
+}
+
 export type Point = {
   x: number;
   y: number;
@@ -57,8 +112,34 @@ export type Point = {
   uy: number;
 };
 
-/** Where the surface is being pushed, and how hard. */
-export type Press = { x: number; y: number; depth: number } | null;
+/**
+ * Where the surface is being pushed, and how hard.
+ *
+ * `depth` alone describes a poke from a pencil tip. The rest of these fields
+ * exist because a hand is not a pencil tip:
+ *
+ *   - `radius` overrides the tuning's reach for this one contact, so a broad
+ *     fingertip pad and a narrow poke can act on the same body.
+ *   - `dx`/`dy` with `grip` drag the surface sideways with the finger. Skin does
+ *     not slide over rubber; it holds, the surface follows, and then it slips.
+ *
+ * A press is passed one at a time or as a list, and a list is the point: a
+ * squeeze between a thumb and a finger is two opposing contacts, and the
+ * pressure term does the rest — material displaced from both sides has to leave
+ * somewhere, so the body bulges where nothing is holding it.
+ */
+export type Press = {
+  x: number;
+  y: number;
+  depth: number;
+  /** Absolute influence radius. Defaults to `reach × restR` from the tuning. */
+  radius?: number;
+  /** How far this contact has moved since the last step. */
+  dx?: number;
+  dy?: number;
+  /** 0..1 — how much of that movement the surface is dragged along by. */
+  grip?: number;
+} | null;
 
 export type SoftBody = {
   points: Point[];
@@ -69,15 +150,32 @@ export type SoftBody = {
    * drifting the body around or compressing it under a grip is done by passing
    * different values rather than by reaching into the solver.
    */
-  step(cx: number, cy: number, restR: number, press: Press): void;
+  step(cx: number, cy: number, restR: number, press: Press | Press[]): void;
+  /**
+   * Change the tuning of this body in place.
+   *
+   * For recovery, mostly. A squishy that springs back at the same rate it gave
+   * way is a rubber band; "soft slow rising" is a lower shape memory for the
+   * first moment after release, ramped back up. The tuning passed to the factory
+   * is copied, so bodies sharing DEFAULT_TUNING cannot retune each other.
+   */
+  tune(next: Partial<Tuning>): void;
   /** Lay the outline into the current path. Does not fill or stroke. */
   trace(ctx: CanvasRenderingContext2D): void;
 };
 
-export function createSoftBody(count = 48, tuning: Tuning = DEFAULT_TUNING): SoftBody {
+export function createSoftBody(
+  count = 48,
+  tuning: Tuning = DEFAULT_TUNING,
+  rest: RestShape = CIRCLE_REST,
+): SoftBody {
+  // Copied, not held: `tune` mutates this, and the default tuning object is
+  // shared by every body that did not pass one of its own.
+  const cfg: Tuning = { ...tuning };
+
   const points: Point[] = Array.from({ length: count }, (_, i) => {
-    const a = (i / count) * Math.PI * 2;
-    return { x: 0, y: 0, px: 0, py: 0, ux: Math.cos(a), uy: Math.sin(a) };
+    const u = rest.at(i / count);
+    return { x: 0, y: 0, px: 0, py: 0, ux: u.x, uy: u.y };
   });
 
   /** Shoelace. Sign is dropped — winding direction is not interesting here. */
@@ -102,59 +200,77 @@ export function createSoftBody(count = 48, tuning: Tuning = DEFAULT_TUNING): Sof
       }
     },
 
+    tune(next) {
+      Object.assign(cfg, next);
+    },
+
     step(cx, cy, restR, press) {
-      // The target area has to track the target radius. Pin it to a fixed
-      // radius while restR moves and the pressure term — an order of magnitude
-      // stronger than shape memory — silently cancels that movement out.
-      const restArea = Math.PI * restR * restR;
-      const reach = restR * tuning.reach;
+      const contacts = Array.isArray(press) ? press : [press];
+      // The target area has to track the target radius, and the rest shape's own
+      // area, not the circle's. Pin it to a fixed radius while restR moves and
+      // the pressure term — an order of magnitude stronger than shape memory —
+      // silently cancels that movement out.
+      const restArea = rest.area * restR * restR;
+      const reach = restR * cfg.reach;
 
       for (const p of points) {
-        const vx = (p.x - p.px) * tuning.damping;
-        const vy = (p.y - p.py) * tuning.damping;
+        const vx = (p.x - p.px) * cfg.damping;
+        const vy = (p.y - p.py) * cfg.damping;
         p.px = p.x;
         p.py = p.y;
         p.x += vx;
         p.y += vy;
 
         // 1. Shape memory
-        p.x += (cx + p.ux * restR - p.x) * tuning.memory;
-        p.y += (cy + p.uy * restR - p.y) * tuning.memory;
+        p.x += (cx + p.ux * restR - p.x) * cfg.memory;
+        p.y += (cy + p.uy * restR - p.y) * cfg.memory;
 
         // The dent travels INWARD, toward the centre — not away from the press
         // point. Away-from-the-point is the intuitive way to write this and it
         // is wrong: the press point sits inside the body, so repelling from it
         // drives the near surface outward and the body inflates under your
         // finger instead of denting. A finger displaces material inward.
-        if (press) {
-          const d = Math.hypot(p.x - press.x, p.y - press.y) || 1;
-          if (d < reach) {
-            // Squared falloff: soft at the edge of the influence circle,
-            // decisive at its centre.
-            const f = 1 - d / reach;
-            const nx = p.x - cx;
-            const ny = p.y - cy;
-            const nd = Math.hypot(nx, ny) || 1;
-            const w = f * f * press.depth;
-            p.x -= (nx / nd) * w;
-            p.y -= (ny / nd) * w;
+        for (const q of contacts) {
+          if (!q) continue;
+          const qReach = q.radius ?? reach;
+          const d = Math.hypot(p.x - q.x, p.y - q.y) || 1;
+          if (d >= qReach) continue;
+
+          // Squared falloff: soft at the edge of the influence circle,
+          // decisive at its centre.
+          const f = 1 - d / qReach;
+          const nx = p.x - cx;
+          const ny = p.y - cy;
+          const nd = Math.hypot(nx, ny) || 1;
+          const w = f * f * q.depth;
+          p.x -= (nx / nd) * w;
+          p.y -= (ny / nd) * w;
+
+          // Friction. The surface is dragged along with the contact, hardest
+          // directly under it. This is what stops a moving press from behaving
+          // like a dent sliding frictionlessly across a shape.
+          const grip = q.grip ?? 0;
+          if (grip > 0) {
+            const g = f * f * grip;
+            p.x += (q.dx ?? 0) * g;
+            p.y += (q.dy ?? 0) * g;
           }
         }
       }
 
-      for (let pass = 0; pass < tuning.passes; pass++) {
+      for (let pass = 0; pass < cfg.passes; pass++) {
         // 2. Neighbour smoothing
         for (let i = 0; i < count; i++) {
           const a = points[(i - 1 + count) % count];
           const b = points[(i + 1) % count];
           const p = points[i];
-          p.x += ((a.x + b.x) / 2 - p.x) * tuning.smoothing;
-          p.y += ((a.y + b.y) / 2 - p.y) * tuning.smoothing;
+          p.x += ((a.x + b.x) / 2 - p.x) * cfg.smoothing;
+          p.y += ((a.y + b.y) / 2 - p.y) * cfg.smoothing;
         }
 
         // 3. Pressure. The area deficit is pushed back out along each point's
         //    outward normal, which is what shifts material to the far side.
-        const shove = ((restArea - areaOf()) / restArea) * restR * tuning.pressure;
+        const shove = ((restArea - areaOf()) / restArea) * restR * cfg.pressure;
         if (Math.abs(shove) > 0.001) {
           for (const p of points) {
             const dx = p.x - cx;
