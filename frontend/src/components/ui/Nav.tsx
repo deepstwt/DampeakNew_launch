@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Menu, X } from "lucide-react";
 import { site } from "@/content/site";
@@ -79,10 +80,25 @@ export function Nav() {
         <span className="flex-1 bg-ink" />
       </div>
 
-      <div className="flex items-center gap-4 border-b border-ink/10 px-4 py-3.5 md:px-6">
-        <Link href="/" className="text-display text-[28px] md:text-[32px]">
-          {site.name}
-          <span className="text-orange">.</span>
+      {/* The row is shorter than it looks: the logo is a two-line lockup, so it
+          needs more height than the wordmark it replaced, and the vertical
+          padding comes down to pay for it. */}
+      <div className="flex items-center gap-4 border-b border-ink/10 px-4 py-2.5 md:px-6 md:py-3">
+        <Link href="/" className="shrink-0">
+          {/* Intrinsic size given, height driven by CSS — the rendered box is
+              set by the header, and next/image only needs the ratio to reserve
+              the space before the file arrives.
+
+              priority: it is the first thing on every page, and a logo that
+              fades in after the rest of the header has painted looks broken. */}
+          <Image
+            src="/brand/dampeak.webp"
+            alt={site.name}
+            width={461}
+            height={400}
+            priority
+            className="h-12 w-auto md:h-[60px]"
+          />
         </Link>
 
         <nav aria-label="Main" className="ml-auto hidden items-center gap-7 md:flex">
