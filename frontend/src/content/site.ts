@@ -20,7 +20,7 @@
  * different amounts of air around the product, and every slot on this site is
  * square: dropped in as they came, one product sat small in the middle of a tile
  * while the next one filled it. Squaring them is what makes a row of four look
- * like one shoot. The untouched originals stay in the repo root.
+ * like one shoot. The untouched originals are in design/ at the repo root.
  */
 export type ProductPhoto = { src: string; alt: string };
 
