@@ -38,8 +38,9 @@ export function Hero() {
         {/* Lighter than it would need to be if the bodies sat under the type —
             the composition keeps them clear of it, so they can stay saturated. */}
         <div className="absolute inset-0 bg-white/50" />
-        {/* Blends the bottom edge into the white section that follows */}
-        <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-b from-transparent to-white" />
+        {/* Blends the bottom edge into the section that follows, which is cream —
+            left as to-white and the hero ends on a visible horizontal seam. */}
+        <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-b from-transparent to-cream" />
       </div>
 
       <div className="relative grid gap-y-12 px-4 pt-8 pb-16 md:px-6 md:pt-12 md:pb-24 lg:grid-cols-[1.15fr_1fr] lg:gap-x-12">

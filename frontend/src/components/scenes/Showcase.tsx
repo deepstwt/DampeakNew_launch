@@ -15,7 +15,7 @@ export function Showcase() {
   const { showcase, hero } = site;
 
   return (
-    <section id="products" className="bg-white px-4 py-20 md:px-6 md:py-28">
+    <section id="products" className="bg-cream px-4 py-20 md:px-6 md:py-28">
       <h2 className="text-display max-w-[18ch] text-[12vw] leading-[0.88] sm:text-[8vw] lg:text-[5vw]">
         {showcase.heading}
       </h2>
@@ -28,7 +28,7 @@ export function Showcase() {
 
       <a
         href={showcase.cta.href}
-        className="rounded-squish-alt mt-14 inline-flex items-center gap-3 bg-yellow px-8 py-5 text-[17px] font-extrabold text-ink transition-transform active:scale-[0.97]"
+        className="rounded-squish-alt mt-14 inline-flex items-center gap-3 bg-white px-8 py-5 text-[17px] font-extrabold text-ink transition-transform active:scale-[0.97]"
       >
         {showcase.cta.label}
         <ArrowRight className="size-5" strokeWidth={3} />
