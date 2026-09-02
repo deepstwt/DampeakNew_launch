@@ -87,7 +87,7 @@ export function ProductCard({ item, priority }: Props) {
       <Link
         href={href}
         aria-label={`Buy ${item.name}`}
-        className="mt-3 flex w-full items-center justify-center gap-2 rounded-full bg-brown px-5 py-3.5 text-[15px] font-extrabold text-white transition hover:brightness-150 active:scale-[0.98]"
+        className="mt-3 flex w-full items-center justify-center gap-2 rounded-full bg-yellow px-5 py-3.5 text-[15px] font-extrabold text-ink transition hover:brightness-95 active:scale-[0.98]"
       >
         Buy Now
         <ShoppingBag className="size-[17px]" strokeWidth={2.8} />

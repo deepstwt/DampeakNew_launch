@@ -28,7 +28,7 @@ export function Showcase() {
 
       <a
         href={showcase.cta.href}
-        className="rounded-squish-alt mt-14 inline-flex items-center gap-3 bg-white px-8 py-5 text-[17px] font-extrabold text-ink transition-transform active:scale-[0.97]"
+        className="rounded-squish-alt mt-14 inline-flex items-center gap-3 bg-yellow px-8 py-5 text-[17px] font-extrabold text-ink transition-transform active:scale-[0.97]"
       >
         {showcase.cta.label}
         <ArrowRight className="size-5" strokeWidth={3} />
