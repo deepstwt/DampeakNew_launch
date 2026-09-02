@@ -9,6 +9,16 @@
 
   --color-ink: #0b0b0f;
 
+  /**
+   * A fifth, for the full-bleed quote band and nothing else yet.
+   *
+   * Deliberately dark: that band carries white type with a yellow half, and a
+   * mid or light brown would take the white down with it. At this value white
+   * clears 10:1 and the brand yellow clears 7:1, so both halves of the sentence
+   * stay as readable as they were on blue.
+   */
+  --color-brown: #4a2b18;
+
   --font-sans: var(--font-sans);
 }
 

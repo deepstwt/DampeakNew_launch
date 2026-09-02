@@ -8,13 +8,15 @@ export function Footer() {
   const year = 2026; // Static: a live year would break hydration on New Year's Eve.
 
   return (
-    <footer className="relative overflow-hidden bg-ink text-white">
+    <footer className="relative overflow-hidden bg-brown text-white">
       {/* Spectrum, mirroring the nav — the page opens and closes on the same rule */}
       <div className="flex h-1.5" aria-hidden>
         <span className="flex-1 bg-blue" />
         <span className="flex-1 bg-orange" />
         <span className="flex-1 bg-yellow" />
-        {/* Moments is ink — invisible on an ink footer, so it shows as white here */}
+        {/* The fourth stripe is ink in the nav. Ink is near-black and the footer
+            is dark — it was invisible when this was an ink footer and it is
+            still invisible on brown — so the closing rule stands it in white. */}
         <span className="flex-1 bg-white" />
       </div>
 

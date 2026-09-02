@@ -128,7 +128,7 @@ export default async function DocPage({ params }: PageProps<"/[doc]">) {
           {doc.cta ? (
             <Link
               href={doc.cta.href}
-              className="rounded-squish mt-14 inline-flex items-center gap-3 bg-blue px-8 py-5 text-[17px] font-extrabold text-white transition-transform active:scale-[0.97]"
+              className="rounded-squish mt-14 inline-flex items-center gap-3 bg-brown px-8 py-5 text-[17px] font-extrabold text-white transition-transform active:scale-[0.97]"
             >
               {doc.cta.label}
               <ArrowRight className="size-5" strokeWidth={3} />
