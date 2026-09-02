@@ -8,9 +8,7 @@ import { createSoftBody, DEFAULT_TUNING } from "@/lib/softbody";
  * The hero backdrop: the four ranges as four soft bodies, drifting.
  *
  * This replaces a photograph, and it is doing a job a photograph could not — it
- * teaches the colour system before a single word is read. Blue means focus,
- * orange means comfort, yellow means routine, ink means moments, and a visitor
- * meets all four in the first second.
+ * puts the palette on screen before a single word is read.
  *
  * Two things keep it from fighting the page:
  *
@@ -47,10 +45,18 @@ const PUSH = 3.2;
  * corner above it and to the bottom edge below the copy. Nothing sits in the
  * band the product occupies.
  *
+ * The top-right body is brown rather than the palette's orange, and lighter than
+ * the brown token. Everything here is seen through a 50% white scrim, so a body
+ * is drawn at roughly half its strength: the token's #4a2b18 comes through that
+ * as a grey-brown with the warmth washed out of it. #8a4a1e lands on the scrim
+ * at about the tone the token reads at on a solid fill, which is what makes it
+ * the same colour to the eye rather than on paper.
+ *
  * Two further constraints the placement has to respect:
  *
- *   - Nothing saturated behind "easier.", which is set in orange. Orange type on
- *     an orange body is the one combination here that genuinely fails to read.
+ *   - Nothing saturated behind "Everyday", which is set in orange. Orange type
+ *     on an orange body is the one combination here that genuinely fails to
+ *     read — and the brown that replaced it is close enough to keep the rule.
  *   - Ink is near-black, so it is small and kept clear of the type entirely. It
  *     is an accent that adds depth; behind a word it would read as a hole.
  *
@@ -58,7 +64,7 @@ const PUSH = 3.2;
  * strongest contrast of any in the palette.
  */
 const RANGES = [
-  { color: "#ff5c16", x: 0.95, y: 0.04, r: 0.11, sx: 0.16, sy: 0.23, phase: 1.9 },
+  { color: "#8a4a1e", x: 0.95, y: 0.04, r: 0.11, sx: 0.16, sy: 0.23, phase: 1.9 },
   { color: "#ffce00", x: 0.06, y: 0.52, r: 0.14, sx: 0.21, sy: 0.17, phase: 0 },
   { color: "#1f3cff", x: 0.36, y: 1.08, r: 0.1, sx: 0.25, sy: 0.15, phase: 3.4 },
   { color: "#0b0b0f", x: 0.04, y: 0.9, r: 0.07, sx: 0.19, sy: 0.27, phase: 5.1 },
