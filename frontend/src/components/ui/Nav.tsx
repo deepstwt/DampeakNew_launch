@@ -72,12 +72,23 @@ export function Nav() {
 
   return (
     <header className="sticky top-0 z-50 bg-white/85 backdrop-blur-xl">
-      {/* Spectrum: the whole brand in one 6px rule */}
-      <div className="flex h-1.5" aria-hidden>
-        <span className="flex-1 bg-blue" />
-        <span className="flex-1 bg-orange" />
+      {/**
+       * Spectrum: the whole brand in one 6px rule — brown, white, yellow.
+       *
+       * The order is not arbitrary. A rule this thin loses any band that matches
+       * the surface it sits against, and the header under this one is white, so
+       * white goes in the middle where brown and yellow bound it on both sides.
+       * At either end it would read as a rule with a piece missing.
+       *
+       * Flanking is not quite enough on its own — the white band still runs into
+       * the white header below it — so the rule carries a hairline along its
+       * bottom edge. It only shows under the white band; against brown and
+       * yellow there is nothing to see.
+       */}
+      <div className="flex h-1.5 border-b border-ink/15" aria-hidden>
+        <span className="flex-1 bg-brown" />
+        <span className="flex-1 bg-white" />
         <span className="flex-1 bg-yellow" />
-        <span className="flex-1 bg-ink" />
       </div>
 
       {/* The row is shorter than it looks: the logo is a two-line lockup, so it

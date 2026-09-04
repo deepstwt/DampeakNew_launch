@@ -9,14 +9,21 @@ export function Footer() {
 
   return (
     <footer className="relative overflow-hidden bg-brown text-white">
-      {/* Spectrum, mirroring the nav — the page opens and closes on the same rule */}
-      <div className="flex h-1.5" aria-hidden>
-        <span className="flex-1 bg-blue" />
-        <span className="flex-1 bg-orange" />
+      {/**
+       * Spectrum, mirroring the nav — the page opens and closes on the same rule,
+       * in the same three colours.
+       *
+       * Resequenced rather than reversed. The nav puts white in the middle
+       * because it sits on a white header; this one sits on a brown footer, so
+       * brown takes the middle for the same reason and the rule keeps all three
+       * bands visible at both ends of the page.
+       *
+       * Same hairline as the nav's, inverted: it separates the brown band from
+       * the brown below it and disappears against the other two.
+       */}
+      <div className="flex h-1.5 border-b border-white/25" aria-hidden>
         <span className="flex-1 bg-yellow" />
-        {/* The fourth stripe is ink in the nav. Ink is near-black and the footer
-            is dark — it was invisible when this was an ink footer and it is
-            still invisible on brown — so the closing rule stands it in white. */}
+        <span className="flex-1 bg-brown" />
         <span className="flex-1 bg-white" />
       </div>
 
