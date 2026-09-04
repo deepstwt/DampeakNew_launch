@@ -112,14 +112,17 @@ export function Footer() {
        * The sign-off: wordmark at poster scale, filling the page edge to edge.
        *
        * The size is tied to the length of the name. 26vw was set for "Oscar." at
-       * six characters; "Dampeak." is eight, and at that size the orange full
-       * stop falls off the page — losing the accent where the wordmark is
-       * largest. Sized to just fill the width instead.
+       * six characters; "Dampeak." is eight, and at that size the full stop
+       * falls off the page — losing the accent where the wordmark is largest.
+       * Sized to just fill the width instead.
+       *
+       * The stop is yellow. It was orange, which was the last of the old palette
+       * left anywhere on the page once the site moved to cream, white and brown.
        */}
       <div aria-hidden className="select-none px-4 md:px-6">
         <span className="text-display block text-[18.5vw] leading-[0.72] tracking-[-0.055em]">
           {name}
-          <span className="text-orange">.</span>
+          <span className="text-yellow">.</span>
         </span>
       </div>
     </footer>

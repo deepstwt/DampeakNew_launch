@@ -114,7 +114,7 @@ export default async function DocPage({ params }: PageProps<"/[doc]">) {
                             key={li}
                             className="flex gap-3 text-[17px] leading-relaxed text-ink/65"
                           >
-                            <span className="mt-2.5 size-1.5 shrink-0 rounded-full bg-blue" />
+                            <span className="mt-2.5 size-1.5 shrink-0 rounded-full bg-brown" />
                             {li}
                           </li>
                         ))}
