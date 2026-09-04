@@ -85,16 +85,21 @@ export function Nav() {
           padding comes down to pay for it. */}
       <div className="flex items-center gap-4 border-b border-ink/10 px-4 py-2.5 md:px-6 md:py-3">
         <Link href="/" className="shrink-0">
-          {/* Intrinsic size given, height driven by CSS — the rendered box is
+          {/* The filename carries the colourway on purpose. Replacing artwork in
+              place leaves the old file cached under the same URL — by the dev
+              server's image optimiser here, and by a CDN in production — so a
+              mark that changes identity changes filename with it.
+
+              Intrinsic size given, height driven by CSS — the rendered box is
               set by the header, and next/image only needs the ratio to reserve
               the space before the file arrives.
 
               priority: it is the first thing on every page, and a logo that
               fades in after the rest of the header has painted looks broken. */}
           <Image
-            src="/brand/dampeak.webp"
+            src="/brand/dampeak-brown.webp"
             alt={site.name}
-            width={461}
+            width={468}
             height={400}
             priority
             className="h-12 w-auto md:h-[60px]"
