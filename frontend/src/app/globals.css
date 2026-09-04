@@ -9,6 +9,22 @@
 
   --color-ink: #0b0b0f;
 
+  /**
+   * The background system: cream, white, brown.
+   *
+   * These three are not accents — they are what sections sit on. White carries
+   * the hero and every reading page, cream is the light alternate that keeps a
+   * white page from running for three screens, and brown is the dark end that
+   * closes a page.
+   *
+   * Brown is nearly black and slightly red, which is what makes the pairing
+   * work: white type clears 16:1 on it, the brand yellow clears 11:1, and cream
+   * clears 14:1, so anything in the palette can sit on it. Cream is warm enough
+   * to read as a colour rather than as off-white, and ink type clears 15:1 on it.
+   */
+  --color-cream: #eee49c;
+  --color-brown: #350806;
+
   --font-sans: var(--font-sans);
 }
 

@@ -226,12 +226,17 @@ export default async function ProductPage({
                   {copy.reasonsTitle}
                 </h3>
 
+                {/* The markers are brown on every product, not the product's own
+                    accent. A bullet is punctuation — it separates one reason from
+                    the next — and colouring it per product made the same list
+                    read as four different components, one of them with an orange
+                    dot beside a pink squishy. */}
                 <ul className="mt-6 space-y-5">
                   {copy.reasons.map((reason) => (
                     <li key={reason.title} className="flex gap-4">
                       <span
                         aria-hidden
-                        className={`mt-2 size-2.5 shrink-0 rounded-full ${product.accent}`}
+                        className="mt-2 size-2.5 shrink-0 rounded-full bg-brown"
                       />
                       <p className="text-[17px] leading-relaxed text-ink/65">
                         <strong className="font-extrabold text-ink">

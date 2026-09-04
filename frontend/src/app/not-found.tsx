@@ -20,7 +20,7 @@ export default function NotFound() {
           <div className="mt-10 flex flex-wrap items-center gap-3">
             <Link
               href="/"
-              className="rounded-squish inline-flex items-center gap-3 bg-blue px-8 py-5 text-[17px] font-extrabold text-white transition-transform active:scale-[0.97]"
+              className="rounded-squish inline-flex items-center gap-3 bg-brown px-8 py-5 text-[17px] font-extrabold text-white transition-transform active:scale-[0.97]"
             >
               Back to the start
               <ArrowRight className="size-5" strokeWidth={3} />

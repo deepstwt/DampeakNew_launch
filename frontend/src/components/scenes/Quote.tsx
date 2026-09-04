@@ -1,7 +1,7 @@
 import { site } from "@/content/site";
 
 /**
- * One line, held on a full field of blue.
+ * One line, held on a full field of brown.
  *
  * The oversized quote mark is a hollow graphic cropped by the section edge —
  * it's the loud element, so the sentence itself can stay plain and readable.
@@ -11,7 +11,7 @@ export function Quote() {
   const { quote } = site;
 
   return (
-    <section className="relative overflow-hidden bg-blue text-white">
+    <section className="relative overflow-hidden bg-brown text-white">
       {/* Cropped by the section, not floated over the words */}
       <span
         aria-hidden

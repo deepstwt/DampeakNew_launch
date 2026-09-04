@@ -72,12 +72,23 @@ export function Nav() {
 
   return (
     <header className="sticky top-0 z-50 bg-white/85 backdrop-blur-xl">
-      {/* Spectrum: the whole brand in one 6px rule */}
-      <div className="flex h-1.5" aria-hidden>
-        <span className="flex-1 bg-blue" />
-        <span className="flex-1 bg-orange" />
+      {/**
+       * Spectrum: the whole brand in one 6px rule — brown, white, yellow.
+       *
+       * The order is not arbitrary. A rule this thin loses any band that matches
+       * the surface it sits against, and the header under this one is white, so
+       * white goes in the middle where brown and yellow bound it on both sides.
+       * At either end it would read as a rule with a piece missing.
+       *
+       * Flanking is not quite enough on its own — the white band still runs into
+       * the white header below it — so the rule carries a hairline along its
+       * bottom edge. It only shows under the white band; against brown and
+       * yellow there is nothing to see.
+       */}
+      <div className="flex h-1.5 border-b border-ink/15" aria-hidden>
+        <span className="flex-1 bg-brown" />
+        <span className="flex-1 bg-white" />
         <span className="flex-1 bg-yellow" />
-        <span className="flex-1 bg-ink" />
       </div>
 
       {/* The row is shorter than it looks: the logo is a two-line lockup, so it
@@ -85,16 +96,21 @@ export function Nav() {
           padding comes down to pay for it. */}
       <div className="flex items-center gap-4 border-b border-ink/10 px-4 py-2.5 md:px-6 md:py-3">
         <Link href="/" className="shrink-0">
-          {/* Intrinsic size given, height driven by CSS — the rendered box is
+          {/* The filename carries the colourway on purpose. Replacing artwork in
+              place leaves the old file cached under the same URL — by the dev
+              server's image optimiser here, and by a CDN in production — so a
+              mark that changes identity changes filename with it.
+
+              Intrinsic size given, height driven by CSS — the rendered box is
               set by the header, and next/image only needs the ratio to reserve
               the space before the file arrives.
 
               priority: it is the first thing on every page, and a logo that
               fades in after the rest of the header has painted looks broken. */}
           <Image
-            src="/brand/dampeak.webp"
+            src="/brand/dampeak-brown.webp"
             alt={site.name}
-            width={461}
+            width={468}
             height={400}
             priority
             className="h-12 w-auto md:h-[60px]"

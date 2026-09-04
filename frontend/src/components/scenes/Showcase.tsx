@@ -15,7 +15,7 @@ export function Showcase() {
   const { showcase, hero } = site;
 
   return (
-    <section id="products" className="bg-white px-4 py-20 md:px-6 md:py-28">
+    <section id="products" className="bg-cream px-4 py-20 md:px-6 md:py-28">
       <h2 className="text-display max-w-[18ch] text-[12vw] leading-[0.88] sm:text-[8vw] lg:text-[5vw]">
         {showcase.heading}
       </h2>

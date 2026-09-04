@@ -8,13 +8,22 @@ export function Footer() {
   const year = 2026; // Static: a live year would break hydration on New Year's Eve.
 
   return (
-    <footer className="relative overflow-hidden bg-ink text-white">
-      {/* Spectrum, mirroring the nav — the page opens and closes on the same rule */}
-      <div className="flex h-1.5" aria-hidden>
-        <span className="flex-1 bg-blue" />
-        <span className="flex-1 bg-orange" />
+    <footer className="relative overflow-hidden bg-brown text-white">
+      {/**
+       * Spectrum, mirroring the nav — the page opens and closes on the same rule,
+       * in the same three colours.
+       *
+       * Resequenced rather than reversed. The nav puts white in the middle
+       * because it sits on a white header; this one sits on a brown footer, so
+       * brown takes the middle for the same reason and the rule keeps all three
+       * bands visible at both ends of the page.
+       *
+       * Same hairline as the nav's, inverted: it separates the brown band from
+       * the brown below it and disappears against the other two.
+       */}
+      <div className="flex h-1.5 border-b border-white/25" aria-hidden>
         <span className="flex-1 bg-yellow" />
-        {/* Moments is ink — invisible on an ink footer, so it shows as white here */}
+        <span className="flex-1 bg-brown" />
         <span className="flex-1 bg-white" />
       </div>
 
@@ -103,14 +112,17 @@ export function Footer() {
        * The sign-off: wordmark at poster scale, filling the page edge to edge.
        *
        * The size is tied to the length of the name. 26vw was set for "Oscar." at
-       * six characters; "Dampeak." is eight, and at that size the orange full
-       * stop falls off the page — losing the accent where the wordmark is
-       * largest. Sized to just fill the width instead.
+       * six characters; "Dampeak." is eight, and at that size the full stop
+       * falls off the page — losing the accent where the wordmark is largest.
+       * Sized to just fill the width instead.
+       *
+       * The stop is yellow. It was orange, which was the last of the old palette
+       * left anywhere on the page once the site moved to cream, white and brown.
        */}
       <div aria-hidden className="select-none px-4 md:px-6">
         <span className="text-display block text-[18.5vw] leading-[0.72] tracking-[-0.055em]">
           {name}
-          <span className="text-orange">.</span>
+          <span className="text-yellow">.</span>
         </span>
       </div>
     </footer>
