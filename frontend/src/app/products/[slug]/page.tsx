@@ -140,9 +140,15 @@ export default async function ProductPage({
             <div className="lg:pt-6">
               {/* The theme, from the spec sheet. Not a category — every product
                   here is a squishy, so a category chip would say the same thing
-                  four times. */}
+                  four times.
+
+                  Brown on every product rather than the product's own accent.
+                  The accents were a brand colour each, and two of the four could
+                  not carry white text: the chip was already unreadable on the
+                  yellow product, and turning the orange one yellow would have
+                  made that two. */}
               <span
-                className={`text-marker inline-block rounded-full px-3 py-1.5 text-white ${product.accent}`}
+                className="text-marker inline-block rounded-full bg-brown px-3 py-1.5 text-white"
               >
                 {product.specs.theme}
               </span>

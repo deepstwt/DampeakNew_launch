@@ -48,13 +48,15 @@ export function Subscribe() {
         </button>
       </div>
 
+      {/* One colour for both outcomes now that orange is out of the palette.
+          The status is still announced — role=status with aria-live carries it
+          to a screen reader either way — but sighted visitors read which it is
+          from the wording alone, not from the colour. */}
       <p
         id="subscribe-status"
         role="status"
         aria-live="polite"
-        className={`mt-3 min-h-5 text-[13px] font-semibold ${
-          state.status === "error" ? "text-orange" : "text-yellow"
-        }`}
+        className="mt-3 min-h-5 text-[13px] font-semibold text-yellow"
       >
         {state.message}
       </p>

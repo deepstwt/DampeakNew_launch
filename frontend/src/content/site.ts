@@ -93,10 +93,6 @@ export const site = {
      * finish, colour, edge profile) so the details table on each product page is
      * the spec, not a retelling of it.
      *
-     * `accent` is a brand colour, one per product, so the palette still gets
-     * taught across the row. It no longer means a category — every one of these
-     * is a squishy, so categories would all say the same thing.
-     *
      * Slugs are unchanged from launch on purpose: they are in the saved-products
      * collection and in every link already shared, so renaming the product does
      * not renumber the URL.
@@ -115,7 +111,6 @@ export const site = {
         slug: "blue-block",
         name: "Rounded Cube",
         fullName: "Rounded cube stress squeeze squish Toy",
-        accent: "bg-blue",
         fact: "Big enough to need a whole hand. Squeeze it flat, let go, and it takes its own time coming back.",
         description: squeezeCopy(
           "Rounded Cube Stress squeeze Toy",
@@ -141,7 +136,6 @@ export const site = {
         slug: "pillow-squish",
         name: "Toasted Bread",
         fullName: "Toasted Bread stress squeeze squish Toy",
-        accent: "bg-orange",
         fact: "Matte foam, not plastic. It gives immediately, which makes it the one you reach for without thinking.",
         description: squeezeCopy(
           "Toasted bread Stress squeeze Toy",
@@ -167,7 +161,6 @@ export const site = {
         slug: "cheese-cube",
         name: "Cheese Cube",
         fullName: "Cheese cube stress squeeze squish Toy",
-        accent: "bg-yellow",
         fact: "The moulded holes give your fingers somewhere to go, so it never lands in your hand the same way twice.",
         description: squeezeCopy(
           "Cheese Cube Stress squeeze Toy",
@@ -193,7 +186,6 @@ export const site = {
         slug: "marble-cube",
         name: "Marbled Cube",
         fullName: "Marbled cube stress squeeze squish Toy",
-        accent: "bg-ink",
         fact: "No two are marbled alike. Smooth all over, so it slides between your fingers rather than catching.",
         description: squeezeCopy(
           "Marbled Cube Stress squeeze Toy",
@@ -303,7 +295,7 @@ export const site = {
     ],
     socials: [
       { label: "Instagram", href: "https://instagram.com" },
-      { label: "YouTube", href: "https://youtube.com" },
+      { label: "TikTok", href: "https://tiktok.com" },
       { label: "Email us", href: "mailto:hello@dampeak.com" },
     ],
   },

@@ -17,7 +17,7 @@ export function Research({ className = "" }: { className?: string }) {
 
   return (
     <section className={`border-t border-ink/10 pt-12 ${className}`}>
-      <p className="text-marker text-orange">{research.eyebrow}</p>
+      <p className="text-marker text-yellow">{research.eyebrow}</p>
 
       <h2 className="text-display mt-5 max-w-[24ch] text-[8vw] leading-[0.92] sm:text-[5vw] lg:text-[2.8vw]">
         {research.headline}

@@ -85,13 +85,13 @@ export function SaveButton({
         className="inline-flex items-center gap-2 rounded-full border border-ink/15 px-5 py-3 text-[15px] font-extrabold transition hover:border-ink/40 disabled:opacity-60"
       >
         <Heart
-          className={`size-[18px] ${isSaved ? "fill-orange text-orange" : "text-ink/50"}`}
+          className={`size-[18px] ${isSaved ? "fill-yellow text-yellow" : "text-ink/50"}`}
           strokeWidth={2.6}
         />
         {isSaved ? "Saved" : "Save"}
       </button>
       {error ? (
-        <p role="status" className="mt-2 text-[13px] font-semibold text-orange">
+        <p role="status" className="mt-2 text-[13px] font-semibold text-yellow">
           {error}
         </p>
       ) : null}

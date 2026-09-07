@@ -1,9 +1,15 @@
 @import "tailwindcss";
 
 @theme {
-  /* The four colours. Solid, unmixed, never tinted. */
+  /**
+   * Solid, unmixed, never tinted.
+   *
+   * Orange has been retired. It was one of the original four and it is gone from
+   * every surface — the spectrum rule, the hero's third line, the sign-off's
+   * full stop, the product accents — so the token goes with it rather than
+   * sitting here waiting to be used again by accident.
+   */
   --color-blue: #1f3cff;
-  --color-orange: #ff5c16;
   --color-yellow: #ffce00;
   --color-white: #ffffff;
 

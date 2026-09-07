@@ -45,18 +45,20 @@ const PUSH = 3.2;
  * corner above it and to the bottom edge below the copy. Nothing sits in the
  * band the product occupies.
  *
- * The top-right body is in the brown family rather than the palette's orange,
- * and it cannot be the brown token itself. Everything here sits under a 50%
- * white scrim, which halves the distance from white to any colour — nothing
- * drawn under it can arrive darker than mid grey, so a near-black brown is not
- * reachable. This is the hue held and the value given up: it lands as a dusty
- * terracotta that reads as the same family as the quote band and the footer.
+ * The top-right body is brown, and it cannot be the brown token itself.
+ * Everything here sits under a 50% white scrim, which halves the distance from
+ * white to any colour — nothing drawn under it can arrive darker than mid grey,
+ * so a near-black brown is not reachable. This is the hue held and the value
+ * given up: it lands as a dusty terracotta that reads as the same family as the
+ * quote band and the footer.
  *
  * Two further constraints the placement has to respect:
  *
- *   - Nothing saturated behind "Everyday", which is set in orange. Orange type
- *     on an orange body is the one combination here that genuinely fails to
- *     read — and the brown that replaced it is close enough to keep the rule.
+ *   - The yellow body is the one to watch. "Everyday" is set in yellow now, and
+ *     this body does pass behind the first letters of it. The scrim is what
+ *     saves it — the body arrives at about a tenth of its strength there, so
+ *     saturated yellow type still separates from it — but move this body up or
+ *     grow it and the two become the same colour.
  *   - Ink is near-black, so it is small and kept clear of the type entirely. It
  *     is an accent that adds depth; behind a word it would read as a hole.
  *
