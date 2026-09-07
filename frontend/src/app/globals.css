@@ -1,9 +1,15 @@
 @import "tailwindcss";
 
 @theme {
-  /* The four colours. Solid, unmixed, never tinted. */
+  /**
+   * Solid, unmixed, never tinted.
+   *
+   * Orange has been retired. It was one of the original four and it is gone from
+   * every surface — the spectrum rule, the hero's third line, the sign-off's
+   * full stop, the product accents — so the token goes with it rather than
+   * sitting here waiting to be used again by accident.
+   */
   --color-blue: #1f3cff;
-  --color-orange: #ff5c16;
   --color-yellow: #ffce00;
   --color-white: #ffffff;
 
@@ -103,6 +109,28 @@
 /* Outlined type. One word only — it stops being a device if it's everywhere. */
 @utility text-outline {
   color: transparent;
+  -webkit-text-stroke: 2px var(--color-ink);
+
+  @media (width >= 768px) {
+    -webkit-text-stroke: 3px var(--color-ink);
+  }
+}
+
+/**
+ * Filled type with an ink edge — for a fill too pale to hold its own shape.
+ *
+ * Yellow on white is a 1.68:1 contrast: at headline size it reads as a stain
+ * rather than as a word, and where the backdrop's pale yellow body passes behind
+ * it there is nearly nothing left. The edge is what draws the letterform; the
+ * fill only colours it in.
+ *
+ * `paint-order` is the part that matters. Left to itself the stroke paints over
+ * the fill and is centred on the outline, so half of it eats inward and the
+ * letters come out thinner than the ones above them. Painting the stroke first
+ * puts all of it outside the glyph, and the weight matches.
+ */
+@utility text-edged {
+  paint-order: stroke fill;
   -webkit-text-stroke: 2px var(--color-ink);
 
   @media (width >= 768px) {

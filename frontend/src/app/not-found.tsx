@@ -14,7 +14,7 @@ export default function NotFound() {
           <p className="text-marker text-ink/35">404</p>
 
           <h1 className="text-display mt-6 max-w-[14ch] text-[14vw] leading-[0.86] sm:text-[9vw] lg:text-[6vw]">
-            That page has <span className="text-orange">moved on.</span>
+            That page has <span className="text-yellow">moved on.</span>
           </h1>
 
           <div className="mt-10 flex flex-wrap items-center gap-3">
