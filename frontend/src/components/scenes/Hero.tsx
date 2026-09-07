@@ -62,7 +62,9 @@ export function Hero() {
             />
             <SpongyText
               className="block"
-              segments={[{ text: hero.headline[2], className: "text-yellow" }]}
+              segments={[
+                { text: hero.headline[2], className: "text-yellow text-edged" },
+              ]}
             />
           </h1>
 
