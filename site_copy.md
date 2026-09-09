@@ -34,7 +34,7 @@ CTAs
 
 ### Section 3
 
-If it doesn't make life easier, we don't make it. (Keep Section as it is)
+If it doesn't make life better, we don't make it. (Keep Section as it is)
 
 ---
 
