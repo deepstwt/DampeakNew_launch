@@ -12,7 +12,10 @@
  */
 
 /**
- * A real photograph. null until one exists for that product.
+ * A real photograph. A product's `images` is every shot of it, in the order they
+ * are shown; the first is the one that stands for the product everywhere else —
+ * the card, the metadata, the structured data. An empty array means no
+ * photography yet, and the product is drawn instead.
  *
  * What is in public/products is not the file that was handed over — it is that
  * file trimmed of its white border, scaled into a square and re-padded to a
@@ -125,10 +128,12 @@ export const site = {
         },
         swatch: "#33b6d6",
         // Photographed. The price is still outstanding.
-        image: {
-          src: "/products/blue-block.webp",
-          alt: "The Rounded Cube squishy: a translucent blue cube with softly rounded corners.",
-        } as ProductPhoto | null,
+        images: [
+          {
+            src: "/products/blue-block.webp",
+            alt: "The Rounded Cube squishy: a translucent blue cube with softly rounded corners.",
+          },
+        ] as ProductPhoto[],
         price: null as string | null,
       },
       {
@@ -150,10 +155,12 @@ export const site = {
         },
         swatch: "#f0aeba",
         // Photographed. The price is still outstanding.
-        image: {
-          src: "/products/pillow-squish.webp",
-          alt: "The Toasted Bread squishy beside its retail box, and a second one being squeezed in one hand.",
-        } as ProductPhoto | null,
+        images: [
+          {
+            src: "/products/pillow-squish.webp",
+            alt: "The Toasted Bread squishy beside its retail box, and a second one being squeezed in one hand.",
+          },
+        ] as ProductPhoto[],
         price: null as string | null,
       },
       {
@@ -175,10 +182,12 @@ export const site = {
         },
         swatch: "#eeba3c",
         // Photographed. The price is still outstanding.
-        image: {
-          src: "/products/cheese-cube.webp",
-          alt: "The Cheese Cube squishy, moulded with holes on every face, with four miniature cheese cubes in front of it.",
-        } as ProductPhoto | null,
+        images: [
+          {
+            src: "/products/cheese-cube.webp",
+            alt: "The Cheese Cube squishy, moulded with holes on every face, with four miniature cheese cubes in front of it.",
+          },
+        ] as ProductPhoto[],
         price: null as string | null,
       },
       {
@@ -200,10 +209,12 @@ export const site = {
         },
         swatch: "#b743bd",
         // Photographed. The price is still outstanding.
-        image: {
-          src: "/products/marble-cube.webp",
-          alt: "Marbled Cube squishies in five colourways beside the retail box, and one being squeezed in one hand.",
-        } as ProductPhoto | null,
+        images: [
+          {
+            src: "/products/marble-cube.webp",
+            alt: "Marbled Cube squishies in five colourways beside the retail box, and one being squeezed in one hand.",
+          },
+        ] as ProductPhoto[],
         price: null as string | null,
       },
     ],
@@ -310,6 +321,17 @@ export const PRODUCTS = site.hero.showcase;
 
 export const getProduct = (slug: string) =>
   PRODUCTS.find((p) => p.slug === slug);
+
+/**
+ * The shot that stands for the product: its card, its share preview, its
+ * structured data. null while a product has no photography.
+ *
+ * Everywhere outside the gallery wants one image, and every one of those places
+ * would otherwise carry its own `images[0] ?? null` and its own opinion about
+ * what happens when the array is empty.
+ */
+export const primaryImage = (p: { images: readonly ProductPhoto[] }) =>
+  p.images[0] ?? null;
 
 /**
  * Where each product is actually sold.

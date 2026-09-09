@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { PRODUCTS, getAmazonUrl, getProduct, site } from "@/content/site";
+import { PRODUCTS, getAmazonUrl, getProduct, primaryImage, site } from "@/content/site";
 import { SITE_URL } from "@/lib/site-url";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { ProductPhoto } from "@/components/ui/ProductPhoto";
+import { ProductGallery } from "@/components/ui/ProductGallery";
 import { BuyNowButton } from "@/components/ui/BuyNowButton";
 import { SaveButton } from "@/components/ui/SaveButton";
 import { Nav } from "@/components/ui/Nav";
@@ -30,6 +31,7 @@ export async function generateMetadata({
    * it once you already know what it is.
    */
   const title = product.fullName;
+  const cover = primaryImage(product);
 
   return {
     title,
@@ -39,9 +41,7 @@ export async function generateMetadata({
       title,
       description: product.fact,
       type: "website",
-      ...(product.image
-        ? { images: [{ url: product.image.src, alt: product.image.alt }] }
-        : {}),
+      ...(cover ? { images: [{ url: cover.src, alt: cover.alt }] } : {}),
     },
   };
 }
@@ -55,6 +55,7 @@ export default async function ProductPage({
 
   const amazonUrl = getAmazonUrl(product.slug);
   const copy = product.description;
+  const cover = primaryImage(product);
 
   /**
    * Product structured data.
@@ -76,7 +77,7 @@ export default async function ProductPage({
     "@type": "Product",
     name: product.fullName,
     description: copy.body,
-    ...(product.image ? { image: product.image.src } : {}),
+    ...(cover ? { image: cover.src } : {}),
     brand: { "@type": "Brand", name: site.name },
     // Every spec from the manufacturing sheet, in the form search engines read.
     additionalProperty: Object.entries(product.specs).map(([name, value]) => ({
@@ -121,20 +122,12 @@ export default async function ProductPage({
           {/* Not a even split: the thumbnail rail eats into the gallery column,
               and the copy beside it is short. 7/5 keeps the main image large. */}
           <div className="mt-10 grid gap-10 lg:grid-cols-[7fr_5fr] lg:gap-16">
-            {/**
-             * A single image while there is one photograph per product. The
-             * gallery component is still in the repo and takes an array — swap it
-             * back in the moment there are several shots of one product.
-             */}
-            <div className="relative aspect-square overflow-hidden rounded-3xl bg-ink/5">
-              <ProductPhoto
-                image={product.image}
-                name={product.name}
-                slug={product.slug}
-                swatch={product.swatch}
-                priority
-              />
-            </div>
+            <ProductGallery
+              images={product.images}
+              name={product.name}
+              slug={product.slug}
+              swatch={product.swatch}
+            />
 
             {/* The case for it */}
             <div className="lg:pt-6">
@@ -300,7 +293,7 @@ export default async function ProductPage({
                   <Link href={`/products/${p.slug}`} className="group block">
                     <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-ink/5">
                       <ProductPhoto
-                        image={p.image}
+                        image={primaryImage(p)}
                         name={p.name}
                         slug={p.slug}
                         swatch={p.swatch}

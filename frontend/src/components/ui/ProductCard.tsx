@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ShoppingBag } from "lucide-react";
-import type { site } from "@/content/site";
+import { primaryImage, type site } from "@/content/site";
 import { ProductPhoto } from "@/components/ui/ProductPhoto";
 
 export type ShowcaseItem = (typeof site.hero.showcase)[number];
@@ -52,7 +52,7 @@ export function ProductCard({ item, priority }: Props) {
             style={LIFT}
           >
             <ProductPhoto
-              image={item.image}
+              image={primaryImage(item)}
               name={item.name}
               slug={item.slug}
               swatch={item.swatch}
