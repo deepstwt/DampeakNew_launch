@@ -216,7 +216,7 @@ export const site = {
   },
 
   quote: {
-    lead: "If it doesn't make life easier,",
+    lead: "If it doesn't make life better,",
     rest: "we don't make it.",
     source: "Our one rule",
   },
