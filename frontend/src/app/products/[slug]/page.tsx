@@ -90,7 +90,7 @@ export default async function ProductPage({
       // No price is published until there is one. An Offer without a price is
       // valid; an Offer with a made-up price is not.
       ...(product.price
-        ? { price: product.price.replace(/[^\d.]/g, ""), priceCurrency: "INR" }
+        ? { price: product.price.replace(/[^\d.]/g, ""), priceCurrency: "USD" }
         : {}),
       url: amazonUrl ?? `${SITE_URL}/products/${product.slug}`,
     },
@@ -187,7 +187,7 @@ export default async function ProductPage({
                   <button
                     type="button"
                     disabled
-                    className="mt-10 inline-flex cursor-not-allowed items-center gap-3 rounded-full bg-ink/10 px-9 py-4.5 text-[17px] font-extrabold text-ink/35"
+                    className="mt-10 inline-flex cursor-not-allowed items-center gap-3 rounded-full bg-blue px-9 py-4.5 text-[17px] font-extrabold text-white opacity-60"
                   >
                     Buy Now
                   </button>

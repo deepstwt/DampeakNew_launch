@@ -105,8 +105,10 @@ export const site = {
      * dot now sits next to the picture — so the picture is what it has to agree
      * with. It also tints the drawn product in the hero.
      *
-     * TODO — needs real data before launch:
-     *   price:  no figures supplied yet, so no price renders anywhere.
+     * `price` is a display string, and the currency in it is the currency the
+     * structured data publishes — see the Offer in the product page. Changing
+     * "$" here without changing that leaves search engines quoting the number
+     * in the wrong money.
      */
     showcase: [
       {
@@ -134,7 +136,7 @@ export const site = {
             alt: "The Rounded Cube squishy: a translucent blue cube with softly rounded corners.",
           },
         ] as ProductPhoto[],
-        price: null as string | null,
+        price: "$14.99" as string | null,
       },
       {
         id: "pillow-squish",
@@ -161,7 +163,7 @@ export const site = {
             alt: "The Toasted Bread squishy beside its retail box, and a second one being squeezed in one hand.",
           },
         ] as ProductPhoto[],
-        price: null as string | null,
+        price: "$14.99" as string | null,
       },
       {
         id: "cheese-cube",
@@ -188,7 +190,7 @@ export const site = {
             alt: "The Cheese Cube squishy, moulded with holes on every face, with four miniature cheese cubes in front of it.",
           },
         ] as ProductPhoto[],
-        price: null as string | null,
+        price: "$14.99" as string | null,
       },
       {
         id: "marble-cube",
@@ -215,7 +217,7 @@ export const site = {
             alt: "Marbled Cube squishies in five colourways beside the retail box, and one being squeezed in one hand.",
           },
         ] as ProductPhoto[],
-        price: null as string | null,
+        price: "$14.99" as string | null,
       },
     ],
   },
