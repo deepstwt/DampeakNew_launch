@@ -1,5 +1,47 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight } from "lucide-react";
+
+/**
+ * The wallets, in the order the reference shows them.
+ *
+ * `background` is the colour the supplied artwork sits on, carried through to
+ * the button so the mark keeps the field its owner drew it against. `border` is
+ * for the light one only — a white button on a white page needs an edge to be a
+ * button at all.
+ *
+ * Each brand publishes rules for its own mark, down to clear space and which
+ * variants may be recoloured. The artwork here is what was handed over; before
+ * these go live, whoever owns the merchant accounts should check each one
+ * against its brand's current button guidelines, because that is also where the
+ * approved dark and light variants come from.
+ */
+const WALLETS = [
+  {
+    name: "Shop Pay",
+    src: "/brand/pay/shoppay.webp",
+    width: 921,
+    height: 292,
+    background: "#4221ac",
+    border: false,
+  },
+  {
+    name: "PayPal",
+    src: "/brand/pay/paypal.webp",
+    width: 947,
+    height: 320,
+    background: "#123986",
+    border: false,
+  },
+  {
+    name: "Google Pay",
+    src: "/brand/pay/gpay.webp",
+    width: 1130,
+    height: 488,
+    background: "#ffffff",
+    border: true,
+  },
+] as const;
 
 /**
  * Contact and shipping address.
@@ -57,31 +99,46 @@ export function CheckoutForm() {
       {/**
        * Express checkout.
        *
-       * Deliberately unbranded. The reference carried Shop Pay, PayPal and
-       * Google Pay, and those marks state a payment relationship — putting them
-       * on a page that cannot take a payment claims one we do not have. The slot
-       * stays so the layout is the real layout.
+       * The three wallets from the reference, drawn from the artwork each brand
+       * supplies. They are disabled — none of them is connected to anything —
+       * and the banner above the form says the page takes no payment, which is
+       * what keeps a row of familiar payment marks from implying a checkout that
+       * works.
+       *
+       * Each logo arrives on its own flat field, so the button takes that field
+       * as its background rather than trying to sit the mark on a colour of
+       * ours. The light one gets a border; without it a white button on a white
+       * page has no edge.
        */}
       <section aria-labelledby="express">
-        <h2
-          id="express"
-          className="text-marker text-center text-ink/40"
-        >
+        <h2 id="express" className="text-marker text-center text-ink/40">
           Express checkout
         </h2>
-        <div className="mt-3 grid gap-3 sm:grid-cols-3">
-          {["Wallet", "Wallet", "Wallet"].map((label, i) => (
-            <div
-              key={i}
-              aria-hidden
-              className="flex h-12 items-center justify-center rounded-xl border border-dashed border-ink/20 bg-ink/[0.03] text-[13px] font-bold text-ink/30"
-            >
-              {label}
-            </div>
+
+        <ul className="mt-3 grid gap-3 sm:grid-cols-3">
+          {WALLETS.map((wallet) => (
+            <li key={wallet.name}>
+              <button
+                type="button"
+                disabled
+                aria-label={`Pay with ${wallet.name} — not available yet`}
+                className={`flex h-12 w-full items-center justify-center overflow-hidden rounded-xl ${wallet.border ? "border border-ink/15" : ""}`}
+                style={{ background: wallet.background }}
+              >
+                <Image
+                  src={wallet.src}
+                  alt={wallet.name}
+                  width={wallet.width}
+                  height={wallet.height}
+                  className="h-full w-auto object-contain"
+                />
+              </button>
+            </li>
           ))}
-        </div>
+        </ul>
+
         <p className="mt-3 text-center text-[13px] font-semibold text-ink/40">
-          Wallets appear here once a payment provider is connected.
+          Wallets turn on once a payment provider is connected.
         </p>
       </section>
 
