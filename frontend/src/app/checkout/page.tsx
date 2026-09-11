@@ -16,15 +16,13 @@ import { CheckoutForm } from "@/components/checkout/CheckoutForm";
  * will have, so the layout and the copy can be settled before any of that
  * exists.
  *
- * Two consequences of that, both deliberate:
- *
- *   - The page says so, on the page. A checkout that looks finished and quietly
- *     cannot charge anyone is the one kind of mockup that can cost a real
- *     customer real money, and it is worth an ugly line to prevent.
- *   - No payment brands. The reference had Shop Pay, PayPal and Google Pay
- *     buttons, and those are Shopify's arrangements with those companies. Their
- *     marks on a page that cannot take a payment claim a relationship we do not
- *     have. The row is here, empty and labelled, so the design keeps the slot.
+ * A banner used to say all of that on the page itself. It is gone, so what is
+ * left to tell a visitor are the controls: Continue to shipping is disabled, the
+ * discount field is disabled, the wallets are disabled and say they turn on once
+ * a payment provider is connected. There is no card field anywhere, so the page
+ * cannot take money even by accident. That holds while this is a screen being
+ * reviewed; before it is public with a working button, it needs a real answer
+ * rather than the absence of one.
  *
  * The product comes in through ?product=<slug> from a Buy Now, and falls back to
  * the first product so the page is never blank when it is opened directly.
@@ -100,12 +98,6 @@ export default async function CheckoutPage({
 
           <CheckoutSteps />
         </header>
-
-        {/* The notice. See the note at the top of this file. */}
-        <p className="rounded-squish mt-8 bg-yellow px-5 py-4 text-[14px] font-bold text-ink">
-          This checkout is a preview. Nothing is charged and no order is placed —
-          there is no payment provider connected yet.
-        </p>
 
         <CheckoutForm />
 
