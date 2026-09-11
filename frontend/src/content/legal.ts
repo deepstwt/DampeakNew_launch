@@ -186,7 +186,7 @@ export const DOCS: Doc[] = [
       {
         heading: "Prices and payment",
         list: [
-          "Prices are shown in Indian Rupees and include applicable taxes unless stated otherwise.",
+          "Prices are shown in US Dollars and include applicable taxes unless stated otherwise.",
           "Delivery charges are shown separately before you pay.",
           "Payment is taken at checkout through our payment provider. We do not store your card details.",
           "If a price is obviously wrong, we will contact you before dispatch rather than simply cancelling.",

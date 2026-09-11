@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { PRODUCTS, getAmazonUrl, getProduct, primaryImage, site } from "@/content/site";
 import { SITE_URL } from "@/lib/site-url";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
@@ -169,33 +170,29 @@ export default async function ProductPage({
               </p>
 
               {/**
-               * Buy Now, gated.
+               * Buy Now.
                *
-               * Everything above this line is open to anyone — photos, specs, the
-               * whole case for the product. The sign-in gate sits on this one
-               * click, the one that leaves for Amazon, because it is the last
-               * moment we can know a visitor was interested before Amazon takes
-               * the relationship.
+               * Two destinations, and which one is right is an open question
+               * rather than a fallback. With an Amazon listing it goes there,
+               * behind the sign-in gate — that gate exists because the click is
+               * the last moment we can know someone was interested before Amazon
+               * takes the relationship. Without one it goes to our own checkout,
+               * where signing in is the visitor's choice, the way the reference
+               * checkout offers it.
                *
-               * With no listing yet the button is disabled and marked unavailable
-               * instead, which is what a shop shows for something it cannot sell.
+               * Both cannot be the plan. AMAZON_URLS is empty, so today every
+               * product takes the second path.
                */}
               {amazonUrl ? (
                 <BuyNowButton amazonUrl={amazonUrl} productName={product.name} />
               ) : (
-                <>
-                  <button
-                    type="button"
-                    disabled
-                    className="mt-10 inline-flex cursor-not-allowed items-center gap-3 rounded-full bg-blue px-9 py-4.5 text-[17px] font-extrabold text-white opacity-60"
-                  >
-                    Buy Now
-                  </button>
-
-                  <p className="mt-4 text-[14px] font-semibold text-ink/40">
-                    Currently unavailable.
-                  </p>
-                </>
+                <Link
+                  href={`/checkout?product=${product.slug}`}
+                  className="rounded-full mt-10 inline-flex items-center gap-3 bg-blue px-9 py-4.5 text-[17px] font-extrabold text-white transition hover:brightness-110 active:scale-[0.98]"
+                >
+                  Buy Now
+                  <ArrowRight className="size-5" strokeWidth={2.6} />
+                </Link>
               )}
 
               <SaveButton slug={product.slug} className="mt-6" />
