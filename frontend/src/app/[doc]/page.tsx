@@ -120,6 +120,13 @@ export default async function DocPage({ params }: PageProps<"/[doc]">) {
                         ))}
                       </ul>
                     ) : null}
+
+                    {/* The half of the section that belongs under its list. */}
+                    {section.after?.map((p) => (
+                      <p key={p} className="mt-4 text-[17px] leading-relaxed text-ink/65">
+                        {p}
+                      </p>
+                    ))}
                   </section>
                 ))}
           </div>

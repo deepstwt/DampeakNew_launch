@@ -65,9 +65,13 @@ export default async function CheckoutPage({
   const money = (n: number) =>
     n.toLocaleString("en-US", { style: "currency", currency: "USD" });
 
-  const legal = DOCS.filter((d) =>
-    ["returns", "privacy", "terms"].includes(d.slug),
-  );
+  /**
+   * The policies a checkout has to put in front of someone before they buy.
+   * Terms of Sale belongs in this row and is missing from it deliberately: its
+   * copy is still the placeholder draft, and linking a buyer to an unfinished
+   * agreement is worse than not linking one yet.
+   */
+  const legal = DOCS.filter((d) => ["returns", "privacy"].includes(d.slug));
 
   return (
     // A grid at every width, not only at lg. `order` is a grid and flex
