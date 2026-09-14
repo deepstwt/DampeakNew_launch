@@ -293,14 +293,20 @@ export const site = {
       },
       {
         /**
-         * Questions, Shipping and Terms of sale are off the footer while their
+         * Questions, Shipping and Terms of sale are off this column while their
          * copy is unfinished. The pages themselves are still published and still
          * reachable — by URL, from the cross-links at the foot of any other
-         * policy page, from the legal row below this, and from the checkout.
-         * Taking a link out of one menu is not the same as unpublishing a page.
+         * policy page, and from the legal row below this. Taking a link out of
+         * one menu is not the same as unpublishing a page.
+         *
+         * The two that are here are the two with finished copy, under the names
+         * the documents themselves carry.
          */
         title: "Help",
-        links: [{ label: "Returns", href: "/returns" }],
+        links: [
+          { label: "Refund & Return Policy", href: "/returns" },
+          { label: "Privacy Policy", href: "/privacy" },
+        ],
       },
     ],
     legal: [

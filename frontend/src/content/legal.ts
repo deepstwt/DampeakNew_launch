@@ -20,6 +20,12 @@ export const COMPANY = {
   supportEmail: "support@dampeak.com",
   privacyEmail: "privacy@dampeak.com",
   phone: "[Support phone]",
+  /**
+   * Where approved returns are posted. Separate from the registered address on
+   * purpose — the place that receives parcels is rarely the place on the
+   * incorporation certificate, and the returns policy publishes this one.
+   */
+  returnsAddress: "[Returns address]",
   gstin: "[GSTIN]",
   cin: "[CIN / registration number]",
   jurisdiction: "[City], India",
@@ -29,6 +35,14 @@ export type Section = {
   heading: string;
   body?: string[];
   list?: string[];
+  /**
+   * Paragraphs that belong after the list rather than before it.
+   *
+   * A section that reads "to qualify, items must: … — and we decide whether
+   * they do" needs its last sentence under the conditions, not above them.
+   * `body` renders first by design, so this is the other half of that.
+   */
+  after?: string[];
 };
 
 export type Doc = {
@@ -80,85 +94,245 @@ export const DOCS: Doc[] = [
   {
     slug: "privacy",
     title: "Privacy Policy",
-    summary: "What we collect, why we collect it, and what you can ask us to do with it.",
-    updated: "August 2026",
+    summary: "What we collect, how we use it, and the choices you have.",
+    updated: "September 2026",
     sections: [
       {
-        heading: "Who we are",
+        heading: "About this policy",
         body: [
-          `${COMPANY.legalName} (“we”, “us”) is the data fiduciary and controller for the personal data described here. You can reach us at ${COMPANY.privacyEmail} or by post at ${COMPANY.address}.`,
+          `${COMPANY.trading.toUpperCase()} ("${COMPANY.trading.toUpperCase()}," "we," "us," or "our") respects your privacy and is committed to protecting the personal information you provide when you visit our website, browse our products, place an order, contact us, or otherwise interact with our services.`,
+          "This Privacy Policy explains what information we collect, how we use it, when we may share it, and the choices you may have regarding your personal information.",
+          "By accessing or using our website, you acknowledge that you have read and understood this Privacy Policy.",
         ],
       },
       {
-        heading: "What we collect",
+        heading: "Personal information we collect",
+        body: [
+          `Depending on how you interact with ${COMPANY.trading.toUpperCase()}, we may collect the following types of personal information.`,
+        ],
+      },
+      {
+        heading: "Information you provide directly",
+        body: [
+          "When you place an order, contact us, create an account, subscribe to communications, or otherwise interact with us, you may provide information such as:",
+        ],
         list: [
-          "Contact details you give us — name, email address, delivery address, phone number.",
-          "Order information — what you bought, when, and the amount paid. We never see or store full card numbers; payments are handled by our payment provider.",
-          "Messages you send us, including support requests and product reviews.",
-          "Basic technical data — IP address, browser type and pages viewed, used to keep the site working and secure.",
+          "Full name",
+          "Email address",
+          "Phone number",
+          "Billing address",
+          "Shipping address",
+          "Order and purchase information",
+          "Information you provide when contacting customer support",
+          "Any other information you voluntarily provide to us",
         ],
       },
       {
-        heading: "Why we use it",
+        heading: "Payment information",
+        body: [
+          "When you make a purchase, payment information is processed through our third-party payment provider.",
+          "We may receive information such as payment status, transaction details, and limited payment information needed to process or manage your order. We do not necessarily receive or store your complete payment card information.",
+          "Payment providers may collect and process your information according to their own privacy policies and terms.",
+        ],
+      },
+      {
+        heading: "Information collected automatically",
+        body: ["When you visit our website, certain information may be collected automatically, including:"],
         list: [
-          "To take, fulfil and deliver your order, and to handle returns.",
-          "To answer your questions and provide support.",
-          "To send you email updates, but only where you have asked us to. Every email has an unsubscribe link.",
-          "To detect and prevent fraud and abuse, and to meet our legal and tax obligations.",
+          "IP address",
+          "Browser type and version",
+          "Device type",
+          "Operating system",
+          "Pages or products viewed",
+          "Referring website or source",
+          "Date and time of visits",
+          "General information about how you interact with our website",
+        ],
+        after: [
+          "We may collect this information using cookies, pixels, analytics tools, and similar technologies.",
         ],
       },
       {
-        heading: "Our lawful basis",
-        body: [
-          "Where GDPR applies, we rely on: performance of a contract (to fulfil your order), consent (for marketing email), legitimate interests (site security and service improvement) and legal obligation (tax and accounting records).",
-          "Where India's DPDP Act 2023 applies, we process personal data on the basis of the consent you give at the point of collection, or for the legitimate uses that Act permits.",
-        ],
-      },
-      {
-        heading: "Who we share it with",
-        body: [
-          "We do not sell your personal data. We share it only with the service providers we need to run the business — payment processing, delivery, email delivery and hosting — and only the minimum each one needs.",
-          "We may disclose data where the law requires it, or to establish or defend legal claims.",
-        ],
-      },
-      {
-        heading: "Where it is stored",
-        body: [
-          "Our systems are hosted with providers who may process data outside your country. Where data leaves the UK or EEA, we rely on the appropriate safeguards required by law, such as Standard Contractual Clauses.",
-        ],
-      },
-      {
-        heading: "How long we keep it",
+        heading: "To process and fulfill orders",
+        body: ["We may use your information to:"],
         list: [
-          "Order and invoice records: kept for the period required by tax law — currently [X] years.",
-          "Marketing contacts: until you unsubscribe, then removed from active lists.",
-          "Support messages: [X] months after the matter is closed.",
-          "Technical logs: [X] days.",
+          "Process and confirm purchases",
+          "Process payments",
+          "Arrange order fulfillment",
+          "Ship products to you",
+          "Provide order updates",
+          "Process returns, refunds, or other order-related requests",
         ],
       },
       {
-        heading: "Your rights",
+        heading: "To communicate with you",
         body: [
-          "You can ask us to give you a copy of your data, correct it, delete it, restrict how we use it, or object to a particular use. You can withdraw consent to marketing at any time.",
-          `To exercise any of these, email ${COMPANY.privacyEmail}. We will respond within the period the law allows. If you are unhappy with our response you can complain to your data protection regulator — in India, the Data Protection Board; in the UK, the ICO.`,
+          "We may use your information to respond to questions, provide customer support, communicate about your orders, and respond to other requests you make.",
         ],
       },
       {
-        heading: "Children",
+        heading: "To improve our website and products",
         body: [
-          "Our site is not directed at children, and we do not knowingly collect data from anyone under 18. If you believe a child has given us personal data, contact us and we will delete it.",
+          "We may use information about how customers interact with our website and products to understand customer preferences, improve our website, develop our products, and improve the overall customer experience.",
         ],
       },
       {
-        heading: "Security",
+        heading: "Marketing and promotional communications",
         body: [
-          "We use encryption in transit, access controls and hashed identifiers rather than raw IP addresses in our analytics. No system is perfectly secure, but we take reasonable technical and organisational measures to protect your data, and we will notify you and the regulator of a qualifying breach as the law requires.",
+          `Where permitted by applicable law, we may use your contact information to send promotional emails or other marketing communications about ${COMPANY.trading.toUpperCase()} products, offers, announcements, or other content we believe may be relevant to you.`,
+          "You can unsubscribe from promotional emails at any time by using the unsubscribe link included in the communication.",
         ],
       },
       {
-        heading: "Changes",
+        heading: "Website analytics and advertising",
         body: [
-          "If we change this policy we will update the date at the top of this page, and tell you directly where the change is significant.",
+          "We may use analytics and advertising technologies to understand how visitors interact with our website, measure the effectiveness of our marketing, and improve our advertising.",
+          "These technologies may include cookies, pixels, tags, and similar tracking technologies provided by third-party services.",
+          "Depending on the technology used and applicable law, these services may collect information about your device, browsing activity, and interactions with our website.",
+        ],
+      },
+      {
+        heading: "Security and fraud prevention",
+        body: [
+          `We may use personal information to help detect, prevent, and investigate fraud, unauthorized activity, security incidents, or other activity that could harm ${COMPANY.trading.toUpperCase()}, our customers, or our website.`,
+        ],
+      },
+      {
+        heading: "Legal and business purposes",
+        body: ["We may use or disclose personal information when reasonably necessary to:"],
+        list: [
+          "Comply with applicable laws or legal obligations",
+          "Respond to lawful requests from government authorities",
+          "Enforce our policies or agreements",
+          "Protect our rights, property, or safety",
+          "Protect the rights, property, or safety of our customers or others",
+          "Resolve disputes",
+          "Support a business transaction, such as a merger, acquisition, restructuring, or sale of assets",
+        ],
+      },
+      {
+        heading: "How we share personal information",
+        body: [
+          "We do not sell your personal information for money.",
+          "We may share personal information with third parties when reasonably necessary to operate our business and provide our services.",
+        ],
+      },
+      {
+        heading: "Service providers",
+        body: [
+          "We may work with third-party companies that help us operate our website and business, including providers involved in:",
+        ],
+        list: [
+          "Payment processing",
+          "Website hosting and technology",
+          "Order fulfillment",
+          "Shipping and delivery",
+          "Customer support",
+          "Email and marketing",
+          "Website analytics",
+          "Advertising",
+          "Fraud prevention",
+          "Other business operations",
+        ],
+        after: [
+          "These service providers may access personal information only as reasonably necessary to provide services to us.",
+        ],
+      },
+      {
+        heading: "Business and legal requirements",
+        body: [
+          "We may disclose information when required or permitted by applicable law, including in response to valid legal processes or requests from authorities.",
+          "We may also share information when necessary to protect our rights, customers, business, or property.",
+        ],
+      },
+      {
+        heading: "Business transfers",
+        body: [
+          `If ${COMPANY.trading.toUpperCase()} is involved in a merger, acquisition, financing, reorganization, sale of assets, or similar business transaction, personal information may be transferred as part of that transaction.`,
+        ],
+      },
+      {
+        heading: "Cookies and similar technologies",
+        body: [
+          `${COMPANY.trading.toUpperCase()} may use cookies and similar technologies to operate and improve our website. Cookies may help us:`,
+        ],
+        list: [
+          "Remember preferences",
+          "Keep shopping sessions functioning",
+          "Understand how visitors use our website",
+          "Measure website performance",
+          "Analyze marketing performance",
+          "Provide relevant advertising",
+        ],
+        after: [
+          "You may be able to control or disable certain cookies through your browser settings. However, disabling cookies may affect certain website functionality.",
+        ],
+      },
+      {
+        heading: "Third-party websites and services",
+        body: [
+          "Our website may contain links to websites, social media platforms, payment providers, or other services operated by third parties.",
+          "If you choose to interact with a third-party service, that service may collect and process your information according to its own privacy policy and terms.",
+          `${COMPANY.trading.toUpperCase()} is not responsible for the privacy practices, security, or content of third-party websites or services.`,
+        ],
+      },
+      {
+        heading: "Children's privacy",
+        body: [
+          "Our website and services are not directed toward children under the age of 13, and we do not knowingly collect personal information from children under 13.",
+          "If you believe that a child has provided us with personal information, please contact us so that we can review the situation and take appropriate action.",
+        ],
+      },
+      {
+        heading: "Data security",
+        body: [
+          "We take reasonable administrative, technical, and organizational measures to protect personal information against unauthorized access, loss, misuse, alteration, or disclosure.",
+          "However, no method of transmitting or storing information online is completely secure. We therefore cannot guarantee the absolute security of your personal information.",
+        ],
+      },
+      {
+        heading: "Data retention",
+        body: [
+          "We retain personal information for as long as reasonably necessary for the purposes described in this Privacy Policy, including to provide our services, complete transactions, maintain business records, comply with legal obligations, resolve disputes, and enforce our agreements.",
+          "The length of time we retain information may vary depending on the type of information and the reason it was collected.",
+        ],
+      },
+      {
+        heading: "Your privacy rights",
+        body: [
+          "Depending on where you live and applicable law, you may have certain rights regarding your personal information. These rights may include the right to:",
+        ],
+        list: [
+          "Request access to personal information we hold about you",
+          "Request correction of inaccurate information",
+          "Request deletion of certain personal information",
+          "Request a copy of your personal information",
+          "Opt out of certain marketing communications",
+          "Opt out of certain targeted advertising or other data uses where applicable",
+          "Withdraw consent where processing is based on consent",
+        ],
+        after: [
+          "To make a privacy request, please contact us using the information provided below. We may need to verify your identity before completing certain requests.",
+          "Your legal rights may vary depending on your location, and some requests may be subject to legal exceptions.",
+        ],
+      },
+      {
+        heading: "Changes to this Privacy Policy",
+        body: [
+          "We may update this Privacy Policy from time to time to reflect changes to our business, website, services, technology, or applicable laws.",
+          'When we make changes, we will update the "Last updated" date at the top of this policy.',
+          "We encourage you to review this Privacy Policy periodically to stay informed about how we handle personal information.",
+        ],
+      },
+      {
+        heading: "Contact us",
+        body: [
+          `If you have questions about this Privacy Policy or how ${COMPANY.trading.toUpperCase()} handles your personal information, please contact us:`,
+        ],
+        list: [
+          COMPANY.trading.toUpperCase(),
+          `Email: ${COMPANY.supportEmail}`,
+          `Address: ${COMPANY.address}`,
         ],
       },
     ],
@@ -326,43 +500,85 @@ export const DOCS: Doc[] = [
 
   {
     slug: "returns",
-    title: "Returns and Refunds",
-    summary: "Changed your mind, or something isn't right.",
-    updated: "August 2026",
+    title: "Refund & Return Policy",
+    summary: "Replacements and refunds for anything defective, damaged or not right.",
+    updated: "September 2026",
     sections: [
       {
-        heading: "Changed your mind",
+        heading: "Our promise",
         body: [
-          "You can return most items within [X] days of delivery for a full refund. The item must be unused and in its original packaging, with any seals intact.",
+          "It is our vision to ensure that you're happy and satisfied after you've purchased your item, and we want to keep it that way no matter what. We'll be more than happy to replace or refund your item if it is defective, damaged, or if you're not satisfied with the results.",
         ],
       },
       {
-        heading: "What can't be returned",
-        list: [
-          "Items sealed for hygiene reasons where the seal has been broken.",
-          "Personalised or made-to-order items.",
-          "Gift cards.",
-        ],
-      },
-      {
-        heading: "How to return something",
-        list: [
-          `Email ${COMPANY.supportEmail} with your order number and what you'd like to do.`,
-          "We will send you a return label or arrange a pickup.",
-          "Pack the item securely — reuse our packaging if you can.",
-        ],
-      },
-      {
-        heading: "Refunds",
+        heading: "Initiating a return",
         body: [
-          "Once we receive and check the item, we refund to your original payment method within [X] working days. Your bank may take a few days more to show it.",
-          "Where you are returning because the item is faulty or wrongly described, we also refund the delivery charge and cover the return cost.",
+          `All returns must be pre-authorized by contacting us at ${COMPANY.supportEmail} before sending any product back.`,
+          "Items sent to our return address without receiving return instructions from us first would be rejected, and are at the customer's risk.",
+        ],
+      },
+      {
+        heading: "Return eligibility",
+        body: ["To qualify for a return or refund, items must:"],
+        list: [
+          "Be requested within 30 days of delivery.",
+          "Be unused and in their original condition.",
+          "Include the original packaging, where applicable.",
+          "Not be damaged as a result of use, misuse, or improper handling.",
+        ],
+        after: [
+          `${COMPANY.trading.toUpperCase()} reserves the right to determine whether a returned item meets the eligibility requirements.`,
+        ],
+      },
+      {
+        heading: "Damaged or defective items",
+        body: [
+          `If your order arrives damaged, defective, or with the wrong item, please contact us at ${COMPANY.supportEmail} as soon as possible.`,
+          "Please include your order number and clear photos of the item and packaging so we can assess the issue and determine the appropriate resolution.",
+          "If the issue is confirmed to be our error or a product defect, we may offer a replacement, refund, or other appropriate resolution.",
+        ],
+      },
+      {
+        heading: "Customer responsibility",
+        list: [
+          "Customers are responsible for securely packaging approved returns to help prevent damage during transit.",
+          `${COMPANY.trading} is not liable for items lost or damaged during the return transit.`,
+          "All return-shipping costs are the responsibility of the customer.",
+        ],
+      },
+      {
+        heading: "Return address",
+        body: [
+          `Approved returns must be mailed to the following address: ${COMPANY.returnsAddress}`,
+        ],
+      },
+      {
+        heading: "Refund processing",
+        body: [
+          "Refunds are issued to the original payment method within 7–15 business days after the returned item has been received and inspected.",
+          "Claims for missing deliveries must be made within 15 days of the expected delivery date; after this period, refunds or reshipments cannot be provided.",
+        ],
+      },
+      {
+        heading: "Missing or undelivered orders",
+        body: [
+          `If your order has not arrived or appears to be missing, please contact us at ${COMPANY.supportEmail} with your order number.`,
+          "We will review the shipment status and work with you to determine the appropriate next step.",
+        ],
+      },
+      {
+        heading: "Shipping information",
+        body: [
+          "Customers are responsible for providing complete and accurate shipping information at checkout.",
+          `${COMPANY.trading.toUpperCase()} is not responsible for orders that are undeliverable or misdelivered due to incorrect or incomplete shipping addresses provided by the customer.`,
+          "If a package is returned due to an incorrect or incomplete address, additional shipping charges may apply if the customer requests that the order be reshipped.",
         ],
       },
       {
         heading: "Exchanges",
         body: [
-          "We do not process direct exchanges. Return the item for a refund and place a new order — it is faster.",
+          "We do not currently offer direct exchanges.",
+          `If you would like a different ${COMPANY.trading.toUpperCase()} product, please contact us regarding your original order and we can advise you on the available options.`,
         ],
       },
     ],
