@@ -13,6 +13,7 @@ loads is a derivative built from these and committed under
 | `New Logo.jpg` | `public/brand/dampeak.webp` | trim → cut out to transparency |
 | `new_logo.png` | `public/brand/dampeak-brown.webp` | trim → resize (already had alpha) |
 | `ShopPay.jpeg` / `PayPal.jpeg` / `GPay.jpeg` | `public/brand/pay/*.webp` | trim → re-pad on the brand's own field |
+| `Contact page.png` | `public/lifestyle/contact.webp` | WebP at 1400px wide |
 
 **Products.** The four arrived at four aspect ratios with four different amounts
 of air around the product, and every image slot on the site is square. Each is

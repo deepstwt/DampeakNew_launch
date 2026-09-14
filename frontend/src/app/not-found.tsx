@@ -2,8 +2,14 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Nav } from "@/components/ui/Nav";
 import { Footer } from "@/components/ui/Footer";
-import { DOCS } from "@/content/legal";
 
+/**
+ * Two ways out and nothing else.
+ *
+ * A row of every policy page used to sit under the buttons. Someone who has hit
+ * a dead link is looking for the way back, not for the shipping policy, and the
+ * footer below already carries the same links for anyone who is.
+ */
 export default function NotFound() {
   return (
     <>
@@ -33,20 +39,6 @@ export default function NotFound() {
             </Link>
           </div>
 
-          <nav aria-label="Site pages" className="mt-16 border-t border-ink/10 pt-8">
-            <ul className="flex flex-wrap gap-2">
-              {DOCS.map((doc) => (
-                <li key={doc.slug}>
-                  <Link
-                    href={`/${doc.slug}`}
-                    className="text-marker rounded-squish-alt inline-block border border-ink/15 px-4 py-2.5 text-ink/60 transition-colors hover:border-ink/40 hover:text-ink"
-                  >
-                    {doc.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
         </div>
       </main>
 

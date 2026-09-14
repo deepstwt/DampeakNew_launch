@@ -293,14 +293,13 @@ export const site = {
       },
       {
         /**
-         * Questions, Shipping and Terms of sale are off this column while their
-         * copy is unfinished. The pages themselves are still published and still
-         * reachable — by URL, from the cross-links at the foot of any other
-         * policy page, and from the legal row below this. Taking a link out of
-         * one menu is not the same as unpublishing a page.
+         * The two policies with finished copy, under the names the documents
+         * themselves carry. Questions and Shipping are not linked here because
+         * they no longer exist — both were removed from DOCS.
          *
-         * The two that are here are the two with finished copy, under the names
-         * the documents themselves carry.
+         * Terms of sale does still exist and is deliberately not in this column
+         * while its copy is the placeholder draft; it stays reachable from the
+         * legal row below and from every other policy page.
          */
         title: "Help",
         links: [
@@ -312,7 +311,6 @@ export const site = {
     legal: [
       { label: "Privacy", href: "/privacy" },
       { label: "Terms", href: "/terms" },
-      { label: "Cookies", href: "/cookies" },
     ],
     socials: [
       { label: "Instagram", href: "https://instagram.com" },

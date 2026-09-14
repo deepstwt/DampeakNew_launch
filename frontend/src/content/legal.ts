@@ -7,10 +7,16 @@
  * at least India's DPDP Act 2023 and the Consumer Protection (E-Commerce) Rules
  * 2020 — plus UK/EU GDPR the moment you ship there.
  *
- * While this is true, LEGAL_DRAFT below renders a visible notice on the pages.
- * Flip it to false once the review is done.
+ * LEGAL_DRAFT rendered a visible notice on these pages saying exactly that. It
+ * is off — turned off as a presentation decision, not because the review
+ * happened. Nothing above this line has stopped being true: the brackets are
+ * still in the copy and still render to a reader as "[Returns address]" and
+ * "[Company legal name]", they just no longer come with an explanation.
+ *
+ * Turn it back on for any document that goes in front of customers before those
+ * two things are done.
  */
-export const LEGAL_DRAFT = true;
+export const LEGAL_DRAFT = false;
 
 export const COMPANY = {
   legalName: "[Company legal name]",
@@ -19,7 +25,17 @@ export const COMPANY = {
   email: "hello@dampeak.com",
   supportEmail: "support@dampeak.com",
   privacyEmail: "privacy@dampeak.com",
-  phone: "[Support phone]",
+  /**
+   * The support line and when it is answered.
+   *
+   * Both came from the reference the contact page was designed against, which
+   * is another company's website. Confirm the number is ours before this is
+   * public: a phone number on a contact page is an instruction, and a wrong one
+   * sends our customers to someone else's switchboard.
+   */
+  phone: "(305) 306-0766",
+  phoneHref: "tel:+13053060766",
+  hours: "Mon – Fri, 11am – 6pm EST",
   /**
    * Where approved returns are posted. Separate from the registered address on
    * purpose — the place that receives parcels is rarely the place on the
@@ -332,7 +348,6 @@ export const DOCS: Doc[] = [
         list: [
           COMPANY.trading.toUpperCase(),
           `Email: ${COMPANY.supportEmail}`,
-          `Address: ${COMPANY.address}`,
         ],
       },
     ],
@@ -369,7 +384,7 @@ export const DOCS: Doc[] = [
       {
         heading: "Delivery",
         body: [
-          "Delivery times are estimates. Risk in the goods passes to you on delivery. See our Shipping page for current areas and timescales.",
+          "Delivery times are estimates. Risk in the goods passes to you on delivery.",
         ],
       },
       {
@@ -415,84 +430,6 @@ export const DOCS: Doc[] = [
         heading: "Governing law",
         body: [
           `These terms are governed by the laws of India, and the courts of ${COMPANY.jurisdiction} have jurisdiction. If you are a consumer resident elsewhere, you keep the protection of the mandatory laws of your country.`,
-        ],
-      },
-    ],
-  },
-
-  {
-    slug: "cookies",
-    title: "Cookie Policy",
-    summary: "What we store on your device, and what we don't.",
-    updated: "August 2026",
-    sections: [
-      {
-        heading: "What cookies are",
-        body: [
-          "Cookies are small files a website stores on your device. Similar technologies include local storage and pixels. They can be strictly necessary, or optional.",
-        ],
-      },
-      {
-        heading: "What we currently use",
-        body: [
-          "This site currently sets only strictly necessary cookies — the ones needed to keep your session and basket working and to protect against fraud. These do not require your consent.",
-          "We do not currently run advertising or third-party tracking cookies. If that changes, we will ask for your consent first through a banner, and update this page before doing so.",
-        ],
-      },
-      {
-        heading: "Analytics",
-        body: [
-          "Where we measure how the site is used, we do so with hashed identifiers rather than raw IP addresses, and we do not attempt to identify individual visitors.",
-        ],
-      },
-      {
-        heading: "Controlling cookies",
-        body: [
-          "You can delete or block cookies in your browser settings. Blocking strictly necessary cookies will stop parts of the site, such as checkout, from working.",
-        ],
-      },
-    ],
-  },
-
-  {
-    slug: "shipping",
-    title: "Shipping",
-    summary: "Where we deliver, how long it takes, and what it costs.",
-    updated: "August 2026",
-    sections: [
-      {
-        heading: "Where we deliver",
-        body: [
-          "We currently deliver across India. [Confirm serviceable pin codes and any exclusions.]",
-        ],
-      },
-      {
-        heading: "Dispatch and delivery times",
-        list: [
-          "Orders placed before [cut-off time] on a working day are dispatched the same day.",
-          "Metro cities: [X–X] working days.",
-          "Rest of India: [X–X] working days.",
-          "Delivery estimates exclude Sundays and public holidays.",
-        ],
-      },
-      {
-        heading: "Charges",
-        list: [
-          "Standard delivery: ₹[amount].",
-          "Free delivery on orders over ₹[amount].",
-          "Any duties or local charges, where applicable, are shown before payment.",
-        ],
-      },
-      {
-        heading: "Tracking",
-        body: [
-          "You will get a tracking link by email once your order is dispatched. If tracking has not updated for [X] working days, contact us and we will chase the carrier.",
-        ],
-      },
-      {
-        heading: "If something goes wrong",
-        body: [
-          "If your parcel arrives damaged, photograph it before opening where you can, and contact us within [X] days. We will replace it or refund you.",
         ],
       },
     ],
@@ -579,102 +516,6 @@ export const DOCS: Doc[] = [
         body: [
           "We do not currently offer direct exchanges.",
           `If you would like a different ${COMPANY.trading.toUpperCase()} product, please contact us regarding your original order and we can advise you on the available options.`,
-        ],
-      },
-    ],
-  },
-
-  {
-    slug: "faq",
-    title: "Questions",
-    summary: "The things people ask most.",
-    updated: "August 2026",
-    format: "faq",
-    sections: [
-      {
-        heading: "How long does delivery take?",
-        body: [
-          "Metro cities usually [X–X] working days, rest of India [X–X]. You get a tracking link as soon as your order leaves us.",
-        ],
-      },
-      {
-        heading: "Can I return something if I change my mind?",
-        body: [
-          "Yes — within [X] days, unused and in its original packaging. Full details are on the Returns page.",
-        ],
-      },
-      {
-        heading: "Is there a warranty?",
-        body: [
-          "Every product carries a [X]-year warranty against manufacturing defects, on top of your statutory rights.",
-        ],
-      },
-      {
-        heading: "Do you ship outside India?",
-        body: ["Not yet. Join the email list and we will tell you when that changes."],
-      },
-      {
-        heading: "How do I track my order?",
-        body: [
-          `Use the link in your dispatch email. If it has not updated for a few days, email ${COMPANY.supportEmail} with your order number.`,
-        ],
-      },
-      {
-        heading: "What payment methods do you take?",
-        body: ["[UPI, cards, net banking, wallets — confirm with your payment provider.]"],
-      },
-      {
-        heading: "Are your products safe for children?",
-        body: [
-          "Our products are designed for adults unless a listing says otherwise. Check the individual product page for age guidance and any small-parts warning.",
-        ],
-      },
-      {
-        heading: "How do I unsubscribe from emails?",
-        body: [
-          "Use the unsubscribe link at the bottom of any email. It takes effect immediately.",
-        ],
-      },
-    ],
-  },
-
-  {
-    slug: "contact",
-    title: "Contact",
-    summary: "Talk to a person.",
-    updated: "August 2026",
-    sections: [
-      {
-        heading: "Support",
-        body: [
-          `Email ${COMPANY.supportEmail} and we will reply within [X] working hours. Include your order number if you have one — it gets you a faster answer.`,
-        ],
-      },
-      {
-        heading: "Everything else",
-        list: [
-          `General: ${COMPANY.email}`,
-          `Privacy requests: ${COMPANY.privacyEmail}`,
-          `Phone: ${COMPANY.phone}`,
-          `Post: ${COMPANY.address}`,
-        ],
-      },
-      {
-        heading: "Company details",
-        list: [
-          `Registered name: ${COMPANY.legalName}`,
-          `Trading as: ${COMPANY.trading}`,
-          `Registered address: ${COMPANY.address}`,
-          `Registration number: ${COMPANY.cin}`,
-          `GSTIN: ${COMPANY.gstin}`,
-          `Email: ${COMPANY.email}`,
-        ],
-      },
-      {
-        heading: "Complaints",
-        body: [
-          "If we have got something wrong, say so and we will fix it. If you are still unhappy, you can escalate to the grievance officer named below, as required by the Consumer Protection (E-Commerce) Rules 2020.",
-          "Grievance Officer: [Name], [email], [phone]. We acknowledge complaints within 48 hours and resolve them within one month.",
         ],
       },
     ],

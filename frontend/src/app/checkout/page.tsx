@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
-import { PRODUCTS, getProduct, primaryImage, site } from "@/content/site";
+import { PRODUCTS, getProduct, primaryImage } from "@/content/site";
 import { DOCS } from "@/content/legal";
-import { CheckoutSteps } from "@/components/checkout/CheckoutSteps";
 import { CheckoutForm } from "@/components/checkout/CheckoutForm";
 
 /**
@@ -16,13 +15,13 @@ import { CheckoutForm } from "@/components/checkout/CheckoutForm";
  * will have, so the layout and the copy can be settled before any of that
  * exists.
  *
- * A banner used to say all of that on the page itself. It is gone, so what is
- * left to tell a visitor are the controls: Continue to shipping is disabled, the
- * discount field is disabled, the wallets are disabled and say they turn on once
- * a payment provider is connected. There is no card field anywhere, so the page
- * cannot take money even by accident. That holds while this is a screen being
- * reviewed; before it is public with a working button, it needs a real answer
- * rather than the absence of one.
+ * A banner used to say all of that on the page itself, and a line under the
+ * wallets said when they would work. Both are gone, so what is left to tell a
+ * visitor where they stand are the controls: Continue to shipping, the discount
+ * field and all three wallets are inert, and there is no card field anywhere, so
+ * the page cannot take money even by accident. That holds while this is a screen
+ * being reviewed; before it is public with a working button, it needs a real
+ * answer rather than the absence of one.
  *
  * The product comes in through ?product=<slug> from a Buy Now, and falls back to
  * the first product so the page is never blank when it is opened directly.
@@ -88,19 +87,28 @@ export default async function CheckoutPage({
        * columns of one grid rather than nested.
        */}
       <div className="order-2 px-6 pt-10 pb-16 md:px-10 lg:order-1 lg:ml-auto lg:w-full lg:max-w-[620px] lg:px-12 lg:pt-14">
+        {/* The wordmark used to sit between the back link and the steps. A
+            checkout is not a place to go browsing, so all the header carries now
+            is the way out; the step indicator moved into the flow below, which
+            is what knows which step is open. */}
         <header>
-          <Link href="/" className="inline-block">
-            <Image
-              src="/brand/dampeak-brown.webp"
-              alt={site.name}
-              width={468}
-              height={400}
-              priority
-              className="h-12 w-auto"
-            />
+          {/**
+           * The way out, at the top where someone looks for it.
+           *
+           * A link to the product rather than history.back(): checkout is only
+           * reached from a product page's Buy Now, and that page is in the query
+           * string, so this is where the visitor came from and it still works
+           * for anyone who arrived on a pasted URL with no history to go back
+           * through. It names the product for the same reason — "Back" alone
+           * makes you remember what you were looking at.
+           */}
+          <Link
+            href={`/products/${product.slug}`}
+            className="text-marker flex w-fit items-center gap-2 text-ink/40 transition-colors hover:text-ink"
+          >
+            <ArrowLeft className="size-4" strokeWidth={3} />
+            Back to {product.name}
           </Link>
-
-          <CheckoutSteps />
         </header>
 
         <CheckoutForm />
