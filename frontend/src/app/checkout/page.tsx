@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
-import { PRODUCTS, getProduct, primaryImage, site } from "@/content/site";
+import { PRODUCTS, getProduct, primaryImage } from "@/content/site";
 import { DOCS } from "@/content/legal";
-import { CheckoutSteps } from "@/components/checkout/CheckoutSteps";
 import { CheckoutForm } from "@/components/checkout/CheckoutForm";
 
 /**
@@ -88,6 +87,10 @@ export default async function CheckoutPage({
        * columns of one grid rather than nested.
        */}
       <div className="order-2 px-6 pt-10 pb-16 md:px-10 lg:order-1 lg:ml-auto lg:w-full lg:max-w-[620px] lg:px-12 lg:pt-14">
+        {/* The wordmark used to sit between the back link and the steps. A
+            checkout is not a place to go browsing, so all the header carries now
+            is the way out; the step indicator moved into the flow below, which
+            is what knows which step is open. */}
         <header>
           {/**
            * The way out, at the top where someone looks for it.
@@ -106,21 +109,6 @@ export default async function CheckoutPage({
             <ArrowLeft className="size-4" strokeWidth={3} />
             Back to {product.name}
           </Link>
-
-          {/* Block, not inline-block: beside an inline back link the logo sat on
-              the same line and `mt-6` did nothing, so the two overlapped. */}
-          <Link href="/" className="mt-6 block w-fit">
-            <Image
-              src="/brand/dampeak-brown.webp"
-              alt={site.name}
-              width={468}
-              height={400}
-              priority
-              className="h-12 w-auto"
-            />
-          </Link>
-
-          <CheckoutSteps />
         </header>
 
         <CheckoutForm />
