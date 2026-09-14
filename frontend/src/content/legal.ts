@@ -7,10 +7,16 @@
  * at least India's DPDP Act 2023 and the Consumer Protection (E-Commerce) Rules
  * 2020 — plus UK/EU GDPR the moment you ship there.
  *
- * While this is true, LEGAL_DRAFT below renders a visible notice on the pages.
- * Flip it to false once the review is done.
+ * LEGAL_DRAFT rendered a visible notice on these pages saying exactly that. It
+ * is off — turned off as a presentation decision, not because the review
+ * happened. Nothing above this line has stopped being true: the brackets are
+ * still in the copy and still render to a reader as "[Returns address]" and
+ * "[Company legal name]", they just no longer come with an explanation.
+ *
+ * Turn it back on for any document that goes in front of customers before those
+ * two things are done.
  */
-export const LEGAL_DRAFT = true;
+export const LEGAL_DRAFT = false;
 
 export const COMPANY = {
   legalName: "[Company legal name]",
