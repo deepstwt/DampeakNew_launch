@@ -193,45 +193,18 @@ export default function ContactPage() {
               </section>
 
               {/**
-               * The parts a policy page used to carry, kept because they are
-               * required rather than because they are interesting: who we are,
-               * and how a complaint escalates under the Consumer Protection
-               * (E-Commerce) Rules 2020.
+               * Complaints and company details used to close this page, and are
+               * gone. Both were printing unfilled brackets — "[Company legal
+               * name]", "[CIN / registration number]", "Grievance Officer:
+               * [Name], [email], [phone]" — which disclosed nothing and read as
+               * an unfinished page.
+               *
+               * They are still owed. Seller identity and a named grievance
+               * officer are what the Consumer Protection (E-Commerce) Rules 2020
+               * expect to be findable on the site, and with these removed they
+               * are nowhere on it. The values live in COMPANY; the day they are
+               * real, this is where they go back.
                */}
-              <section className="mt-14 border-t border-ink/10 pt-10">
-                <h2 className="text-[22px] font-extrabold tracking-tight">
-                  Complaints
-                </h2>
-                <p className="mt-4 text-[16px] leading-relaxed text-ink/65">
-                  If we have got something wrong, say so and we will fix it. If
-                  you are still unhappy, you can escalate to the grievance officer
-                  below, as required by the Consumer Protection (E-Commerce) Rules
-                  2020.
-                </p>
-                <p className="mt-3 text-[16px] leading-relaxed text-ink/65">
-                  Grievance Officer: [Name], [email], [phone]. We acknowledge
-                  complaints within 48 hours and resolve them within one month.
-                </p>
-              </section>
-
-              <section className="mt-12">
-                <h2 className="text-marker text-ink/45">Company details</h2>
-                <dl className="mt-4 space-y-2 text-[15px]">
-                  {[
-                    ["Registered name", COMPANY.legalName],
-                    ["Trading as", COMPANY.trading],
-                    ["Registration number", COMPANY.cin],
-                    ["GSTIN", COMPANY.gstin],
-                    ["General enquiries", COMPANY.email],
-                    ["Privacy requests", COMPANY.privacyEmail],
-                  ].map(([label, value]) => (
-                    <div key={label} className="flex flex-wrap gap-x-2">
-                      <dt className="font-semibold text-ink/45">{label}:</dt>
-                      <dd className="font-bold">{value}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </section>
             </div>
           </div>
         </div>
