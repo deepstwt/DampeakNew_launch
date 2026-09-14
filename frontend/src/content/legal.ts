@@ -421,40 +421,6 @@ export const DOCS: Doc[] = [
   },
 
   {
-    slug: "cookies",
-    title: "Cookie Policy",
-    summary: "What we store on your device, and what we don't.",
-    updated: "August 2026",
-    sections: [
-      {
-        heading: "What cookies are",
-        body: [
-          "Cookies are small files a website stores on your device. Similar technologies include local storage and pixels. They can be strictly necessary, or optional.",
-        ],
-      },
-      {
-        heading: "What we currently use",
-        body: [
-          "This site currently sets only strictly necessary cookies — the ones needed to keep your session and basket working and to protect against fraud. These do not require your consent.",
-          "We do not currently run advertising or third-party tracking cookies. If that changes, we will ask for your consent first through a banner, and update this page before doing so.",
-        ],
-      },
-      {
-        heading: "Analytics",
-        body: [
-          "Where we measure how the site is used, we do so with hashed identifiers rather than raw IP addresses, and we do not attempt to identify individual visitors.",
-        ],
-      },
-      {
-        heading: "Controlling cookies",
-        body: [
-          "You can delete or block cookies in your browser settings. Blocking strictly necessary cookies will stop parts of the site, such as checkout, from working.",
-        ],
-      },
-    ],
-  },
-
-  {
     slug: "shipping",
     title: "Shipping",
     summary: "Where we deliver, how long it takes, and what it costs.",

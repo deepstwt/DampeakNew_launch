@@ -312,7 +312,6 @@ export const site = {
     legal: [
       { label: "Privacy", href: "/privacy" },
       { label: "Terms", href: "/terms" },
-      { label: "Cookies", href: "/cookies" },
     ],
     socials: [
       { label: "Instagram", href: "https://instagram.com" },
