@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { Clock, Mail, Package, Phone } from "lucide-react";
-import { PRODUCTS, primaryImage, site } from "@/content/site";
+import { site } from "@/content/site";
 import { COMPANY } from "@/content/legal";
 import { Nav } from "@/components/ui/Nav";
 import { Footer } from "@/components/ui/Footer";
@@ -53,42 +53,38 @@ export default function ContactPage() {
       <main id="top" className="bg-white">
         <div className="lg:grid lg:grid-cols-2">
           {/**
-           * The catalogue, as the page's picture.
+           * The page's picture: the product being used, not the product on a
+           * white tile. Every other image on this site is a packshot; this is
+           * the one place that shows what owning one looks like.
            *
            * Sticky on a wide screen so it holds while the right-hand column
-           * scrolls past it, and hidden below lg — stacked, it would be four
-           * product shots standing between a visitor and a phone number.
+           * scrolls past it, and hidden below lg — stacked, a full-height
+           * photograph would stand between a visitor and a phone number.
            */}
           <aside className="relative hidden bg-brown lg:block">
             {/* Offset by the header rather than pinned to the top of the
                 viewport. The nav is sticky and 90px tall, so a full-height
                 panel at top-0 hangs 90px below the fold — and what falls off
                 the bottom is the line the panel is there to say. */}
-            <div className="sticky top-[90px] flex min-h-[calc(100vh-90px)] flex-col justify-between p-12">
-              <div className="grid grid-cols-2 gap-4">
-                {PRODUCTS.map((product) => {
-                  const image = primaryImage(product);
-                  return (
-                    <Link
-                      key={product.slug}
-                      href={`/products/${product.slug}`}
-                      className="group relative aspect-square overflow-hidden rounded-2xl bg-white transition-transform hover:scale-[1.02]"
-                    >
-                      {image ? (
-                        <Image
-                          src={image.src}
-                          alt={product.name}
-                          fill
-                          sizes="(max-width: 1280px) 22vw, 260px"
-                          className="object-contain"
-                        />
-                      ) : null}
-                    </Link>
-                  );
-                })}
-              </div>
+            <div className="sticky top-[90px] h-[calc(100vh-90px)]">
+              <Image
+                src="/lifestyle/contact.webp"
+                alt="A man sitting outside in the late afternoon, squeezing a yellow squishy."
+                fill
+                priority
+                sizes="(max-width: 1024px) 0px, 50vw"
+                className="object-cover"
+              />
 
-              <div className="mt-12">
+              {/* The caption sits on the photograph, so it needs its own ground.
+                  A scrim from the foot of the image rather than a flat overlay:
+                  the picture stays the picture, and the words stay readable. */}
+              <div
+                aria-hidden
+                className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-ink/85 via-ink/40 to-transparent"
+              />
+
+              <div className="absolute inset-x-0 bottom-0 p-12">
                 <p className="text-marker flex items-center gap-3 text-yellow">
                   <span aria-hidden className="h-0.5 w-6 bg-yellow" />
                   Customer care
