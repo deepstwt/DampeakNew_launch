@@ -289,16 +289,18 @@ export const site = {
         links: [
           { label: "About us", href: "/about" },
           { label: "Contact", href: "/contact" },
-          { label: "Questions", href: "/faq" },
         ],
       },
       {
+        /**
+         * Questions, Shipping and Terms of sale are off the footer while their
+         * copy is unfinished. The pages themselves are still published and still
+         * reachable — by URL, from the cross-links at the foot of any other
+         * policy page, from the legal row below this, and from the checkout.
+         * Taking a link out of one menu is not the same as unpublishing a page.
+         */
         title: "Help",
-        links: [
-          { label: "Shipping", href: "/shipping" },
-          { label: "Returns", href: "/returns" },
-          { label: "Terms of sale", href: "/terms" },
-        ],
+        links: [{ label: "Returns", href: "/returns" }],
       },
     ],
     legal: [
