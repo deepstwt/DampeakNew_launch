@@ -332,7 +332,6 @@ export const DOCS: Doc[] = [
         list: [
           COMPANY.trading.toUpperCase(),
           `Email: ${COMPANY.supportEmail}`,
-          `Address: ${COMPANY.address}`,
         ],
       },
     ],
@@ -369,7 +368,7 @@ export const DOCS: Doc[] = [
       {
         heading: "Delivery",
         body: [
-          "Delivery times are estimates. Risk in the goods passes to you on delivery. See our Shipping page for current areas and timescales.",
+          "Delivery times are estimates. Risk in the goods passes to you on delivery.",
         ],
       },
       {
@@ -415,50 +414,6 @@ export const DOCS: Doc[] = [
         heading: "Governing law",
         body: [
           `These terms are governed by the laws of India, and the courts of ${COMPANY.jurisdiction} have jurisdiction. If you are a consumer resident elsewhere, you keep the protection of the mandatory laws of your country.`,
-        ],
-      },
-    ],
-  },
-
-  {
-    slug: "shipping",
-    title: "Shipping",
-    summary: "Where we deliver, how long it takes, and what it costs.",
-    updated: "August 2026",
-    sections: [
-      {
-        heading: "Where we deliver",
-        body: [
-          "We currently deliver across India. [Confirm serviceable pin codes and any exclusions.]",
-        ],
-      },
-      {
-        heading: "Dispatch and delivery times",
-        list: [
-          "Orders placed before [cut-off time] on a working day are dispatched the same day.",
-          "Metro cities: [X–X] working days.",
-          "Rest of India: [X–X] working days.",
-          "Delivery estimates exclude Sundays and public holidays.",
-        ],
-      },
-      {
-        heading: "Charges",
-        list: [
-          "Standard delivery: ₹[amount].",
-          "Free delivery on orders over ₹[amount].",
-          "Any duties or local charges, where applicable, are shown before payment.",
-        ],
-      },
-      {
-        heading: "Tracking",
-        body: [
-          "You will get a tracking link by email once your order is dispatched. If tracking has not updated for [X] working days, contact us and we will chase the carrier.",
-        ],
-      },
-      {
-        heading: "If something goes wrong",
-        body: [
-          "If your parcel arrives damaged, photograph it before opening where you can, and contact us within [X] days. We will replace it or refund you.",
         ],
       },
     ],
@@ -551,60 +506,6 @@ export const DOCS: Doc[] = [
   },
 
   {
-    slug: "faq",
-    title: "Questions",
-    summary: "The things people ask most.",
-    updated: "August 2026",
-    format: "faq",
-    sections: [
-      {
-        heading: "How long does delivery take?",
-        body: [
-          "Metro cities usually [X–X] working days, rest of India [X–X]. You get a tracking link as soon as your order leaves us.",
-        ],
-      },
-      {
-        heading: "Can I return something if I change my mind?",
-        body: [
-          "Yes — within [X] days, unused and in its original packaging. Full details are on the Returns page.",
-        ],
-      },
-      {
-        heading: "Is there a warranty?",
-        body: [
-          "Every product carries a [X]-year warranty against manufacturing defects, on top of your statutory rights.",
-        ],
-      },
-      {
-        heading: "Do you ship outside India?",
-        body: ["Not yet. Join the email list and we will tell you when that changes."],
-      },
-      {
-        heading: "How do I track my order?",
-        body: [
-          `Use the link in your dispatch email. If it has not updated for a few days, email ${COMPANY.supportEmail} with your order number.`,
-        ],
-      },
-      {
-        heading: "What payment methods do you take?",
-        body: ["[UPI, cards, net banking, wallets — confirm with your payment provider.]"],
-      },
-      {
-        heading: "Are your products safe for children?",
-        body: [
-          "Our products are designed for adults unless a listing says otherwise. Check the individual product page for age guidance and any small-parts warning.",
-        ],
-      },
-      {
-        heading: "How do I unsubscribe from emails?",
-        body: [
-          "Use the unsubscribe link at the bottom of any email. It takes effect immediately.",
-        ],
-      },
-    ],
-  },
-
-  {
     slug: "contact",
     title: "Contact",
     summary: "Talk to a person.",
@@ -622,7 +523,6 @@ export const DOCS: Doc[] = [
           `General: ${COMPANY.email}`,
           `Privacy requests: ${COMPANY.privacyEmail}`,
           `Phone: ${COMPANY.phone}`,
-          `Post: ${COMPANY.address}`,
         ],
       },
       {
@@ -630,7 +530,6 @@ export const DOCS: Doc[] = [
         list: [
           `Registered name: ${COMPANY.legalName}`,
           `Trading as: ${COMPANY.trading}`,
-          `Registered address: ${COMPANY.address}`,
           `Registration number: ${COMPANY.cin}`,
           `GSTIN: ${COMPANY.gstin}`,
           `Email: ${COMPANY.email}`,
