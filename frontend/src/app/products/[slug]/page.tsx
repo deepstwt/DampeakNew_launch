@@ -6,7 +6,6 @@ import { PRODUCTS, getAmazonUrl, getProduct, primaryImage, site } from "@/conten
 import { SITE_URL } from "@/lib/site-url";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { ProductPhoto } from "@/components/ui/ProductPhoto";
-import { ProductGallery } from "@/components/ui/ProductGallery";
 import { BuyNowButton } from "@/components/ui/BuyNowButton";
 import { SaveButton } from "@/components/ui/SaveButton";
 import { Nav } from "@/components/ui/Nav";
@@ -120,15 +119,27 @@ export default async function ProductPage({
           />
 
 
-          {/* Not a even split: the thumbnail rail eats into the gallery column,
-              and the copy beside it is short. 7/5 keeps the main image large. */}
+          {/* Not an even split: the picture carries this page and the copy
+              beside it is short, so 7/5 keeps the image large. */}
           <div className="mt-10 grid gap-10 lg:grid-cols-[7fr_5fr] lg:gap-16">
-            <ProductGallery
-              images={product.images}
-              name={product.name}
-              slug={product.slug}
-              swatch={product.swatch}
-            />
+            {/**
+             * One photograph.
+             *
+             * A rail of four frames stood here — the shot that exists, and three
+             * placeholders for the ones that do not. `images` is still an array
+             * and `primaryImage` still answers "the one that stands for this
+             * product", so a gallery is a component away if there is ever more
+             * than one shot to put in it.
+             */}
+            <div className="relative aspect-square overflow-hidden rounded-3xl bg-ink/5">
+              <ProductPhoto
+                image={cover}
+                name={product.name}
+                slug={product.slug}
+                swatch={product.swatch}
+                priority
+              />
+            </div>
 
             {/* The case for it */}
             <div className="lg:pt-6">
