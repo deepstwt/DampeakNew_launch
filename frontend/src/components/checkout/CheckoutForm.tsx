@@ -100,10 +100,11 @@ export function CheckoutForm() {
        * Express checkout.
        *
        * The three wallets from the reference, drawn from the artwork each brand
-       * supplies. They are disabled — none of them is connected to anything —
-       * and the banner above the form says the page takes no payment, which is
-       * what keeps a row of familiar payment marks from implying a checkout that
-       * works.
+       * supplies. None is connected to anything, so all three are disabled —
+       * which is now the only thing saying so. The banner above the form and the
+       * line under this row both came off, and what is left to tell a visitor
+       * where they stand is the controls: these, the discount field and Continue
+       * to shipping are all inert, and the page has no card field anywhere.
        *
        * Each logo arrives on its own flat field, so the button takes that field
        * as its background rather than trying to sit the mark on a colour of
@@ -137,9 +138,6 @@ export function CheckoutForm() {
           ))}
         </ul>
 
-        <p className="mt-3 text-center text-[13px] font-semibold text-ink/40">
-          Wallets turn on once a payment provider is connected.
-        </p>
       </section>
 
       <div className="my-8 flex items-center gap-4">
