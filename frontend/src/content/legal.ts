@@ -25,7 +25,17 @@ export const COMPANY = {
   email: "hello@dampeak.com",
   supportEmail: "support@dampeak.com",
   privacyEmail: "privacy@dampeak.com",
-  phone: "[Support phone]",
+  /**
+   * The support line and when it is answered.
+   *
+   * Both came from the reference the contact page was designed against, which
+   * is another company's website. Confirm the number is ours before this is
+   * public: a phone number on a contact page is an instruction, and a wrong one
+   * sends our customers to someone else's switchboard.
+   */
+  phone: "(305) 306-0766",
+  phoneHref: "tel:+13053060766",
+  hours: "Mon – Fri, 11am – 6pm EST",
   /**
    * Where approved returns are posted. Separate from the registered address on
    * purpose — the place that receives parcels is rarely the place on the
@@ -506,46 +516,6 @@ export const DOCS: Doc[] = [
         body: [
           "We do not currently offer direct exchanges.",
           `If you would like a different ${COMPANY.trading.toUpperCase()} product, please contact us regarding your original order and we can advise you on the available options.`,
-        ],
-      },
-    ],
-  },
-
-  {
-    slug: "contact",
-    title: "Contact",
-    summary: "Talk to a person.",
-    updated: "August 2026",
-    sections: [
-      {
-        heading: "Support",
-        body: [
-          `Email ${COMPANY.supportEmail} and we will reply within [X] working hours. Include your order number if you have one — it gets you a faster answer.`,
-        ],
-      },
-      {
-        heading: "Everything else",
-        list: [
-          `General: ${COMPANY.email}`,
-          `Privacy requests: ${COMPANY.privacyEmail}`,
-          `Phone: ${COMPANY.phone}`,
-        ],
-      },
-      {
-        heading: "Company details",
-        list: [
-          `Registered name: ${COMPANY.legalName}`,
-          `Trading as: ${COMPANY.trading}`,
-          `Registration number: ${COMPANY.cin}`,
-          `GSTIN: ${COMPANY.gstin}`,
-          `Email: ${COMPANY.email}`,
-        ],
-      },
-      {
-        heading: "Complaints",
-        body: [
-          "If we have got something wrong, say so and we will fix it. If you are still unhappy, you can escalate to the grievance officer named below, as required by the Consumer Protection (E-Commerce) Rules 2020.",
-          "Grievance Officer: [Name], [email], [phone]. We acknowledge complaints within 48 hours and resolve them within one month.",
         ],
       },
     ],
