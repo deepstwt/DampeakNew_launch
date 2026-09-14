@@ -142,21 +142,33 @@ export default async function DocPage({ params }: PageProps<"/[doc]">) {
             </Link>
           ) : null}
 
-          {/* Cross-links: policies are useless if you can't get between them */}
-          <nav aria-label="Other pages" className="mt-16 border-t border-ink/10 pt-8">
-            <ul className="flex flex-wrap gap-2">
-              {DOCS.filter((d) => d.slug !== doc.slug).map((d) => (
-                <li key={d.slug}>
-                  <Link
-                    href={`/${d.slug}`}
-                    className="text-marker rounded-squish-alt inline-block border border-ink/15 px-4 py-2.5 text-ink/60 transition-colors hover:border-ink/40 hover:text-ink"
-                  >
-                    {d.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          {/**
+           * Cross-links: policies are useless if you can't get between them.
+           *
+           * Off the non-legal documents, which today means About. Someone who
+           * has just read the company story and reached a Shop button is not
+           * looking for the cookie policy, and a row of legal pills under it
+           * was the last thing on the page.
+           */}
+          {doc.legal !== false ? (
+            <nav
+              aria-label="Other pages"
+              className="mt-16 border-t border-ink/10 pt-8"
+            >
+              <ul className="flex flex-wrap gap-2">
+                {DOCS.filter((d) => d.slug !== doc.slug).map((d) => (
+                  <li key={d.slug}>
+                    <Link
+                      href={`/${d.slug}`}
+                      className="text-marker rounded-squish-alt inline-block border border-ink/15 px-4 py-2.5 text-ink/60 transition-colors hover:border-ink/40 hover:text-ink"
+                    >
+                      {d.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ) : null}
         </article>
       </main>
 
