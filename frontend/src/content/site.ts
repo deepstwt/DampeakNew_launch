@@ -6,9 +6,8 @@
  * get away with. All photography is placeholder until our own shoot lands.
  *
  * Copy source: site_copy.md at the repo root (the copy deck). Where the deck
- * still carries an author placeholder — "(material)" in every product's first
- * bullet — it is reproduced verbatim rather than invented around. Search this
- * file for MATERIAL_TBD to find them all.
+ * carries an author placeholder, the copy around it is cut rather than shipped
+ * with brackets in it — see the note on `reasons` below.
  */
 
 /**
@@ -27,15 +26,6 @@
  */
 export type ProductPhoto = { src: string; alt: string };
 
-const u = (id: string, w = 1400) =>
-  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`;
-
-/**
- * The deck writes this as "(material)" because the compound has not been chosen
- * yet. One constant so the day it is decided is a one-line change, not four.
- */
-const MATERIAL_TBD = "(material)";
-
 /**
  * Every product's description follows the same three-part shape from the deck:
  * a section headline, one paragraph, then the reasons. Shared so a fifth product
@@ -45,11 +35,13 @@ const squeezeCopy = (product: string, design: string) => ({
   headline: "Soft, Satisfying & Made to Squeeze",
   body: `Meet your new favorite squeeze companion. Our ${product} is designed for satisfying, repetitive squeezing whenever you're anxious, stressed, and your hands need something to do. Its soft squishy texture and soft slow rising feel makes it enjoyable to squeeze again and again.`,
   reasonsTitle: "Why You'll Love It",
+  /**
+   * The deck opens this list with "Soft & Satisfying: Made with (material) for a
+   * soft, squeezable texture." The compound has not been chosen, and the bullet
+   * says nothing without it — so it is out until there is a material to name,
+   * rather than shipping the word "(material)" to a customer.
+   */
   reasons: [
-    {
-      title: "Soft & Satisfying",
-      text: `Made with ${MATERIAL_TBD} for a soft, squeezable texture.`,
-    },
     {
       title: "Made for Repeated Squeezing",
       text: "Designed to withstand regular use without easily losing its shape.",
@@ -240,13 +232,14 @@ export const site = {
     tagline:
       "Because sometimes anxiety and stress isn't loud, and a little squeeze is what you need at that moment.",
     cta: { label: "Start Squeezing", href: "/products" },
-    image: {
-      // TODO — placeholder. The deck's lifestyle shot (a hand squeezing the
-      // toasted bread at a desk, the other three on a plate) is still being
-      // generated; drop it in here and the section takes it as-is.
-      src: u("1674475760738-8c7af859f821", 2000),
-      alt: "A soft knitted blanket draped over a sofa",
-    },
+    /**
+     * No photograph. The deck's lifestyle shot — a hand squeezing the toasted
+     * bread at a desk, the other three on a plate — has not been made yet, and
+     * what stood here in the meantime was a stock picture of a knitted blanket:
+     * the wrong object, under a headline about squeezing. The section carries
+     * its own type until the real shot exists; add `image` back and Band takes
+     * it as the full-bleed background again.
+     */
   },
 
   /**
@@ -341,23 +334,3 @@ export const getProduct = (slug: string) =>
 export const primaryImage = (p: { images: readonly ProductPhoto[] }) =>
   p.images[0] ?? null;
 
-/**
- * Where each product is actually sold.
- *
- * This site is the pitch; Amazon is the checkout. Paste a listing URL here and
- * that product's page switches from a disabled "Currently unavailable" button to a
- * live "Buy Now". Nothing else needs changing — the structured data follows it.
- *
- * Kept as Record<string, string> rather than folded into the `as const` product
- * data on purpose: this is the field expected to change most often, and an empty
- * string here has to stay assignable to a real URL later.
- */
-export const AMAZON_URLS: Record<string, string> = {
-  "blue-block": "",
-  "pillow-squish": "",
-  "cheese-cube": "",
-  "marble-cube": "",
-};
-
-/** null rather than "" so callers branch on presence, not on emptiness. */
-export const getAmazonUrl = (slug: string) => AMAZON_URLS[slug]?.trim() || null;

@@ -2,11 +2,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { PRODUCTS, getAmazonUrl, getProduct, primaryImage, site } from "@/content/site";
+import { PRODUCTS, getProduct, primaryImage, site } from "@/content/site";
 import { SITE_URL } from "@/lib/site-url";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { ProductPhoto } from "@/components/ui/ProductPhoto";
-import { BuyNowButton } from "@/components/ui/BuyNowButton";
 import { SaveButton } from "@/components/ui/SaveButton";
 import { Nav } from "@/components/ui/Nav";
 import { Footer } from "@/components/ui/Footer";
@@ -53,7 +52,6 @@ export default async function ProductPage({
   const product = getProduct(slug);
   if (!product) notFound();
 
-  const amazonUrl = getAmazonUrl(product.slug);
   const copy = product.description;
   const cover = primaryImage(product);
 
@@ -66,9 +64,9 @@ export default async function ProductPage({
    *
    * Two deliberate choices, both about not making claims we cannot back:
    *
-   *   - `offers.url` points wherever the sale actually happens. Google compares
-   *     offer data against the page it lands on, and pointing it here while the
-   *     transaction is on Amazon is the disagreement that gets flagged.
+   *   - `offers.url` points wherever the sale actually happens, which is this
+   *     site's own checkout. Google compares offer data against the page it
+   *     lands on, and a mismatch there is what gets flagged.
    *   - No `availability`. It is only ever a copy of Amazon's stock at the moment
    *     this page was built, and a stale InStock is worse than none.
    */
@@ -92,7 +90,7 @@ export default async function ProductPage({
       ...(product.price
         ? { price: product.price.replace(/[^\d.]/g, ""), priceCurrency: "USD" }
         : {}),
-      url: amazonUrl ?? `${SITE_URL}/products/${product.slug}`,
+      url: `${SITE_URL}/products/${product.slug}`,
     },
   };
 
@@ -181,30 +179,23 @@ export default async function ProductPage({
               </p>
 
               {/**
-               * Buy Now.
+               * Buy Now — one destination.
                *
-               * Two destinations, and which one is right is an open question
-               * rather than a fallback. With an Amazon listing it goes there,
-               * behind the sign-in gate — that gate exists because the click is
-               * the last moment we can know someone was interested before Amazon
-               * takes the relationship. Without one it goes to our own checkout,
-               * where signing in is the visitor's choice, the way the reference
-               * checkout offers it.
-               *
-               * Both cannot be the plan. AMAZON_URLS is empty, so today every
-               * product takes the second path.
+               * It used to fork: an Amazon listing if one existed, our own
+               * checkout if not. The listing URLs were four empty strings, so the
+               * Amazon half never ran, and with a checkout of our own the reason
+               * behind it — that the click was the last moment we could know
+               * someone was interested before Amazon took the relationship — no
+               * longer applies. The fork is gone rather than left waiting on
+               * data that would reopen a decision already made.
                */}
-              {amazonUrl ? (
-                <BuyNowButton amazonUrl={amazonUrl} productName={product.name} />
-              ) : (
-                <Link
-                  href={`/checkout?product=${product.slug}`}
-                  className="rounded-full mt-10 inline-flex items-center gap-3 bg-blue px-9 py-4.5 text-[17px] font-extrabold text-white transition hover:brightness-110 active:scale-[0.98]"
-                >
-                  Buy Now
-                  <ArrowRight className="size-5" strokeWidth={2.6} />
-                </Link>
-              )}
+              <Link
+                href={`/checkout?product=${product.slug}`}
+                className="rounded-full mt-10 inline-flex items-center gap-3 bg-blue px-9 py-4.5 text-[17px] font-extrabold text-white transition hover:brightness-110 active:scale-[0.98]"
+              >
+                Buy Now
+                <ArrowRight className="size-5" strokeWidth={2.6} />
+              </Link>
 
               <SaveButton slug={product.slug} className="mt-6" />
             </div>
