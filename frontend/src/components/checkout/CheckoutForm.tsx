@@ -124,7 +124,15 @@ function Field({
 export function CheckoutForm() {
   const [step, setStep] = useState<Step>("Information");
   const [values, setValues] = useState<Record<string, string>>({});
-  const [delivery, setDelivery] = useState<string>(DELIVERY[0].id);
+  /**
+   * Nothing preselected.
+   *
+   * Standard was checked on arrival, which made Continue to payment's condition
+   * one that was already met before the visitor did anything — so the button had
+   * no reason to change and sat dull with a choice apparently made for them.
+   * Starting empty gives the step something to complete.
+   */
+  const [delivery, setDelivery] = useState<string | null>(null);
 
   const set = (id: FieldName) => (v: string) =>
     setValues((prev) => ({ ...prev, [id]: v }));
@@ -265,7 +273,7 @@ export function CheckoutForm() {
             <ArrowRight className="size-5" strokeWidth={3} />
           </button>
         </form>
-      ) : (
+      ) : step === "Shipping" ? (
         <div className="mt-8">
           <section aria-labelledby="delivery">
             <h2 id="delivery" className="text-[19px] font-extrabold tracking-tight">
@@ -308,13 +316,16 @@ export function CheckoutForm() {
           </section>
 
           <div className="mt-8 flex flex-wrap items-center gap-4">
-            {/* Payment is where this stops: no provider is connected, so this
-                one cannot come on the way the last one did. */}
             <button
               type="button"
-              disabled
-              aria-disabled
-              className="rounded-squish inline-flex cursor-not-allowed items-center gap-3 bg-ink/10 px-8 py-4.5 text-[17px] font-extrabold text-ink/35"
+              onClick={() => delivery && setStep("Payment")}
+              disabled={!delivery}
+              aria-disabled={!delivery}
+              className={`rounded-squish inline-flex items-center gap-3 px-8 py-4.5 text-[17px] font-extrabold transition ${
+                delivery
+                  ? "bg-blue text-white hover:brightness-110 active:scale-[0.98]"
+                  : "cursor-not-allowed bg-ink/10 text-ink/35"
+              }`}
             >
               Continue to payment
               <ArrowRight className="size-5" strokeWidth={3} />
@@ -327,6 +338,73 @@ export function CheckoutForm() {
             >
               <ArrowLeft className="size-4" strokeWidth={3} />
               Back to information
+            </button>
+          </div>
+        </div>
+      ) : (
+        /**
+         * Payment — where the flow stops, and has to.
+         *
+         * No card fields. Not "not yet": card details are always collected by the
+         * payment provider's own hosted fields, never by inputs of ours, and a
+         * card number typed into a form that cannot process it is the one
+         * mistake on this page that would cost a real person real money.
+         *
+         * So this step shows the wallets it will use and a Place order that
+         * cannot come on. It is a dead end by design — the next thing this page
+         * needs is a merchant account, not more markup.
+         */
+        <div className="mt-8">
+          <section aria-labelledby="pay">
+            <h2 id="pay" className="text-[19px] font-extrabold tracking-tight">
+              Payment
+            </h2>
+
+            <p className="mt-3 text-[15px] leading-relaxed font-semibold text-ink/55">
+              Payment methods appear here once a provider is connected. Nothing
+              is charged on this page.
+            </p>
+
+            <ul className="mt-5 grid gap-3 sm:grid-cols-3">
+              {WALLETS.map((wallet) => (
+                <li key={wallet.name}>
+                  <button
+                    type="button"
+                    disabled
+                    aria-label={`Pay with ${wallet.name} — not available yet`}
+                    className={`flex h-12 w-full items-center justify-center overflow-hidden rounded-xl opacity-60 ${wallet.border ? "border border-ink/15" : ""}`}
+                    style={{ background: wallet.background }}
+                  >
+                    <Image
+                      src={wallet.src}
+                      alt={wallet.name}
+                      width={wallet.width}
+                      height={wallet.height}
+                      className="h-full w-auto object-contain"
+                    />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <div className="mt-8 flex flex-wrap items-center gap-4">
+            <button
+              type="button"
+              disabled
+              aria-disabled
+              className="rounded-squish inline-flex cursor-not-allowed items-center gap-3 bg-ink/10 px-8 py-4.5 text-[17px] font-extrabold text-ink/35"
+            >
+              Place order
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setStep("Shipping")}
+              className="inline-flex items-center gap-2 text-[15px] font-bold text-ink/55 transition-colors hover:text-ink"
+            >
+              <ArrowLeft className="size-4" strokeWidth={3} />
+              Back to shipping
             </button>
           </div>
         </div>
