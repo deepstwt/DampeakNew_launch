@@ -19,12 +19,9 @@
 export const LEGAL_DRAFT = false;
 
 export const COMPANY = {
-  legalName: "[Company legal name]",
   trading: "Dampeak",
-  address: "[Registered address]",
   email: "hello@dampeak.com",
   supportEmail: "support@dampeak.com",
-  privacyEmail: "privacy@dampeak.com",
   /**
    * The support line and when it is answered.
    *
@@ -36,15 +33,6 @@ export const COMPANY = {
   phone: "(305) 306-0766",
   phoneHref: "tel:+13053060766",
   hours: "Mon – Fri, 11am – 6pm EST",
-  /**
-   * Where approved returns are posted. Separate from the registered address on
-   * purpose — the place that receives parcels is rarely the place on the
-   * incorporation certificate, and the returns policy publishes this one.
-   */
-  returnsAddress: "[Returns address]",
-  gstin: "[GSTIN]",
-  cin: "[CIN / registration number]",
-  jurisdiction: "[City], India",
 } as const;
 
 export type Section = {
@@ -362,7 +350,7 @@ export const DOCS: Doc[] = [
       {
         heading: "These terms",
         body: [
-          `By placing an order with ${COMPANY.legalName} you agree to these terms. Please read them before you buy. Nothing here affects your statutory rights as a consumer.`,
+          `By placing an order with ${COMPANY.trading} you agree to these terms. Please read them before you buy. Nothing here affects your statutory rights as a consumer.`,
         ],
       },
       {
@@ -429,7 +417,7 @@ export const DOCS: Doc[] = [
       {
         heading: "Governing law",
         body: [
-          `These terms are governed by the laws of India, and the courts of ${COMPANY.jurisdiction} have jurisdiction. If you are a consumer resident elsewhere, you keep the protection of the mandatory laws of your country.`,
+          "These terms are governed by the laws of India. If you are a consumer resident elsewhere, you keep the protection of the mandatory laws of your country.",
         ],
       },
     ],
@@ -451,7 +439,7 @@ export const DOCS: Doc[] = [
         heading: "Initiating a return",
         body: [
           `All returns must be pre-authorized by contacting us at ${COMPANY.supportEmail} before sending any product back.`,
-          "Items sent to our return address without receiving return instructions from us first would be rejected, and are at the customer's risk.",
+          "We will reply with the return address and instructions. Items sent back without receiving those instructions from us first would be rejected, and are at the customer's risk.",
         ],
       },
       {
@@ -481,12 +469,6 @@ export const DOCS: Doc[] = [
           "Customers are responsible for securely packaging approved returns to help prevent damage during transit.",
           `${COMPANY.trading} is not liable for items lost or damaged during the return transit.`,
           "All return-shipping costs are the responsibility of the customer.",
-        ],
-      },
-      {
-        heading: "Return address",
-        body: [
-          `Approved returns must be mailed to the following address: ${COMPANY.returnsAddress}`,
         ],
       },
       {

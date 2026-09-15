@@ -51,15 +51,14 @@ export default async function CheckoutPage({
    * to be added up. Quantity is fixed at one: there is no cart, so there is
    * nothing that could make it two.
    *
-   * Tax is shown as a share of the total rather than added on top, which is what
-   * a tax-inclusive price means — the line under the total says how much of it
-   * is tax, it does not raise it.
+   * No tax line. It said "Including $1.36 in taxes", worked out from a ten
+   * percent rate invented for the mockup — a number a customer would read as
+   * ours. There is no tax engine behind this page and no market settled, so the
+   * total is the price until there is a real rate to apply.
    */
   const unit = Number(product.price?.replace(/[^\d.]/g, "") ?? 0);
   const quantity = 1;
   const subtotal = unit * quantity;
-  const TAX_RATE = 0.1;
-  const includedTax = subtotal - subtotal / (1 + TAX_RATE);
 
   const money = (n: number) =>
     n.toLocaleString("en-US", { style: "currency", currency: "USD" });
@@ -217,12 +216,7 @@ export default async function CheckoutPage({
           </dl>
 
           <div className="mt-6 flex items-end justify-between border-t border-ink/10 pt-6">
-            <div>
-              <p className="text-[17px] font-extrabold">Total</p>
-              <p className="mt-1 text-[13px] font-semibold text-ink/45">
-                Including {money(includedTax)} in taxes
-              </p>
-            </div>
+            <p className="text-[17px] font-extrabold">Total</p>
             <p className="text-display text-[28px]">
               <span className="mr-1.5 align-middle text-[13px] font-bold text-ink/45">
                 USD
