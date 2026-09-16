@@ -25,16 +25,25 @@ export const metadata: Metadata = {
 export default async function CheckoutPage({
   searchParams,
 }: PageProps<"/checkout">) {
-  const { product: slug } = await searchParams;
+  const { product: slug, qty } = await searchParams;
   const product =
     (typeof slug === "string" ? getProduct(slug) : undefined) ?? PRODUCTS[0];
 
   /**
-   * One line, one quantity. There is no cart, so there is nothing that could
-   * make it two — and the money is formatted here rather than in the component,
-   * which should not have to know a currency.
+   * One line, and however many of it the product page was left on.
+   *
+   * `qty` arrives from a Buy Now and is treated as hostile: it is a number in a
+   * URL, so it can be "0", "-3", "abc" or "1e9". Clamped to the same 1–10 the
+   * stepper offers, because a checkout that says "×1000000" because someone
+   * edited the address bar is a checkout that will eventually be screenshotted.
+   *
+   * The money is formatted here rather than in the component, which should not
+   * have to know a currency.
    */
-  const quantity = 1;
+  const asked = Number(Array.isArray(qty) ? qty[0] : qty);
+  const quantity = Number.isFinite(asked)
+    ? Math.min(10, Math.max(1, Math.floor(asked)))
+    : 1;
   const unit = Number(product.price?.replace(/[^\d.]/g, "") ?? 0);
   const price = (unit * quantity).toLocaleString("en-US", {
     style: "currency",

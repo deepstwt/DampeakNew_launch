@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { PRODUCTS, getProduct, primaryImage, site } from "@/content/site";
 import { SITE_URL } from "@/lib/site-url";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { ProductPhoto } from "@/components/ui/ProductPhoto";
+import { BuyPanel } from "@/components/ui/BuyPanel";
 import { SaveButton } from "@/components/ui/SaveButton";
 import { Nav } from "@/components/ui/Nav";
 import { Footer } from "@/components/ui/Footer";
@@ -180,23 +180,13 @@ export default async function ProductPage({
               </p>
 
               {/**
-               * Buy Now — one destination.
+               * How many, and then Buy Now.
                *
-               * It used to fork: an Amazon listing if one existed, our own
-               * checkout if not. The listing URLs were four empty strings, so the
-               * Amazon half never ran, and with a checkout of our own the reason
-               * behind it — that the click was the last moment we could know
-               * someone was interested before Amazon took the relationship — no
-               * longer applies. The fork is gone rather than left waiting on
-               * data that would reopen a decision already made.
+               * Both live in BuyPanel because the button carries the number —
+               * quantity reaches the checkout in the href, so a stepper sitting
+               * apart from the link would be a control that changes nothing.
                */}
-              <Link
-                href={`/checkout?product=${product.slug}`}
-                className="rounded-full mt-10 inline-flex items-center gap-3 bg-blue px-9 py-4.5 text-[17px] font-extrabold text-white transition hover:brightness-110 active:scale-[0.98]"
-              >
-                Buy Now
-                <ArrowRight className="size-5" strokeWidth={2.6} />
-              </Link>
+              <BuyPanel slug={product.slug} />
 
               <SaveButton slug={product.slug} className="mt-6" />
             </div>
