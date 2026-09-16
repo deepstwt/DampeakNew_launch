@@ -64,6 +64,27 @@ const squeezeCopy = (name: string, giftSubject: string) => [
   },
 ];
 
+/**
+ * The three things a product page says under its price, before the description.
+ *
+ * The same three on all four, because they are true of all four — who it is for,
+ * what it does, and what it is bought as. They replace the one-line `fact` that
+ * used to sit here, which was a different sentence per product and described the
+ * material ("matte foam, not plastic") to someone who has not decided to care yet.
+ *
+ * `icon` names a drawing in ProductHighlights rather than carrying an emoji.
+ * Emoji are a font, not artwork: 🧑 renders as a different person on every
+ * platform and as a blank box where the font is missing, and none of them can be
+ * asked to match the stroke weight of the rest of this page.
+ */
+export const HIGHLIGHTS = [
+  { icon: "age", label: "14+" },
+  { icon: "squeeze", label: "Satisfying Squeeze" },
+  { icon: "gift", label: "Perfect Gift" },
+] as const;
+
+export type Highlight = (typeof HIGHLIGHTS)[number];
+
 export const site = {
   name: "Dampeak",
   tagline: "Made for Better Everyday",
@@ -86,9 +107,23 @@ export const site = {
     /**
      * The four products. This is the whole catalogue — there is no fifth.
      *
-     * `name` is the shelf name, short enough for a card. `fullName` is the
-     * listing title from the deck, used as the page heading and in metadata,
-     * because that is the string a search for "cheese cube stress toy" matches.
+     * `name` is the product's name, and there is only one of it: the heading on
+     * its page, the card, the breadcrumb, the checkout line, the <title>, the
+     * share preview and the structured data all print this string.
+     *
+     * There used to be two — a short shelf name for the heading and a longer
+     * listing title underneath it — which read as two products with similar
+     * names rather than as one product named once. Keeping the listing title as
+     * the name is what lets the second field go: it already carries the words
+     * someone types into a search box, so nothing is left for a `fullName` to
+     * do that this does not.
+     *
+     * `fact` is the one-line description, and it is also no longer on the page:
+     * it is the meta and share description, which is where a sentence about how
+     * the thing feels does its work — in a search result, before the visitor has
+     * arrived. On the page it sat between the price and the three highlights,
+     * saying something about the material to someone still deciding whether they
+     * want one at all.
      *
      * `specs` mirrors the manufacturing sheet exactly (shape, theme, surface
      * finish, colour, edge profile) so the details table on each product page is
@@ -112,8 +147,7 @@ export const site = {
       {
         id: "blue-block",
         slug: "blue-block",
-        name: "Rounded Cube",
-        fullName: "Rounded Cube Squeeze Toy",
+        name: "Rounded Cube Squeeze Toy",
         fact: "Big enough to need a whole hand. Squeeze it flat, let go, and it takes its own time coming back.",
         description: squeezeCopy(
           "Rounded Cube",
@@ -127,11 +161,22 @@ export const site = {
           edge: "Rounded",
         },
         swatch: "#33b6d6",
-        // Photographed. The price is still outstanding.
         images: [
           {
             src: "/products/blue-block.webp",
             alt: "The Rounded Cube squishy: a translucent blue cube with softly rounded corners.",
+          },
+          {
+            src: "/products/blue-block-2.webp",
+            alt: "The Rounded Cube squishy alone on white, its glassy faces catching the light.",
+          },
+          {
+            src: "/products/blue-block-3.webp",
+            alt: "The Rounded Cube squishy squeezed in one hand, its faces buckling inward around the fingers.",
+          },
+          {
+            src: "/products/blue-block-4.webp",
+            alt: "The Rounded Cube squishy from a lower angle, showing the rippled surface of its top face.",
           },
         ] as ProductPhoto[],
         price: "$14.99" as string | null,
@@ -139,8 +184,7 @@ export const site = {
       {
         id: "pillow-squish",
         slug: "pillow-squish",
-        name: "Toasted Bread",
-        fullName: "Toasted Bread Squeeze Toy",
+        name: "Toasted Bread Squeeze Toy",
         fact: "Matte foam, not plastic. It gives immediately, which makes it the one you reach for without thinking.",
         description: squeezeCopy(
           "Toasted Bread",
@@ -154,11 +198,26 @@ export const site = {
           edge: "Rounded",
         },
         swatch: "#f0aeba",
-        // Photographed. The price is still outstanding.
         images: [
           {
             src: "/products/pillow-squish.webp",
             alt: "The Toasted Bread squishy beside its retail box, and a second one being squeezed in one hand.",
+          },
+          {
+            src: "/products/pillow-squish-2.webp",
+            alt: "The Toasted Bread squishy face on, its pink centre freckled like a toasted crust.",
+          },
+          {
+            src: "/products/pillow-squish-3.webp",
+            alt: "The Toasted Bread squishy pressed deeply with a thumb, dimpling in one hand.",
+          },
+          {
+            src: "/products/pillow-squish-4.webp",
+            alt: "Two Toasted Bread squishies resting one behind the other.",
+          },
+          {
+            src: "/products/pillow-squish-5.webp",
+            alt: "The Toasted Bread squishy at an angle, showing how thick and pillowed it is.",
           },
         ] as ProductPhoto[],
         price: "$14.99" as string | null,
@@ -166,8 +225,7 @@ export const site = {
       {
         id: "cheese-cube",
         slug: "cheese-cube",
-        name: "Cheese Cube",
-        fullName: "Cheese Cube Squeeze Toy",
+        name: "Cheese Cube Squeeze Toy",
         fact: "The moulded holes give your fingers somewhere to go, so it never lands in your hand the same way twice.",
         description: squeezeCopy(
           "Cheese Cube",
@@ -181,11 +239,22 @@ export const site = {
           edge: "Soft edges",
         },
         swatch: "#eeba3c",
-        // Photographed. The price is still outstanding.
         images: [
           {
             src: "/products/cheese-cube.webp",
             alt: "The Cheese Cube squishy, moulded with holes on every face, with four miniature cheese cubes in front of it.",
+          },
+          {
+            src: "/products/cheese-cube-2.webp",
+            alt: "The Cheese Cube squishy alone on white, holes moulded into every face.",
+          },
+          {
+            src: "/products/cheese-cube-3.webp",
+            alt: "The Cheese Cube squishy gripped in one hand, its holes closing as it compresses.",
+          },
+          {
+            src: "/products/cheese-cube-4.webp",
+            alt: "The Cheese Cube squishy seen from above, the top face pitted with holes of different sizes.",
           },
         ] as ProductPhoto[],
         price: "$14.99" as string | null,
@@ -193,8 +262,7 @@ export const site = {
       {
         id: "marble-cube",
         slug: "marble-cube",
-        name: "Marbled Cube",
-        fullName: "Marbled Cube Squeeze Toy",
+        name: "Marbled Cube Squeeze Toy",
         fact: "No two are marbled alike. Smooth all over, so it slides between your fingers rather than catching.",
         description: squeezeCopy(
           "Marbled Cube",
@@ -208,11 +276,22 @@ export const site = {
           edge: "Rounded",
         },
         swatch: "#b743bd",
-        // Photographed. The price is still outstanding.
         images: [
           {
             src: "/products/marble-cube.webp",
-            alt: "Marbled Cube squishies in five colourways beside the retail box, and one being squeezed in one hand.",
+            alt: "Four Marbled Cube squishies stacked together — purple, orange, blue and green, each marbled differently.",
+          },
+          {
+            src: "/products/marble-cube-2.webp",
+            alt: "The Marbled Cube squishy in purple, pink and white swirls, alone on white.",
+          },
+          {
+            src: "/products/marble-cube-3.webp",
+            alt: "The Marbled Cube squishy squeezed in one hand until its sides fold.",
+          },
+          {
+            src: "/products/marble-cube-4.webp",
+            alt: "The Marbled Cube squishy held in the fingertips, one corner still unsqueezed.",
           },
         ] as ProductPhoto[],
         price: "$14.99" as string | null,
@@ -239,13 +318,19 @@ export const site = {
       "Because sometimes anxiety and stress isn't loud, and a little squeeze is what you need at that moment.",
     cta: { label: "Start Squeezing", href: "/products" },
     /**
-     * No photograph. The deck's lifestyle shot — a hand squeezing the toasted
-     * bread at a desk, the other three on a plate — has not been made yet, and
-     * what stood here in the meantime was a stock picture of a knitted blanket:
-     * the wrong object, under a headline about squeezing. The section carries
-     * its own type until the real shot exists; add `image` back and Band takes
-     * it as the full-bleed background again.
+     * The lifestyle shot, at last — and the right object this time: the thing in
+     * his hand is one of ours, being squeezed, which is what the headline is
+     * about. The stand-in it replaces was a stock knitted blanket.
+     *
+     * The composition decides where the type goes. He sits in the left half and
+     * looks across to the right, so the copy sits in the right half: the empty
+     * half of the frame, and the one his eyeline already points at. Moving the
+     * copy left would lay it over him and make him look past it at nothing.
      */
+    image: {
+      src: "/lifestyle/soft-moments.webp",
+      alt: "A man sitting outside in an evening garden, squeezing a yellow squishy in one hand.",
+    },
   },
 
   /**
@@ -277,10 +362,10 @@ export const site = {
         title: "Shop",
         links: [
           { label: "All products", href: "/products" },
-          { label: "Rounded Cube", href: "/products/blue-block" },
-          { label: "Toasted Bread", href: "/products/pillow-squish" },
-          { label: "Cheese Cube", href: "/products/cheese-cube" },
-          { label: "Marbled Cube", href: "/products/marble-cube" },
+          { label: "Rounded Cube Squeeze Toy", href: "/products/blue-block" },
+          { label: "Toasted Bread Squeeze Toy", href: "/products/pillow-squish" },
+          { label: "Cheese Cube Squeeze Toy", href: "/products/cheese-cube" },
+          { label: "Marbled Cube Squeeze Toy", href: "/products/marble-cube" },
         ],
       },
       {

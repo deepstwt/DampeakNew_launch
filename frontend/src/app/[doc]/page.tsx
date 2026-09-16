@@ -107,6 +107,17 @@ export default async function DocPage({ params }: PageProps<"/[doc]">) {
                       </p>
                     ))}
 
+                    {/* One address, one block — line breaks, not paragraphs. */}
+                    {section.address ? (
+                      <address className="mt-4 text-[17px] leading-relaxed text-ink/65 not-italic">
+                        {section.address.map((line) => (
+                          <span key={line} className="block">
+                            {line}
+                          </span>
+                        ))}
+                      </address>
+                    ) : null}
+
                     {section.list ? (
                       <ul className="mt-4 space-y-2.5">
                         {section.list.map((li) => (

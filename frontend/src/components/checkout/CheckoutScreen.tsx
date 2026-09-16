@@ -5,6 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import { CheckoutSteps, type Step } from "@/components/checkout/CheckoutSteps";
+import { resolve, useCart, type ResolvedLine } from "@/lib/cart";
+import { formatUSD, fromCents } from "@/lib/money";
 
 /**
  * The checkout: Information, Shipping, Payment, and the order that follows.
@@ -13,21 +15,18 @@ import { CheckoutSteps, type Step } from "@/components/checkout/CheckoutSteps";
  * once an order is placed the summary column beside the form has nothing left
  * to do. A server component could not make that call; it cannot see this state.
  *
+ * It also owns what is being bought, for the same reason: a cart lives in the
+ * browser. `direct` is the Buy Now case, where the page was told one product and
+ * one quantity in the URL; with no `direct` this is the cart's checkout and the
+ * lines come from the cart.
+ *
  * Each step's button is dull until its step is done and live the moment it is.
  * A button that is always dull teaches a visitor it is decoration; one that is
  * always bright and does nothing is worse.
  */
 
-export type CheckoutSummary = {
-  slug: string;
-  name: string;
-  fullName: string;
-  detail: string;
-  /** Pre-formatted — the money lives in one place and this is not it. */
-  price: string;
-  image: { src: string; alt: string } | null;
-  quantity: number;
-};
+/** What a Buy Now carries: one product, one quantity, already validated. */
+export type DirectLine = { slug: string; quantity: number };
 
 /* ── The wallets ─────────────────────────────────────────────────────────── */
 
@@ -76,18 +75,25 @@ const REQUIRED = [
 
 type FieldName = (typeof REQUIRED)[number] | "organization" | "address-line2";
 
+/**
+ * `cents` is what the total is built from; `price` is what the option says on
+ * screen. Free is 0 and prints as a word, so deriving one from the other would
+ * mean either a total that cannot add up "Free" or an option labelled "$0.00".
+ */
 const DELIVERY = [
   {
     id: "standard",
     name: "Standard",
     detail: "4 – 7 business days",
     price: "Free",
+    cents: 0,
   },
   {
     id: "express",
     name: "Express",
     detail: "2 – 3 business days",
     price: "$6.00",
+    cents: 600,
   },
 ] as const;
 
@@ -131,12 +137,13 @@ function Field({
 }
 
 export function CheckoutScreen({
-  summary,
+  direct,
   legal,
 }: {
-  summary: CheckoutSummary;
+  direct: DirectLine | null;
   legal: { slug: string; title: string }[];
 }) {
+  const cart = useCart();
   const [step, setStep] = useState<Step>("Information");
   const [values, setValues] = useState<Record<string, string>>({});
   /**
@@ -149,7 +156,18 @@ export function CheckoutScreen({
    */
   const [delivery, setDelivery] = useState<string | null>(null);
   const [method, setMethod] = useState<string | null>(null);
-  const [order, setOrder] = useState<string | null>(null);
+  /**
+   * The placed order, and a snapshot of what was in it.
+   *
+   * The lines have to be copied rather than read back off the cart: placing the
+   * order empties the cart, and a confirmation that reads live cart state would
+   * come up showing nothing bought.
+   */
+  const [order, setOrder] = useState<{
+    ref: string;
+    lines: ResolvedLine[];
+    total: number;
+  } | null>(null);
 
   const set = (id: FieldName) => (v: string) =>
     setValues((prev) => ({ ...prev, [id]: v }));
@@ -169,18 +187,42 @@ export function CheckoutScreen({
   const chosenDelivery = DELIVERY.find((d) => d.id === delivery) ?? null;
 
   /**
+   * What is being bought, and what it comes to.
+   *
+   * A Buy Now resolves on the server as well as the browser, so that case paints
+   * complete on the first frame. The cart cannot: it is in localStorage, so the
+   * server renders no lines and `cart.ready` is what says whether an empty list
+   * means "empty" or "not read yet".
+   */
+  const lines = direct ? resolve([direct]) : cart.items;
+  const ready = direct ? true : cart.ready;
+
+  const subtotal = lines.reduce((sum, line) => sum + line.total, 0);
+  const shipping = chosenDelivery?.cents ?? 0;
+  const total = subtotal + shipping;
+
+  /**
+   * Where "back" goes, which is wherever this checkout was entered from: the
+   * product for a Buy Now, the cart otherwise.
+   */
+  const back =
+    direct && lines[0]
+      ? { href: `/products/${lines[0].slug}`, label: lines[0].name }
+      : { href: "/cart", label: "your cart" };
+
+  /**
    * The confirmation takes the whole column once an order is placed — no step
    * indicator, no way back into the form. That is how every shop ends this
    * flow: the thing you were filling in is finished, and what is left is the
    * reference and where it is going.
    */
-  const backToProduct = (
+  const backLink = (
     <Link
-      href={`/products/${summary.slug}`}
+      href={back.href}
       className="text-marker flex w-fit items-center gap-2 text-ink/40 transition-colors hover:text-ink"
     >
       <ArrowLeft className="size-4" strokeWidth={3} />
-      Back to {summary.name}
+      Back to {back.label}
     </Link>
   );
 
@@ -227,7 +269,25 @@ export function CheckoutScreen({
         <dl className="mt-8 divide-y divide-ink/10 border-y border-ink/10">
           <div className="flex flex-wrap justify-between gap-4 py-4">
             <dt className="text-marker text-ink/45">Order number</dt>
-            <dd className="text-[15px] font-extrabold">{order}</dd>
+            <dd className="text-[15px] font-extrabold">{order.ref}</dd>
+          </div>
+
+          {/* What was bought. The summary panel is gone by this point, and an
+              order confirmation that never says what was ordered is the one
+              page in this flow someone comes back to looking for exactly that. */}
+          <div className="flex flex-wrap justify-between gap-6 py-4">
+            <dt className="text-marker text-ink/45">Order</dt>
+            <dd className="text-right text-[15px] font-bold">
+              {order.lines.map((line) => (
+                <span key={line.slug} className="block">
+                  {line.name}{" "}
+                  <span className="text-ink/45">× {line.quantity}</span>
+                </span>
+              ))}
+              <span className="mt-1 block font-extrabold tabular-nums">
+                {formatUSD(fromCents(order.total))}
+              </span>
+            </dd>
           </div>
 
           <div className="flex flex-wrap justify-between gap-6 py-4">
@@ -271,6 +331,48 @@ export function CheckoutScreen({
     );
   }
 
+  /**
+   * A checkout with nothing in it.
+   *
+   * Reachable two ways: /checkout opened directly with an empty cart, and a Buy
+   * Now whose slug no longer names a product. Both get the same page, and
+   * neither gets the form — a shipping address collected against no order is a
+   * form that cannot be submitted, three steps before anything says so.
+   *
+   * `ready` separates "empty" from "not read yet". Rendering the empty state
+   * while the cart is still being read tells someone with three things in it
+   * that they have none, which is the one message here they might act on.
+   */
+  if (lines.length === 0) {
+    return (
+      <div className="min-h-screen bg-white px-6 py-14 md:px-10">
+        <div className="mx-auto max-w-[620px]">
+          {ready ? (
+            <>
+              <h1 className="text-display text-[9vw] leading-[0.95] sm:text-[5vw] lg:text-[2.8vw]">
+                There is nothing to check out.
+              </h1>
+              <p className="mt-4 text-[17px] leading-relaxed font-medium text-ink/65">
+                Your cart is empty. Pick something to squeeze first.
+              </p>
+              <Link
+                href="/products"
+                className="rounded-squish mt-8 inline-flex items-center gap-3 bg-ink px-8 py-4.5 text-[17px] font-extrabold text-white transition hover:brightness-150 active:scale-[0.98]"
+              >
+                Shop all products
+                <ArrowRight className="size-5" strokeWidth={3} />
+              </Link>
+            </>
+          ) : (
+            <p className="text-[17px] font-semibold text-ink/45">
+              Loading your cart…
+            </p>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
     /**
      * A grid at every width, not only at lg. `order` is a grid and flex
@@ -280,7 +382,7 @@ export function CheckoutScreen({
      */
     <div className="grid min-h-screen bg-white lg:grid-cols-2">
       <div className="order-2 px-6 pt-10 pb-16 md:px-10 lg:order-1 lg:ml-auto lg:w-full lg:max-w-[620px] lg:px-12 lg:pt-14">
-        <header>{backToProduct}</header>
+        <header>{backLink}</header>
 
         <CheckoutSteps current={step} />
 
@@ -541,12 +643,17 @@ export function CheckoutScreen({
             <button
               type="button"
               onClick={() => {
-                if (!method) return;
+                if (!method || lines.length === 0) return;
                 // A reference, drawn when the order is placed. Six characters,
                 // generated here rather than server-side because there is no
                 // order to number — this is what the confirmation shows.
                 const ref = Math.random().toString(36).slice(2, 8).toUpperCase();
-                setOrder(`DP-${ref}`);
+                setOrder({ ref: `DP-${ref}`, lines, total });
+                // The cart has been bought; emptying it is the last thing this
+                // flow owes it. A Buy Now never touched the cart, so it must
+                // not empty one either — that would delete things the visitor
+                // put aside and never agreed to buy.
+                if (!direct) cart.clear();
               }}
               disabled={!method}
               aria-disabled={!method}
@@ -574,11 +681,11 @@ export function CheckoutScreen({
 
         <div className="mt-10 flex flex-col gap-6 border-t border-ink/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
           <Link
-            href={`/products/${summary.slug}`}
+            href={back.href}
             className="inline-flex items-center gap-2 text-[15px] font-bold text-ink/55 transition-colors hover:text-ink"
           >
             <ArrowLeft className="size-4" strokeWidth={3} />
-            Return to {summary.name}
+            Return to {back.label}
           </Link>
 
           <ul className="flex flex-wrap gap-x-5 gap-y-2">
@@ -603,38 +710,44 @@ export function CheckoutScreen({
         <div className="lg:max-w-[520px]">
           <h2 className="sr-only">Order summary</h2>
 
-          <ul>
-            <li className="flex items-center gap-4">
-              <div className="relative shrink-0">
-                <div className="relative size-16 overflow-hidden rounded-xl border border-ink/10 bg-white">
-                  {summary.image ? (
-                    <Image
-                      src={summary.image.src}
-                      alt=""
-                      fill
-                      sizes="64px"
-                      className="object-contain"
-                    />
-                  ) : null}
+          {/* Every line, not one: this panel is now fed by a cart as often as
+              by a Buy Now. */}
+          <ul className="space-y-5">
+            {lines.map((line) => (
+              <li key={line.slug} className="flex items-center gap-4">
+                <div className="relative shrink-0">
+                  <div className="relative size-16 overflow-hidden rounded-xl border border-ink/10 bg-white">
+                    {line.image ? (
+                      <Image
+                        src={line.image.src}
+                        alt=""
+                        fill
+                        sizes="64px"
+                        className="object-contain"
+                      />
+                    ) : null}
+                  </div>
+                  {/* The quantity badge, as every checkout draws it. */}
+                  <span
+                    aria-hidden
+                    className="absolute -top-2 -right-2 inline-flex size-6 items-center justify-center rounded-full bg-brown text-[12px] font-extrabold text-white"
+                  >
+                    {line.quantity}
+                  </span>
                 </div>
-                {/* The quantity badge, as every checkout draws it. */}
-                <span
-                  aria-hidden
-                  className="absolute -top-2 -right-2 inline-flex size-6 items-center justify-center rounded-full bg-brown text-[12px] font-extrabold text-white"
-                >
-                  {summary.quantity}
-                </span>
-              </div>
 
-              <div className="min-w-0 flex-1">
-                <p className="text-[15px] font-extrabold">{summary.fullName}</p>
-                <p className="mt-0.5 text-[13px] font-semibold text-ink/45">
-                  {summary.detail}
+                <div className="min-w-0 flex-1">
+                  <p className="text-[15px] font-extrabold">{line.name}</p>
+                  <p className="mt-0.5 text-[13px] font-semibold text-ink/45">
+                    {line.detail}
+                  </p>
+                </div>
+
+                <p className="text-[15px] font-extrabold tabular-nums">
+                  {formatUSD(fromCents(line.total))}
                 </p>
-              </div>
-
-              <p className="text-[15px] font-extrabold">{summary.price}</p>
-            </li>
+              </li>
+            ))}
           </ul>
 
           {/* Discount code. Inert — there is nothing to redeem against. */}
@@ -662,7 +775,9 @@ export function CheckoutScreen({
           <dl className="mt-8 space-y-3 border-t border-ink/10 pt-8 text-[15px]">
             <div className="flex items-center justify-between">
               <dt className="font-semibold text-ink/60">Subtotal</dt>
-              <dd className="font-extrabold">{summary.price}</dd>
+              <dd className="font-extrabold tabular-nums">
+                {formatUSD(fromCents(subtotal))}
+              </dd>
             </div>
             <div className="flex items-center justify-between">
               <dt className="font-semibold text-ink/60">Shipping</dt>
@@ -672,13 +787,20 @@ export function CheckoutScreen({
             </div>
           </dl>
 
+          {/**
+           * Total, including delivery once one is chosen.
+           *
+           * It used to print the subtotal under a heading that said Total, which
+           * was right only while every delivery option was free — choosing
+           * Express added six dollars to the order and nothing on the page.
+           */}
           <div className="mt-6 flex items-end justify-between border-t border-ink/10 pt-6">
             <p className="text-[17px] font-extrabold">Total</p>
-            <p className="text-display text-[28px]">
+            <p className="text-display text-[28px] tabular-nums">
               <span className="mr-1.5 align-middle text-[13px] font-bold text-ink/45">
                 USD
               </span>
-              {summary.price}
+              {formatUSD(fromCents(total))}
             </p>
           </div>
         </div>

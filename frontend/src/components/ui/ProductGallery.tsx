@@ -6,12 +6,14 @@ import type { ProductPhoto as Photo } from "@/content/site";
 import { ProductPhoto } from "@/components/ui/ProductPhoto";
 
 /**
- * One product, its shots, and the frames still waiting for one.
+ * One product, its shots, and any frames still waiting for one.
  *
- * There is a single photograph of each product, so three of the four frames are
- * empty — outlines, holding the shape the rail will have. They are not buttons:
- * an empty frame that can be pressed would blank the picture the page is about,
- * which is a worse answer than one that plainly has nothing in it yet.
+ * All four products now have a full rail — a packshot, the product alone, and it
+ * in a hand — so the dashed outlines below are no longer drawn in practice. They
+ * stay because the rail has to hold its shape for a product photographed later:
+ * an empty frame is not a button, since one that could be pressed would blank
+ * the picture the page is about, which is worse than plainly having nothing in
+ * it yet.
  *
  * Drop photographs into `images` and each one fills the next frame and becomes
  * selectable. Nothing else changes.

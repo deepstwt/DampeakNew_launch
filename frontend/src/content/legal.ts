@@ -20,8 +20,14 @@ export const LEGAL_DRAFT = false;
 
 export const COMPANY = {
   trading: "Dampeak",
+  /**
+   * One address, everywhere. There were two — a general one and a
+   * support@ — which meant the contact page, the returns policy and the
+   * footer could each name a different inbox for the same question. Customers
+   * do not know which of our inboxes their problem belongs to, and they should
+   * not have to guess.
+   */
   email: "hello@dampeak.com",
-  supportEmail: "support@dampeak.com",
   /**
    * The support line and when it is answered.
    *
@@ -33,6 +39,19 @@ export const COMPANY = {
   phone: "(305) 306-0766",
   phoneHref: "tel:+13053060766",
   hours: "Mon – Fri, 11am – 6pm EST",
+  /**
+   * Where an approved return is posted, one line per entry.
+   *
+   * It lives here rather than in the returns copy because the contact page
+   * prints it too, and an address that is typed twice is an address that will
+   * one day be half-updated — the half a customer read being the wrong half.
+   */
+  address: [
+    "Dampeak LLC",
+    "1201 6th Ave W STE 100",
+    "Unit #724",
+    "Bradenton, Florida 34205",
+  ],
 } as const;
 
 export type Section = {
@@ -47,6 +66,15 @@ export type Section = {
    * `body` renders first by design, so this is the other half of that.
    */
   after?: string[];
+  /**
+   * A postal address, one line per entry.
+   *
+   * Not `body`: an address is one thing, and rendering its lines as separate
+   * paragraphs spaces them like separate thoughts. Joining them into a single
+   * comma-run instead makes the one piece of text on the page a customer has to
+   * copy onto a parcel the hardest piece to read.
+   */
+  address?: readonly string[];
 };
 
 export type Doc = {
@@ -335,7 +363,7 @@ export const DOCS: Doc[] = [
         ],
         list: [
           COMPANY.trading.toUpperCase(),
-          `Email: ${COMPANY.supportEmail}`,
+          `Email: ${COMPANY.email}`,
         ],
       },
     ],
@@ -438,7 +466,7 @@ export const DOCS: Doc[] = [
       {
         heading: "Initiating a return",
         body: [
-          `All returns must be pre-authorized by contacting us at ${COMPANY.supportEmail} before sending any product back.`,
+          `All returns must be pre-authorized by contacting us at ${COMPANY.email} before sending any product back.`,
           "We will reply with the return address and instructions. Items sent back without receiving those instructions from us first would be rejected, and are at the customer's risk.",
         ],
       },
@@ -458,7 +486,7 @@ export const DOCS: Doc[] = [
       {
         heading: "Damaged or defective items",
         body: [
-          `If your order arrives damaged, defective, or with the wrong item, please contact us at ${COMPANY.supportEmail} as soon as possible.`,
+          `If your order arrives damaged, defective, or with the wrong item, please contact us at ${COMPANY.email} as soon as possible.`,
           "Please include your order number and clear photos of the item and packaging so we can assess the issue and determine the appropriate resolution.",
           "If the issue is confirmed to be our error or a product defect, we may offer a replacement, refund, or other appropriate resolution.",
         ],
@@ -472,6 +500,11 @@ export const DOCS: Doc[] = [
         ],
       },
       {
+        heading: "Return address",
+        body: ["Approved returns must be mailed to the following address:"],
+        address: COMPANY.address,
+      },
+      {
         heading: "Refund processing",
         body: [
           "Refunds are issued to the original payment method within 7–15 business days after the returned item has been received and inspected.",
@@ -481,7 +514,7 @@ export const DOCS: Doc[] = [
       {
         heading: "Missing or undelivered orders",
         body: [
-          `If your order has not arrived or appears to be missing, please contact us at ${COMPANY.supportEmail} with your order number.`,
+          `If your order has not arrived or appears to be missing, please contact us at ${COMPANY.email} with your order number.`,
           "We will review the shipment status and work with you to determine the appropriate next step.",
         ],
       },
