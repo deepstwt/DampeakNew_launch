@@ -131,6 +131,13 @@ export default async function ProductPage({
              * than one shot to put in it.
              */}
             <div className="relative aspect-square overflow-hidden rounded-3xl bg-ink/5">
+              {/* On the picture, top left. z-10 because the photograph fills the
+                  tile absolutely and would otherwise cover it. */}
+              <SaveButton
+                slug={product.slug}
+                className="absolute top-4 left-4 z-10"
+              />
+
               <ProductPhoto
                 image={cover}
                 name={product.name}
@@ -188,7 +195,6 @@ export default async function ProductPage({
                */}
               <BuyPanel slug={product.slug} />
 
-              <SaveButton slug={product.slug} className="mt-6" />
             </div>
           </div>
 
