@@ -1,37 +1,24 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import Image from "next/image";
-import { ArrowLeft } from "lucide-react";
 import { PRODUCTS, getProduct, primaryImage } from "@/content/site";
 import { DOCS } from "@/content/legal";
-import { CheckoutForm } from "@/components/checkout/CheckoutForm";
+import { CheckoutScreen } from "@/components/checkout/CheckoutScreen";
 
 /**
- * Checkout — the information step.
+ * Checkout — the page around the flow.
  *
- * A word on what this is and is not. It takes no money, writes no order and
- * clears no basket: there is no payment provider connected, no order collection
- * in the database and no cart in the app. It is the screen, built to the flow it
- * will have, so the layout and the copy can be settled before any of that
- * exists.
+ * Thin on purpose. Everything on screen depends on how far through the visitor
+ * is, and how far through they are is client state, so the whole layout lives in
+ * CheckoutScreen. What is left here is what a server can settle: which product,
+ * what it costs, and which policies to link.
  *
- * A banner used to say all of that on the page itself, and a line under the
- * wallets said when they would work. Both are gone, so what is left to tell a
- * visitor where they stand are the controls: Continue to shipping, the discount
- * field and all three wallets are inert, and there is no card field anywhere, so
- * the page cannot take money even by accident. That holds while this is a screen
- * being reviewed; before it is public with a working button, it needs a real
- * answer rather than the absence of one.
- *
- * The product comes in through ?product=<slug> from a Buy Now, and falls back to
- * the first product so the page is never blank when it is opened directly.
+ * The product arrives as ?product=<slug> from a Buy Now, and falls back to the
+ * first product so the page is never blank when it is opened directly.
  */
 
 export const metadata: Metadata = {
   title: "Checkout",
   description: "Complete your order.",
-  // Nothing here should be indexed: it is a step in a flow, not a destination,
-  // and this one is a mockup besides.
+  // A step in a flow, not a destination.
   robots: { index: false, follow: false },
 };
 
@@ -42,26 +29,17 @@ export default async function CheckoutPage({
   const product =
     (typeof slug === "string" ? getProduct(slug) : undefined) ?? PRODUCTS[0];
 
-  const image = primaryImage(product);
-
   /**
-   * The money.
-   *
-   * `price` is a display string ("$14.99"), so the number has to come out of it
-   * to be added up. Quantity is fixed at one: there is no cart, so there is
-   * nothing that could make it two.
-   *
-   * No tax line. It said "Including $1.36 in taxes", worked out from a ten
-   * percent rate invented for the mockup — a number a customer would read as
-   * ours. There is no tax engine behind this page and no market settled, so the
-   * total is the price until there is a real rate to apply.
+   * One line, one quantity. There is no cart, so there is nothing that could
+   * make it two — and the money is formatted here rather than in the component,
+   * which should not have to know a currency.
    */
-  const unit = Number(product.price?.replace(/[^\d.]/g, "") ?? 0);
   const quantity = 1;
-  const subtotal = unit * quantity;
-
-  const money = (n: number) =>
-    n.toLocaleString("en-US", { style: "currency", currency: "USD" });
+  const unit = Number(product.price?.replace(/[^\d.]/g, "") ?? 0);
+  const price = (unit * quantity).toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+  });
 
   /**
    * The policies a checkout has to put in front of someone before they buy.
@@ -69,163 +47,24 @@ export default async function CheckoutPage({
    * copy is still the placeholder draft, and linking a buyer to an unfinished
    * agreement is worse than not linking one yet.
    */
-  const legal = DOCS.filter((d) => ["returns", "privacy"].includes(d.slug));
+  const legal = DOCS.filter((d) => ["returns", "privacy"].includes(d.slug)).map(
+    (d) => ({ slug: d.slug, title: d.title }),
+  );
+
+  const image = primaryImage(product);
 
   return (
-    // A grid at every width, not only at lg. `order` is a grid and flex
-    // property, so on a plain block container it does nothing and the columns
-    // stack in source order — which put the form above the summary on a phone,
-    // the opposite of what the ordering below asks for.
-    <div className="grid min-h-screen bg-white lg:grid-cols-2">
-      {/**
-       * The form column, and the order column beside it.
-       *
-       * On a narrow screen the order summary comes first in the DOM order that
-       * matters — you check what you are buying, then fill the form — but on a
-       * wide one it belongs on the right, which is why the two are laid out as
-       * columns of one grid rather than nested.
-       */}
-      <div className="order-2 px-6 pt-10 pb-16 md:px-10 lg:order-1 lg:ml-auto lg:w-full lg:max-w-[620px] lg:px-12 lg:pt-14">
-        {/* The wordmark used to sit between the back link and the steps. A
-            checkout is not a place to go browsing, so all the header carries now
-            is the way out; the step indicator moved into the flow below, which
-            is what knows which step is open. */}
-        <header>
-          {/**
-           * The way out, at the top where someone looks for it.
-           *
-           * A link to the product rather than history.back(): checkout is only
-           * reached from a product page's Buy Now, and that page is in the query
-           * string, so this is where the visitor came from and it still works
-           * for anyone who arrived on a pasted URL with no history to go back
-           * through. It names the product for the same reason — "Back" alone
-           * makes you remember what you were looking at.
-           */}
-          <Link
-            href={`/products/${product.slug}`}
-            className="text-marker flex w-fit items-center gap-2 text-ink/40 transition-colors hover:text-ink"
-          >
-            <ArrowLeft className="size-4" strokeWidth={3} />
-            Back to {product.name}
-          </Link>
-        </header>
-
-        <CheckoutForm />
-
-        <div className="mt-10 flex flex-col gap-6 border-t border-ink/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
-          <Link
-            href={`/products/${product.slug}`}
-            className="inline-flex items-center gap-2 text-[15px] font-bold text-ink/55 transition-colors hover:text-ink"
-          >
-            <ArrowLeft className="size-4" strokeWidth={3} />
-            Return to {product.name}
-          </Link>
-
-          <ul className="flex flex-wrap gap-x-5 gap-y-2">
-            {legal.map((doc) => (
-              <li key={doc.slug}>
-                <Link
-                  href={`/${doc.slug}`}
-                  className="text-[13px] font-semibold text-ink/45 transition-colors hover:text-ink"
-                >
-                  {doc.title}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-
-      <aside
-        aria-label="Order summary"
-        className="order-1 border-b border-ink/10 bg-cream/40 px-6 py-10 md:px-10 lg:order-2 lg:min-h-screen lg:border-b-0 lg:border-l lg:px-12 lg:pt-14"
-      >
-        <div className="lg:max-w-[520px]">
-          <h2 className="sr-only">Order summary</h2>
-
-          <ul>
-            <li className="flex items-center gap-4">
-              <div className="relative shrink-0">
-                <div className="relative size-16 overflow-hidden rounded-xl border border-ink/10 bg-white">
-                  {image ? (
-                    <Image
-                      src={image.src}
-                      alt=""
-                      fill
-                      sizes="64px"
-                      className="object-contain"
-                    />
-                  ) : null}
-                </div>
-                {/* The quantity badge, as every checkout draws it. */}
-                <span
-                  aria-hidden
-                  className="absolute -top-2 -right-2 inline-flex size-6 items-center justify-center rounded-full bg-brown text-[12px] font-extrabold text-white"
-                >
-                  {quantity}
-                </span>
-              </div>
-
-              <div className="min-w-0 flex-1">
-                <p className="text-[15px] font-extrabold">{product.fullName}</p>
-                <p className="mt-0.5 text-[13px] font-semibold text-ink/45">
-                  {product.specs.colour} · {product.specs.finish}
-                </p>
-              </div>
-
-              <p className="text-[15px] font-extrabold">
-                {money(unit * quantity)}
-                <span className="sr-only"> for {quantity}</span>
-              </p>
-            </li>
-          </ul>
-
-          {/* Discount code. Inert, like everything else on this page. */}
-          <form className="mt-8 flex gap-3 border-t border-ink/10 pt-8">
-            <label htmlFor="discount" className="sr-only">
-              Gift card or discount code
-            </label>
-            <input
-              id="discount"
-              name="discount"
-              type="text"
-              placeholder="Gift card or discount code"
-              disabled
-              className="min-w-0 flex-1 rounded-xl border border-ink/15 bg-white px-4 py-3 text-[15px] font-semibold placeholder:text-ink/35 disabled:bg-ink/[0.03]"
-            />
-            <button
-              type="button"
-              disabled
-              className="rounded-xl bg-ink/10 px-6 py-3 text-[15px] font-extrabold text-ink/35"
-            >
-              Apply
-            </button>
-          </form>
-
-          <dl className="mt-8 space-y-3 border-t border-ink/10 pt-8 text-[15px]">
-            <div className="flex items-center justify-between">
-              <dt className="font-semibold text-ink/60">Subtotal</dt>
-              <dd className="font-extrabold">{money(subtotal)}</dd>
-            </div>
-            <div className="flex items-center justify-between">
-              <dt className="font-semibold text-ink/60">Shipping</dt>
-              <dd className="font-semibold text-ink/45">
-                Calculated at next step
-              </dd>
-            </div>
-          </dl>
-
-          <div className="mt-6 flex items-end justify-between border-t border-ink/10 pt-6">
-            <p className="text-[17px] font-extrabold">Total</p>
-            <p className="text-display text-[28px]">
-              <span className="mr-1.5 align-middle text-[13px] font-bold text-ink/45">
-                USD
-              </span>
-              {money(subtotal)}
-            </p>
-          </div>
-        </div>
-      </aside>
-    </div>
+    <CheckoutScreen
+      summary={{
+        slug: product.slug,
+        name: product.name,
+        fullName: product.fullName,
+        detail: `${product.specs.colour} · ${product.specs.finish}`,
+        price,
+        image: image ? { src: image.src, alt: image.alt } : null,
+        quantity,
+      }}
+      legal={legal}
+    />
   );
 }

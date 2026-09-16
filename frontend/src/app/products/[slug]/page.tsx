@@ -74,7 +74,8 @@ export default async function ProductPage({
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.fullName,
-    description: copy.body,
+    // The opening section, which is the closest thing to a summary the copy has.
+    description: copy[0].body.join(" "),
     ...(cover ? { image: cover.src } : {}),
     brand: { "@type": "Brand", name: site.name },
     // Every spec from the manufacturing sheet, in the form search engines read.
@@ -204,48 +205,27 @@ export default async function ProductPage({
           {/**
            * The description, full width under the fold.
            *
-           * Two columns rather than one long list: the paragraph and the reasons
-           * are read in either order, and stacking them makes the page look
-           * longer than it is.
+           * Four headed sections in two columns. One column would run the page
+           * to twice the length for copy that is read in any order — these are
+           * four separate claims about the same object, not a sequence.
            */}
           <section className="mt-20 border-t border-ink/10 pt-12">
-            <div className="grid gap-10 lg:grid-cols-[5fr_6fr] lg:gap-16">
-              <div>
-                <h2 className="text-display max-w-[16ch] text-[9vw] leading-[0.92] sm:text-[5.5vw] lg:text-[2.9vw]">
-                  {copy.headline}
-                </h2>
-                <p className="mt-7 max-w-[52ch] text-[18px] leading-relaxed font-medium text-ink/70">
-                  {copy.body}
-                </p>
-              </div>
-
-              <div className="lg:pt-3">
-                <h3 className="text-[22px] font-extrabold tracking-tight">
-                  {copy.reasonsTitle}
-                </h3>
-
-                {/* The markers are brown on every product, not the product's own
-                    accent. A bullet is punctuation — it separates one reason from
-                    the next — and colouring it per product made the same list
-                    read as four different components, one of them with an orange
-                    dot beside a pink squishy. */}
-                <ul className="mt-6 space-y-5">
-                  {copy.reasons.map((reason) => (
-                    <li key={reason.title} className="flex gap-4">
-                      <span
-                        aria-hidden
-                        className="mt-2 size-2.5 shrink-0 rounded-full bg-brown"
-                      />
-                      <p className="text-[17px] leading-relaxed text-ink/65">
-                        <strong className="font-extrabold text-ink">
-                          {reason.title}:
-                        </strong>{" "}
-                        {reason.text}
-                      </p>
-                    </li>
+            <div className="grid gap-x-16 gap-y-12 lg:grid-cols-2">
+              {copy.map((part) => (
+                <div key={part.heading}>
+                  <h2 className="text-[22px] font-extrabold tracking-tight">
+                    {part.heading}
+                  </h2>
+                  {part.body.map((paragraph) => (
+                    <p
+                      key={paragraph}
+                      className="mt-4 max-w-[54ch] text-[17px] leading-relaxed text-ink/65"
+                    >
+                      {paragraph}
+                    </p>
                   ))}
-                </ul>
-              </div>
+                </div>
+              ))}
             </div>
           </section>
 

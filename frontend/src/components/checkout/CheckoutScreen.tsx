@@ -3,20 +3,31 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import { CheckoutSteps, type Step } from "@/components/checkout/CheckoutSteps";
 
 /**
- * The checkout flow, as far as it goes: Information, then Shipping.
+ * The checkout: Information, Shipping, Payment, and the order that follows.
  *
- * Continue to shipping is disabled until the fields it needs are filled, and
- * live the moment they are — that is the whole point of the state in here. A
- * button that is always dull teaches a visitor that it is decoration; a button
- * that is always bright and does nothing is worse.
+ * It owns the whole screen, not just the form, because it owns the order — and
+ * once an order is placed the summary column beside the form has nothing left
+ * to do. A server component could not make that call; it cannot see this state.
  *
- * Payment is where it stops. There is no provider connected, so Continue to
- * payment never comes on, and nothing on this page collects a card number.
+ * Each step's button is dull until its step is done and live the moment it is.
+ * A button that is always dull teaches a visitor it is decoration; one that is
+ * always bright and does nothing is worse.
  */
+
+export type CheckoutSummary = {
+  slug: string;
+  name: string;
+  fullName: string;
+  detail: string;
+  /** Pre-formatted — the money lives in one place and this is not it. */
+  price: string;
+  image: { src: string; alt: string } | null;
+  quantity: number;
+};
 
 /* ── The wallets ─────────────────────────────────────────────────────────── */
 
@@ -50,9 +61,7 @@ const FIELD =
  * What has to be filled before the step can be left.
  *
  * Company and the second address line are the two a real checkout marks
- * optional, so they are absent here — and the email is checked for shape rather
- * than presence, because "a@b" reaching the shipping step and failing there is
- * the same mistake one screen later.
+ * optional, so they are absent here.
  */
 const REQUIRED = [
   "email",
@@ -121,7 +130,13 @@ function Field({
   );
 }
 
-export function CheckoutForm() {
+export function CheckoutScreen({
+  summary,
+  legal,
+}: {
+  summary: CheckoutSummary;
+  legal: { slug: string; title: string }[];
+}) {
   const [step, setStep] = useState<Step>("Information");
   const [values, setValues] = useState<Record<string, string>>({});
   /**
@@ -133,19 +148,141 @@ export function CheckoutForm() {
    * Starting empty gives the step something to complete.
    */
   const [delivery, setDelivery] = useState<string | null>(null);
+  const [method, setMethod] = useState<string | null>(null);
+  const [order, setOrder] = useState<string | null>(null);
 
   const set = (id: FieldName) => (v: string) =>
     setValues((prev) => ({ ...prev, [id]: v }));
 
   const field = (id: FieldName) => values[id] ?? "";
 
-  const complete =
-    REQUIRED.every((id) => (values[id] ?? "").trim().length > 0) &&
-    /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(values.email ?? "");
+  /**
+   * Filled, not valid.
+   *
+   * Every required field has something in it — that is the whole test. Nothing
+   * here inspects what was typed, on purpose: this flow is walked with whatever
+   * the person walking it feels like typing, and a format check would stop them
+   * at the email field for a reason that does not matter here.
+   */
+  const complete = REQUIRED.every((id) => (values[id] ?? "").trim().length > 0);
+
+  const chosenDelivery = DELIVERY.find((d) => d.id === delivery) ?? null;
+
+  /**
+   * The confirmation takes the whole column once an order is placed — no step
+   * indicator, no way back into the form. That is how every shop ends this
+   * flow: the thing you were filling in is finished, and what is left is the
+   * reference and where it is going.
+   */
+  const backToProduct = (
+    <Link
+      href={`/products/${summary.slug}`}
+      className="text-marker flex w-fit items-center gap-2 text-ink/40 transition-colors hover:text-ink"
+    >
+      <ArrowLeft className="size-4" strokeWidth={3} />
+      Back to {summary.name}
+    </Link>
+  );
+
+  if (order) {
+    const name = [field("given-name"), field("family-name")]
+      .filter(Boolean)
+      .join(" ");
+    const address = [
+      field("address-line1"),
+      field("address-line2"),
+      field("address-level2"),
+      field("address-level1"),
+      field("postal-code"),
+    ].filter(Boolean);
+    const chosen = DELIVERY.find((d) => d.id === delivery);
+
+    /**
+     * One column, centred, and no order summary beside it.
+     *
+     * The summary exists to tell you what you are about to buy; once you have
+     * bought it, the thing to read is the reference and the address it is going
+     * to. Leaving the panel up would keep a gift-card field and a "calculated at
+     * next step" line on screen after there is nothing left to calculate.
+     */
+    return (
+      <div className="min-h-screen bg-white px-6 py-14 md:px-10">
+        <div className="mx-auto max-w-[620px]">
+        <span
+          aria-hidden
+          className="inline-flex size-14 items-center justify-center rounded-full bg-brown"
+        >
+          <Check className="size-7 text-white" strokeWidth={3} />
+        </span>
+
+        <h2 className="text-display mt-6 text-[9vw] leading-[0.95] sm:text-[5vw] lg:text-[2.8vw]">
+          Thank you{name ? `, ${field("given-name")}` : ""}.
+        </h2>
+
+        <p className="mt-4 text-[17px] leading-relaxed font-medium text-ink/65">
+          Your order is placed. We have sent the details to{" "}
+          <span className="font-extrabold text-ink">{field("email")}</span>.
+        </p>
+
+        <dl className="mt-8 divide-y divide-ink/10 border-y border-ink/10">
+          <div className="flex flex-wrap justify-between gap-4 py-4">
+            <dt className="text-marker text-ink/45">Order number</dt>
+            <dd className="text-[15px] font-extrabold">{order}</dd>
+          </div>
+
+          <div className="flex flex-wrap justify-between gap-6 py-4">
+            <dt className="text-marker text-ink/45">Shipping to</dt>
+            <dd className="max-w-[46ch] text-right text-[15px] font-bold not-italic">
+              {name ? <span className="block">{name}</span> : null}
+              {address.map((line) => (
+                <span key={line} className="block text-ink/65">
+                  {line}
+                </span>
+              ))}
+            </dd>
+          </div>
+
+          {chosen ? (
+            <div className="flex flex-wrap justify-between gap-4 py-4">
+              <dt className="text-marker text-ink/45">Delivery</dt>
+              <dd className="text-[15px] font-bold">
+                {chosen.name} · {chosen.detail}
+              </dd>
+            </div>
+          ) : null}
+
+          {method ? (
+            <div className="flex flex-wrap justify-between gap-4 py-4">
+              <dt className="text-marker text-ink/45">Paid with</dt>
+              <dd className="text-[15px] font-bold">{method}</dd>
+            </div>
+          ) : null}
+        </dl>
+
+        <Link
+          href="/products"
+          className="rounded-squish mt-10 inline-flex items-center gap-3 bg-brown px-8 py-4.5 text-[17px] font-extrabold text-white transition hover:brightness-150 active:scale-[0.98]"
+        >
+          Continue shopping
+          <ArrowRight className="size-5" strokeWidth={3} />
+        </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <CheckoutSteps current={step} />
+    /**
+     * A grid at every width, not only at lg. `order` is a grid and flex
+     * property, so on a plain block container it does nothing and the columns
+     * stack in source order — which put the form above the summary on a phone,
+     * the opposite of what the ordering here asks for.
+     */
+    <div className="grid min-h-screen bg-white lg:grid-cols-2">
+      <div className="order-2 px-6 pt-10 pb-16 md:px-10 lg:order-1 lg:ml-auto lg:w-full lg:max-w-[620px] lg:px-12 lg:pt-14">
+        <header>{backToProduct}</header>
+
+        <CheckoutSteps current={step} />
 
       {step === "Information" ? (
         <form
@@ -343,16 +480,18 @@ export function CheckoutForm() {
         </div>
       ) : (
         /**
-         * Payment — where the flow stops, and has to.
+         * Payment, and then the order.
          *
-         * No card fields. Not "not yet": card details are always collected by the
-         * payment provider's own hosted fields, never by inputs of ours, and a
-         * card number typed into a form that cannot process it is the one
-         * mistake on this page that would cost a real person real money.
+         * The wallets are the payment methods: pick one and Place order comes
+         * on, the same way the two steps before this one work. There is no card
+         * form and there will not be one here — card details belong in the
+         * payment provider's own hosted fields, never in inputs of ours, and a
+         * real card number typed into a page that cannot process it is the one
+         * thing on this flow that could cost somebody something.
          *
-         * So this step shows the wallets it will use and a Place order that
-         * cannot come on. It is a dead end by design — the next thing this page
-         * needs is a merchant account, not more markup.
+         * Placing the order draws a reference and shows the confirmation. It
+         * does not charge, write an order or send an email, because none of
+         * those exist yet; what it does is complete the walk-through.
          */
         <div className="mt-8">
           <section aria-labelledby="pay">
@@ -360,19 +499,19 @@ export function CheckoutForm() {
               Payment
             </h2>
 
-            <p className="mt-3 text-[15px] leading-relaxed font-semibold text-ink/55">
-              Payment methods appear here once a provider is connected. Nothing
-              is charged on this page.
-            </p>
-
             <ul className="mt-5 grid gap-3 sm:grid-cols-3">
               {WALLETS.map((wallet) => (
                 <li key={wallet.name}>
                   <button
                     type="button"
-                    disabled
-                    aria-label={`Pay with ${wallet.name} — not available yet`}
-                    className={`flex h-12 w-full items-center justify-center overflow-hidden rounded-xl opacity-60 ${wallet.border ? "border border-ink/15" : ""}`}
+                    onClick={() => setMethod(wallet.name)}
+                    aria-pressed={method === wallet.name}
+                    aria-label={`Pay with ${wallet.name}`}
+                    className={`flex h-12 w-full items-center justify-center overflow-hidden rounded-xl transition ${
+                      method === wallet.name
+                        ? "ring-2 ring-ink ring-offset-2"
+                        : "hover:brightness-105"
+                    } ${wallet.border ? "border border-ink/15" : ""}`}
                     style={{ background: wallet.background }}
                   >
                     <Image
@@ -386,16 +525,39 @@ export function CheckoutForm() {
                 </li>
               ))}
             </ul>
+
+            {method ? (
+              <p className="mt-4 text-[14px] font-semibold text-ink/55">
+                Paying with <span className="font-extrabold text-ink">{method}</span>.
+              </p>
+            ) : (
+              <p className="mt-4 text-[14px] font-semibold text-ink/55">
+                Choose how you would like to pay.
+              </p>
+            )}
           </section>
 
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <button
               type="button"
-              disabled
-              aria-disabled
-              className="rounded-squish inline-flex cursor-not-allowed items-center gap-3 bg-ink/10 px-8 py-4.5 text-[17px] font-extrabold text-ink/35"
+              onClick={() => {
+                if (!method) return;
+                // A reference, drawn when the order is placed. Six characters,
+                // generated here rather than server-side because there is no
+                // order to number — this is what the confirmation shows.
+                const ref = Math.random().toString(36).slice(2, 8).toUpperCase();
+                setOrder(`DP-${ref}`);
+              }}
+              disabled={!method}
+              aria-disabled={!method}
+              className={`rounded-squish inline-flex items-center gap-3 px-8 py-4.5 text-[17px] font-extrabold transition ${
+                method
+                  ? "bg-blue text-white hover:brightness-110 active:scale-[0.98]"
+                  : "cursor-not-allowed bg-ink/10 text-ink/35"
+              }`}
             >
               Place order
+              <ArrowRight className="size-5" strokeWidth={3} />
             </button>
 
             <button
@@ -409,6 +571,118 @@ export function CheckoutForm() {
           </div>
         </div>
       )}
+
+        <div className="mt-10 flex flex-col gap-6 border-t border-ink/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
+          <Link
+            href={`/products/${summary.slug}`}
+            className="inline-flex items-center gap-2 text-[15px] font-bold text-ink/55 transition-colors hover:text-ink"
+          >
+            <ArrowLeft className="size-4" strokeWidth={3} />
+            Return to {summary.name}
+          </Link>
+
+          <ul className="flex flex-wrap gap-x-5 gap-y-2">
+            {legal.map((doc) => (
+              <li key={doc.slug}>
+                <Link
+                  href={`/${doc.slug}`}
+                  className="text-[13px] font-semibold text-ink/45 transition-colors hover:text-ink"
+                >
+                  {doc.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <aside
+        aria-label="Order summary"
+        className="order-1 border-b border-ink/10 bg-cream/40 px-6 py-10 md:px-10 lg:order-2 lg:min-h-screen lg:border-b-0 lg:border-l lg:px-12 lg:pt-14"
+      >
+        <div className="lg:max-w-[520px]">
+          <h2 className="sr-only">Order summary</h2>
+
+          <ul>
+            <li className="flex items-center gap-4">
+              <div className="relative shrink-0">
+                <div className="relative size-16 overflow-hidden rounded-xl border border-ink/10 bg-white">
+                  {summary.image ? (
+                    <Image
+                      src={summary.image.src}
+                      alt=""
+                      fill
+                      sizes="64px"
+                      className="object-contain"
+                    />
+                  ) : null}
+                </div>
+                {/* The quantity badge, as every checkout draws it. */}
+                <span
+                  aria-hidden
+                  className="absolute -top-2 -right-2 inline-flex size-6 items-center justify-center rounded-full bg-brown text-[12px] font-extrabold text-white"
+                >
+                  {summary.quantity}
+                </span>
+              </div>
+
+              <div className="min-w-0 flex-1">
+                <p className="text-[15px] font-extrabold">{summary.fullName}</p>
+                <p className="mt-0.5 text-[13px] font-semibold text-ink/45">
+                  {summary.detail}
+                </p>
+              </div>
+
+              <p className="text-[15px] font-extrabold">{summary.price}</p>
+            </li>
+          </ul>
+
+          {/* Discount code. Inert — there is nothing to redeem against. */}
+          <div className="mt-8 flex gap-3 border-t border-ink/10 pt-8">
+            <label htmlFor="discount" className="sr-only">
+              Gift card or discount code
+            </label>
+            <input
+              id="discount"
+              name="discount"
+              type="text"
+              placeholder="Gift card or discount code"
+              disabled
+              className="min-w-0 flex-1 rounded-xl border border-ink/15 bg-white px-4 py-3 text-[15px] font-semibold placeholder:text-ink/35 disabled:bg-ink/[0.03]"
+            />
+            <button
+              type="button"
+              disabled
+              className="rounded-xl bg-ink/10 px-6 py-3 text-[15px] font-extrabold text-ink/35"
+            >
+              Apply
+            </button>
+          </div>
+
+          <dl className="mt-8 space-y-3 border-t border-ink/10 pt-8 text-[15px]">
+            <div className="flex items-center justify-between">
+              <dt className="font-semibold text-ink/60">Subtotal</dt>
+              <dd className="font-extrabold">{summary.price}</dd>
+            </div>
+            <div className="flex items-center justify-between">
+              <dt className="font-semibold text-ink/60">Shipping</dt>
+              <dd className="font-semibold text-ink/45">
+                {chosenDelivery ? chosenDelivery.price : "Calculated at next step"}
+              </dd>
+            </div>
+          </dl>
+
+          <div className="mt-6 flex items-end justify-between border-t border-ink/10 pt-6">
+            <p className="text-[17px] font-extrabold">Total</p>
+            <p className="text-display text-[28px]">
+              <span className="mr-1.5 align-middle text-[13px] font-bold text-ink/45">
+                USD
+              </span>
+              {summary.price}
+            </p>
+          </div>
+        </div>
+      </aside>
     </div>
   );
 }

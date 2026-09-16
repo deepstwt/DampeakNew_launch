@@ -67,98 +67,155 @@ Per-product layout:
 
 ---
 
-### Rounded cube stress squeeze squish Toy
+### Rounded Cube Squeeze Toy
 
-**PRODUCT NAME** — Rounded cube stress squeeze squish Toy
+**PRODUCT NAME** — Rounded Cube Squeeze Toy
 
 **PRODUCT DESCRIPTION**
 
-#### Soft, Satisfying & Made to Squeeze
+#### Soft Satisfying Squeeze
 
-Meet your new favorite squeeze companion. Our **Rounded Cube Stress squeeze
-Toy** is designed for satisfying, repetitive squeezing whenever you're
-anxious,stressed, and your hands need something to do. Its soft **squishy**
-texture and **soft slow rising** feel makes it enjoyable to squeeze again and
-again.
+This slow-rising Rounded Cube squishy is soft, and very satisfying to squeeze.
 
-#### Why You'll Love It
+Easy to keep nearby and fun to pick up whenever you feel like fidgeting,
+playing, or just enjoying the feel of something soft in your hands.
 
-- **Soft & Satisfying:** Made with **(material)** for a soft, squeezable texture.
-- **Made for Repeated Squeezing:** Designed to withstand regular use without easily losing its shape.
-- **Fun, Unique Design:** The **satisfying blue design** gives it a calming feel, and makes it as fun to look at as it is to squeeze.
-- **Perfect Desk Companion:** Keep it at your desk, in your room, or anywhere you want a little hands-on activity.
-- **Great for Gifting:** A fun choice for birthdays, holidays, party favors, stocking stuffers, and more.
+#### Safe Soft Material
+
+This stress relief squishy toy gives a simple, direct satisfaction. Its
+non-toxic TPR material provides a smooth, and gentle feel and rebound with every
+squeeze, making it satisfying to handle.
+
+#### Perfect for every scenario
+
+Keep it at your desk during homework or work, take it along on a road trip, keep
+it nearby during movie nights, or toss it in your bag for something to squeeze
+on the go. It's a fun little companion for kids, teens, and adults alike,
+whether you're looking for something to keep your hands busy, add a little fun
+to your day, or simply enjoy a satisfying squeeze.
+
+#### A perfect Little Gift
+
+The Rounded Cube makes an easy and fun little gift for birthdays, holidays, Christmas,
+stocking stuffers, party favors, or a just-because surprise. Tuck one into a
+stocking, add it to a gift bag, or give it on its own to someone who loves fun,
+tactile things.
+
+Sometimes the best gifts are the ones you can't help but squeeze.
 
 ---
 
-### Cheese cube stress squeeze squish Toy
+### Toasted Bread Squeeze Toy
 
-**PRODUCT NAME** — Cheese cube stress squeeze squish Toy
+**PRODUCT NAME** — Toasted Bread Squeeze Toy
 
 **PRODUCT DESCRIPTION**
 
-#### Soft, Satisfying & Made to Squeeze
+#### Soft Satisfying Squeeze
 
-Meet your new favorite squeeze companion. Our **Cheese Cube Stress squeeze Toy**
-is designed for satisfying, repetitive squeezing whenever you're anxious,stressed,
-and your hands need something to do. Its soft **squishy** texture and **soft slow
-rising** feel makes it enjoyable to squeeze again and again.
+This slow-rising Toasted Bread squishy is soft, and very satisfying to squeeze.
 
-#### Why You'll Love It
+Easy to keep nearby and fun to pick up whenever you feel like fidgeting,
+playing, or just enjoying the feel of something soft in your hands.
 
-- **Soft & Satisfying:** Made with **(material)** for a soft, squeezable texture.
-- **Made for Repeated Squeezing:** Designed to withstand regular use without easily losing its shape.
-- **Fun, Unique Design:** The **intricate cheese design** makes it as fun to look at as it is to squeeze.
-- **Perfect Desk Companion:** Keep it at your desk, in your room, or anywhere you want a little hands-on activity.
-- **Great for Gifting:** A fun choice for birthdays, holidays, party favors, stocking stuffers, and more.
+#### Safe Soft Material
+
+This stress relief squishy toy gives a simple, direct satisfaction. Its
+non-toxic TPR material provides a smooth, and gentle feel and rebound with every
+squeeze, making it satisfying to handle.
+
+#### Perfect for every scenario
+
+Keep it at your desk during homework or work, take it along on a road trip, keep
+it nearby during movie nights, or toss it in your bag for something to squeeze
+on the go. It's a fun little companion for kids, teens, and adults alike,
+whether you're looking for something to keep your hands busy, add a little fun
+to your day, or simply enjoy a satisfying squeeze.
+
+#### A perfect Little Gift
+
+The Toasted Bread squish makes an easy and fun little gift for birthdays, holidays, Christmas,
+stocking stuffers, party favors, or a just-because surprise. Tuck one into a
+stocking, add it to a gift bag, or give it on its own to someone who loves fun,
+tactile things.
+
+Sometimes the best gifts are the ones you can't help but squeeze.
 
 ---
 
-### Toasted Bread stress squeeze squish Toy
+### Cheese Cube Squeeze Toy
 
-**PRODUCT NAME** — Toasted Bread stress squeeze squish Toy
+**PRODUCT NAME** — Cheese Cube Squeeze Toy
 
 **PRODUCT DESCRIPTION**
 
-#### Soft, Satisfying & Made to Squeeze
+#### Soft Satisfying Squeeze
 
-Meet your new favorite squeeze companion. Our **Toasted bread Stress squeeze
-Toy** is designed for satisfying, repetitive squeezing whenever you're
-anxious,stressed, and your hands need something to do. Its soft **squishy**
-texture and **soft slow rising** feel makes it enjoyable to squeeze again and
-again.
+This slow-rising Cheese Cube squishy is soft, and very satisfying to squeeze.
 
-#### Why You'll Love It
+Easy to keep nearby and fun to pick up whenever you feel like fidgeting,
+playing, or just enjoying the feel of something soft in your hands.
 
-- **Soft & Satisfying:** Made with **(material)** for a soft, squeezable texture.
-- **Made for Repeated Squeezing:** Designed to withstand regular use without easily losing its shape.
-- **Fun, Unique Design:** The **beautiful toasted bread design** makes it as fun to look at as it is to squeeze.
-- **Perfect Desk Companion:** Keep it at your desk, in your room, or anywhere you want a little hands-on activity.
-- **Great for Gifting:** A fun choice for birthdays, holidays, party favors, stocking stuffers, and more.
+#### Safe Soft Material
+
+This stress relief squishy toy gives a simple, direct satisfaction. Its
+non-toxic TPR material provides a smooth, and gentle feel and rebound with every
+squeeze, making it satisfying to handle.
+
+#### Perfect for every scenario
+
+Keep it at your desk during homework or work, take it along on a road trip, keep
+it nearby during movie nights, or toss it in your bag for something to squeeze
+on the go. It's a fun little companion for kids, teens, and adults alike,
+whether you're looking for something to keep your hands busy, add a little fun
+to your day, or simply enjoy a satisfying squeeze.
+
+#### A perfect Little Gift
+
+The Cheese Cube makes an easy and fun little gift for birthdays, holidays, Christmas,
+stocking stuffers, party favors, or a just-because surprise. Tuck one into a
+stocking, add it to a gift bag, or give it on its own to someone who loves fun,
+tactile things.
+
+Sometimes the best gifts are the ones you can't help but squeeze.
 
 ---
 
-### Marbled cube stress squeeze squish Toy
+### Marbled Cube Squeeze Toy
 
-**PRODUCT NAME** — Marbled cube stress squeeze squish Toy
+**PRODUCT NAME** — Marbled Cube Squeeze Toy
 
 **PRODUCT DESCRIPTION**
 
-#### Soft, Satisfying & Made to Squeeze
+#### Soft Satisfying Squeeze
 
-Meet your new favorite squeeze companion. Our **Marbled Cube Stress squeeze
-Toy** is designed for satisfying, repetitive squeezing whenever you're
-anxious,stressed, and your hands need something to do. Its soft **squishy**
-texture and **soft slow rising** feel makes it enjoyable to squeeze again and
-again.
+This slow-rising Marbled Cube squishy is soft, and very satisfying to squeeze.
 
-#### Why You'll Love It
+Easy to keep nearby and fun to pick up whenever you feel like fidgeting,
+playing, or just enjoying the feel of something soft in your hands.
 
-- **Soft & Satisfying:** Made with **(material)** for a soft, squeezable texture.
-- **Made for Repeated Squeezing:** Designed to withstand regular use without easily losing its shape.
-- **Fun, Unique Design:** The **intricate marble design** makes it as fun to look at as it is to squeeze.
-- **Perfect Desk Companion:** Keep it at your desk, in your room, or anywhere you want a little hands-on activity.
-- **Great for Gifting:** A fun choice for birthdays, holidays, party favors, stocking stuffers, and more.
+#### Safe Soft Material
+
+This stress relief squishy toy gives a simple, direct satisfaction. Its
+non-toxic TPR material provides a smooth, and gentle feel and rebound with every
+squeeze, making it satisfying to handle.
+
+#### Perfect for every scenario
+
+Keep it at your desk during homework or work, take it along on a road trip, keep
+it nearby during movie nights, or toss it in your bag for something to squeeze
+on the go. It's a fun little companion for kids, teens, and adults alike,
+whether you're looking for something to keep your hands busy, add a little fun
+to your day, or simply enjoy a satisfying squeeze.
+
+#### A perfect Little Gift
+
+The Marbled Cube makes an easy and fun little gift for birthdays, holidays, Christmas,
+stocking stuffers, party favors, or a just-because surprise. Tuck one into a
+stocking, add it to a gift bag, or give it on its own to someone who loves fun,
+tactile things.
+
+Sometimes the best gifts are the ones you can't help but squeeze.
 
 ---
 
