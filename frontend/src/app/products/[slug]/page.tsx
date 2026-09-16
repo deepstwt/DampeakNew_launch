@@ -5,6 +5,7 @@ import { PRODUCTS, getProduct, primaryImage, site } from "@/content/site";
 import { SITE_URL } from "@/lib/site-url";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { ProductPhoto } from "@/components/ui/ProductPhoto";
+import { ProductGallery } from "@/components/ui/ProductGallery";
 import { BuyPanel } from "@/components/ui/BuyPanel";
 import { SaveButton } from "@/components/ui/SaveButton";
 import { Nav } from "@/components/ui/Nav";
@@ -118,34 +119,24 @@ export default async function ProductPage({
           />
 
 
-          {/* Not an even split: the picture carries this page and the copy
-              beside it is short, so 7/5 keeps the image large. */}
-          <div className="mt-10 grid gap-10 lg:grid-cols-[7fr_5fr] lg:gap-16">
-            {/**
-             * One photograph.
-             *
-             * A rail of four frames stood here — the shot that exists, and three
-             * placeholders for the ones that do not. `images` is still an array
-             * and `primaryImage` still answers "the one that stands for this
-             * product", so a gallery is a component away if there is ever more
-             * than one shot to put in it.
-             */}
-            <div className="relative aspect-square overflow-hidden rounded-3xl bg-ink/5">
-              {/* On the picture, top left. z-10 because the photograph fills the
-                  tile absolutely and would otherwise cover it. */}
-              <SaveButton
-                slug={product.slug}
-                className="absolute top-4 left-4 z-10"
-              />
-
-              <ProductPhoto
-                image={cover}
-                name={product.name}
-                slug={product.slug}
-                swatch={product.swatch}
-                priority
-              />
-            </div>
+          {/* An even split now. The picture used to take seven twelfths of the
+              row; with a thumbnail rail beside it and four headed sections of
+              copy below, it does not need to be the largest thing on screen. */}
+          <div className="mt-10 grid gap-10 lg:grid-cols-2 lg:gap-16">
+            <ProductGallery
+              images={product.images}
+              name={product.name}
+              slug={product.slug}
+              swatch={product.swatch}
+              overlay={
+                /* On the picture, top left. z-10 because the photograph fills
+                   the frame absolutely and would otherwise cover it. */
+                <SaveButton
+                  slug={product.slug}
+                  className="absolute top-4 left-4 z-10"
+                />
+              }
+            />
 
             {/* The case for it */}
             <div className="lg:pt-6">
