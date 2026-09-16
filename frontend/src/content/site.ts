@@ -27,36 +27,42 @@
 export type ProductPhoto = { src: string; alt: string };
 
 /**
- * Every product's description follows the same three-part shape from the deck:
- * a section headline, one paragraph, then the reasons. Shared so a fifth product
- * cannot arrive with a different structure.
+ * Every product's description, as four headed sections.
+ *
+ * The copy is the same for all four but for two places — the name in the first
+ * line and the subject of the gift sentence — so it is written once here rather
+ * than four times in the catalogue below. The gift subject is its own parameter
+ * because it is not always the product's name: the toasted bread is "the Toasted
+ * Bread squish" in that sentence and the others are not.
  */
-const squeezeCopy = (product: string, design: string) => ({
-  headline: "Soft, Satisfying & Made to Squeeze",
-  body: `Meet your new favorite squeeze companion. Our ${product} is designed for satisfying, repetitive squeezing whenever you're anxious, stressed, and your hands need something to do. Its soft squishy texture and soft slow rising feel makes it enjoyable to squeeze again and again.`,
-  reasonsTitle: "Why You'll Love It",
-  /**
-   * The deck opens this list with "Soft & Satisfying: Made with (material) for a
-   * soft, squeezable texture." The compound has not been chosen, and the bullet
-   * says nothing without it — so it is out until there is a material to name,
-   * rather than shipping the word "(material)" to a customer.
-   */
-  reasons: [
-    {
-      title: "Made for Repeated Squeezing",
-      text: "Designed to withstand regular use without easily losing its shape.",
-    },
-    { title: "Fun, Unique Design", text: design },
-    {
-      title: "Perfect Desk Companion",
-      text: "Keep it at your desk, in your room, or anywhere you want a little hands-on activity.",
-    },
-    {
-      title: "Great for Gifting",
-      text: "A fun choice for birthdays, holidays, party favors, stocking stuffers, and more.",
-    },
-  ],
-});
+const squeezeCopy = (name: string, giftSubject: string) => [
+  {
+    heading: "Soft satisfying squeeze",
+    body: [
+      `This slow-rising ${name} squishy is soft, and very satisfying to squeeze.`,
+      "Easy to keep nearby and fun to pick up whenever you feel like fidgeting, playing, or just enjoying the feel of something soft in your hands.",
+    ],
+  },
+  {
+    heading: "Safe soft material",
+    body: [
+      "This stress relief squishy toy gives a simple, direct satisfaction. Its non-toxic TPR material provides a smooth, and gentle feel and rebound with every squeeze, making it satisfying to handle.",
+    ],
+  },
+  {
+    heading: "Perfect for every scenario",
+    body: [
+      "Keep it at your desk during homework or work, take it along on a road trip, keep it nearby during movie nights, or toss it in your bag for something to squeeze on the go. It's a fun little companion for kids, teens, and adults alike, whether you're looking for something to keep your hands busy, add a little fun to your day, or simply enjoy a satisfying squeeze.",
+    ],
+  },
+  {
+    heading: "A perfect little gift",
+    body: [
+      `${giftSubject} makes an easy and fun little gift for birthdays, holidays, Christmas, stocking stuffers, party favors, or a just-because surprise. Tuck one into a stocking, add it to a gift bag, or give it on its own to someone who loves fun, tactile things.`,
+      "Sometimes the best gifts are the ones you can't help but squeeze.",
+    ],
+  },
+];
 
 export const site = {
   name: "Dampeak",
@@ -107,11 +113,11 @@ export const site = {
         id: "blue-block",
         slug: "blue-block",
         name: "Rounded Cube",
-        fullName: "Rounded cube stress squeeze squish Toy",
+        fullName: "Rounded Cube Squeeze Toy",
         fact: "Big enough to need a whole hand. Squeeze it flat, let go, and it takes its own time coming back.",
         description: squeezeCopy(
-          "Rounded Cube Stress squeeze Toy",
-          "The satisfying blue design gives it a calming feel, and makes it as fun to look at as it is to squeeze.",
+          "Rounded Cube",
+          "The Rounded Cube",
         ),
         specs: {
           shape: "Rounded cube",
@@ -134,11 +140,11 @@ export const site = {
         id: "pillow-squish",
         slug: "pillow-squish",
         name: "Toasted Bread",
-        fullName: "Toasted Bread stress squeeze squish Toy",
+        fullName: "Toasted Bread Squeeze Toy",
         fact: "Matte foam, not plastic. It gives immediately, which makes it the one you reach for without thinking.",
         description: squeezeCopy(
-          "Toasted bread Stress squeeze Toy",
-          "The beautiful toasted bread design makes it as fun to look at as it is to squeeze.",
+          "Toasted Bread",
+          "The Toasted Bread squish",
         ),
         specs: {
           shape: "Pillow square",
@@ -161,11 +167,11 @@ export const site = {
         id: "cheese-cube",
         slug: "cheese-cube",
         name: "Cheese Cube",
-        fullName: "Cheese cube stress squeeze squish Toy",
+        fullName: "Cheese Cube Squeeze Toy",
         fact: "The moulded holes give your fingers somewhere to go, so it never lands in your hand the same way twice.",
         description: squeezeCopy(
-          "Cheese Cube Stress squeeze Toy",
-          "The intricate cheese design makes it as fun to look at as it is to squeeze.",
+          "Cheese Cube",
+          "The Cheese Cube",
         ),
         specs: {
           shape: "Cube",
@@ -188,11 +194,11 @@ export const site = {
         id: "marble-cube",
         slug: "marble-cube",
         name: "Marbled Cube",
-        fullName: "Marbled cube stress squeeze squish Toy",
+        fullName: "Marbled Cube Squeeze Toy",
         fact: "No two are marbled alike. Smooth all over, so it slides between your fingers rather than catching.",
         description: squeezeCopy(
-          "Marbled Cube Stress squeeze Toy",
-          "The intricate marble design makes it as fun to look at as it is to squeeze.",
+          "Marbled Cube",
+          "The Marbled Cube",
         ),
         specs: {
           shape: "Rounded cube",
