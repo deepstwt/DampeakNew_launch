@@ -1,10 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, ArrowRight, Check } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Lock } from "lucide-react";
 import { CheckoutSteps, type Step } from "@/components/checkout/CheckoutSteps";
+import { Finalizing } from "@/components/checkout/Finalizing";
+import { WalletSheet, type Wallet } from "@/components/checkout/WalletSheet";
+import { authClient } from "@/lib/auth-client";
 import { resolve, useCart, type ResolvedLine } from "@/lib/cart";
 import { formatUSD, fromCents } from "@/lib/money";
 
@@ -44,11 +47,38 @@ export type DirectLine = { slug: string; quantity: number };
  * against its brand's current button guidelines, because that is also where the
  * approved dark and light variants come from.
  */
-const WALLETS = [
-  { name: "Shop Pay", src: "/brand/pay/shoppay.webp", width: 921, height: 292, background: "#4221ac", border: false },
-  { name: "PayPal", src: "/brand/pay/paypal.webp", width: 947, height: 320, background: "#123986", border: false },
-  { name: "Google Pay", src: "/brand/pay/gpay.webp", width: 1130, height: 488, background: "#ffffff", border: true },
-] as const;
+const WALLETS: Wallet[] = [
+  {
+    name: "Shop Pay",
+    src: "/brand/pay/shoppay.webp",
+    width: 921,
+    height: 292,
+    background: "#4221ac",
+    border: false,
+    tag: "Shop Pay · Fast checkout",
+    instrument: "Visa ···· 4242",
+  },
+  {
+    name: "PayPal",
+    src: "/brand/pay/paypal.webp",
+    width: 947,
+    height: 320,
+    background: "#123986",
+    border: false,
+    tag: "PayPal · Express checkout",
+    instrument: "PayPal balance",
+  },
+  {
+    name: "Google Pay",
+    src: "/brand/pay/gpay.webp",
+    width: 1130,
+    height: 488,
+    background: "#ffffff",
+    border: true,
+    tag: "Google Pay · Fast checkout",
+    instrument: "Visa ···· 4242",
+  },
+];
 
 /* ── The form ────────────────────────────────────────────────────────────── */
 
@@ -73,7 +103,15 @@ const REQUIRED = [
   "tel",
 ] as const;
 
-type FieldName = (typeof REQUIRED)[number] | "organization" | "address-line2";
+type FieldName =
+  | (typeof REQUIRED)[number]
+  | "organization"
+  | "address-line2"
+  | "country"
+  | "billing-address"
+  | "billing-city"
+  | "billing-state"
+  | "billing-zip";
 
 /**
  * `cents` is what the total is built from; `price` is what the option says on
@@ -96,6 +134,104 @@ const DELIVERY = [
     cents: 600,
   },
 ] as const;
+
+/**
+ * Where we ship, and the states of the one country that has them here.
+ *
+ * A short list rather than every country on earth: the prices on this site are
+ * in USD and the delivery options are written for the US. A checkout offering a
+ * country it cannot quote a delivery price for is offering nothing.
+ */
+const COUNTRIES = [
+  "United States",
+  "Canada",
+  "United Kingdom",
+  "Australia",
+  "India",
+] as const;
+
+const US_STATES = [
+  "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado",
+  "Connecticut", "Delaware", "District of Columbia", "Florida", "Georgia",
+  "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
+  "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota",
+  "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire",
+  "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota",
+  "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island",
+  "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont",
+  "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming",
+] as const;
+
+/** The two payment choices on the last step. */
+type PayWith = "card" | "shoppay";
+
+/**
+ * The card the flow starts with: the test number every payment provider
+ * publishes for demonstrations, which is not a card that exists and cannot be
+ * charged by anyone. It is prefilled rather than left blank on purpose — an
+ * empty card field on a page like this is an invitation to type a real one.
+ */
+const TEST_CARD = { number: "4242 4242 4242 4242", expiry: "12/28", cvc: "123" };
+
+/** 4242424242424242 → 4242 4242 4242 4242, as it is typed. */
+const groupDigits = (raw: string) =>
+  raw
+    .replace(/\D/g, "")
+    .slice(0, 16)
+    .replace(/(.{4})/g, "$1 ")
+    .trim();
+
+/** 1228 → 12/28, and a slash typed by hand is not doubled. */
+const expiryMask = (raw: string) => {
+  const digits = raw.replace(/\D/g, "").slice(0, 4);
+  return digits.length > 2 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits;
+};
+
+function Select({
+  id,
+  label,
+  value,
+  onChange,
+  options,
+  autoComplete,
+  className = "",
+}: {
+  id: FieldName;
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: readonly string[];
+  autoComplete?: string;
+  className?: string;
+}) {
+  return (
+    <div className={className}>
+      {/* Visible, unlike the inputs' labels: a select shows its value from the
+          start, so there is no placeholder doing the label's job. */}
+      <label htmlFor={id} className="mb-1.5 block text-[13px] font-bold text-ink/55">
+        {label}
+      </label>
+      <select
+        id={id}
+        name={id}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        autoComplete={autoComplete}
+        className={`${FIELD} appearance-none bg-[length:12px] bg-[right_1rem_center] bg-no-repeat pr-10`}
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5l5-5' stroke='%230b0b0f' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E\")",
+        }}
+      >
+        {options.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
 
 function Field({
   id,
@@ -144,8 +280,21 @@ export function CheckoutScreen({
   legal: { slug: string; title: string }[];
 }) {
   const cart = useCart();
+  /**
+   * Who is signed in, if anyone.
+   *
+   * A wallet is an account, not a form: the profile on the sheet is the account
+   * the visitor is signed into, which is why the email there is the signed-in
+   * one rather than whatever was last typed into the contact field. Signed out,
+   * it falls back to what the form has.
+   */
+  const { data: session } = authClient.useSession();
   const [step, setStep] = useState<Step>("Information");
-  const [values, setValues] = useState<Record<string, string>>({});
+  const [values, setValues] = useState<Record<string, string>>({
+    // A select is never empty, so its default belongs here rather than in a
+    // fallback at every read site.
+    country: "United States",
+  });
   /**
    * Nothing preselected.
    *
@@ -156,6 +305,34 @@ export function CheckoutScreen({
    */
   const [delivery, setDelivery] = useState<string | null>(null);
   const [method, setMethod] = useState<string | null>(null);
+  /**
+   * Which wallet sheet is open, if any.
+   *
+   * Express checkout is a second way through this screen, not a shortcut inside
+   * the first: it takes what the Information step has and goes straight to the
+   * order, which is what a wallet does in a real shop — it already holds the
+   * card and the delivery address, so the two steps it skips are the two it
+   * would have filled in itself.
+   */
+  const [sheet, setSheet] = useState<Wallet | null>(null);
+  const [payWith, setPayWith] = useState<PayWith>("card");
+  const [sameBilling, setSameBilling] = useState(true);
+  /**
+   * Component state, and nowhere else.
+   *
+   * Never written to storage, never put on the order, never logged. The order
+   * keeps the last four digits and only because a receipt has to say which card
+   * paid it.
+   */
+  const [card, setCard] = useState({ ...TEST_CARD, name: "" });
+  /** Held between pressing Pay now and the confirmation appearing. */
+  const [paying, setPaying] = useState(false);
+  const payTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // A pending payment on a screen that has gone is an order placed into nothing.
+  useEffect(() => () => {
+    if (payTimer.current) clearTimeout(payTimer.current);
+  }, []);
   /**
    * The placed order, and a snapshot of what was in it.
    *
@@ -185,6 +362,81 @@ export function CheckoutScreen({
   const complete = REQUIRED.every((id) => (values[id] ?? "").trim().length > 0);
 
   const chosenDelivery = DELIVERY.find((d) => d.id === delivery) ?? null;
+
+  /**
+   * Filled, not valid — the same test the steps before this one use. A card
+   * number is checked by the bank that issues it, and a Luhn check here would
+   * only stop someone walking through a flow that charges nothing.
+   */
+  const canPay =
+    payWith === "shoppay" ||
+    (card.number.replace(/\D/g, "").length >= 12 &&
+      card.expiry.length >= 4 &&
+      card.cvc.length >= 3);
+
+  /** The address as one line, for the places that recap it rather than edit it. */
+  const shipLine = [
+    field("address-line1"),
+    field("address-line2"),
+    field("address-level2"),
+    field("address-level1"),
+    field("postal-code"),
+    field("country") === "United States" ? "" : field("country"),
+  ]
+    .filter(Boolean)
+    .join(", ");
+
+  /**
+   * What was entered on the steps already passed, with a way back into each.
+   *
+   * Every checkout has this and ours did not: once you left the Information
+   * step there was nothing on screen saying which email or address the order was
+   * going to, and the only way to check was Back — which is the button people
+   * press when they think they have lost their place. Each row goes back to the
+   * step that owns it, so Change means change this, not start again.
+   */
+  const review = (rows: { label: string; value: string; to: Step }[]) => (
+    <dl className="divide-y divide-ink/10 rounded-2xl border border-ink/15">
+      {rows.map((row) => (
+        <div key={row.label} className="flex items-start gap-4 px-4 py-3.5">
+          <dt className="w-[76px] shrink-0 pt-0.5 text-[13px] font-bold text-ink/45">
+            {row.label}
+          </dt>
+          <dd className="min-w-0 flex-1 text-[14px] font-bold break-words">
+            {row.value || <span className="text-ink/35">Not given</span>}
+          </dd>
+          <button
+            type="button"
+            onClick={() => setStep(row.to)}
+            className="shrink-0 pt-0.5 text-[13px] font-extrabold text-blue underline decoration-2 underline-offset-4 transition-opacity hover:opacity-70"
+          >
+            Change
+          </button>
+        </div>
+      ))}
+    </dl>
+  );
+
+  /**
+   * Placing the order — the last thing both routes through this screen do.
+   *
+   * Written once because the two routes have to end identically: whether the
+   * order came from the three steps or from a wallet sheet, the reference is
+   * drawn the same way, the lines are snapshotted the same way, and the cart is
+   * emptied under the same condition. Two copies of this drift, and the one that
+   * drifts is always the one nobody clicks in testing.
+   */
+  const place = (paidWith: string, lines: ResolvedLine[], total: number) => {
+    // Six characters, generated here rather than server-side because there is
+    // no order to number — this is what the confirmation shows.
+    const ref = Math.random().toString(36).slice(2, 8).toUpperCase();
+    setMethod(paidWith);
+    setOrder({ ref: `DP-${ref}`, lines, total });
+    // The cart has been bought; emptying it is the last thing this flow owes
+    // it. A Buy Now never touched the cart, so it must not empty one either —
+    // that would delete things the visitor put aside and never agreed to buy.
+    if (!direct) cart.clear();
+  };
 
   /**
    * What is being bought, and what it comes to.
@@ -227,9 +479,15 @@ export function CheckoutScreen({
   );
 
   if (order) {
-    const name = [field("given-name"), field("family-name")]
-      .filter(Boolean)
-      .join(" ");
+    /**
+     * The same order the wallet sheet uses: what was typed, then the account.
+     * An express order can be placed without the form being touched, and this
+     * page is the one that would otherwise thank nobody and post to nowhere.
+     */
+    const name =
+      [field("given-name"), field("family-name")].filter(Boolean).join(" ") ||
+      (session?.user?.name ?? "");
+    const email = field("email") || (session?.user?.email ?? "");
     const address = [
       field("address-line1"),
       field("address-line2"),
@@ -250,78 +508,119 @@ export function CheckoutScreen({
     return (
       <div className="min-h-screen bg-white px-6 py-14 md:px-10">
         <div className="mx-auto max-w-[620px]">
-        <span
-          aria-hidden
-          className="inline-flex size-14 items-center justify-center rounded-full bg-brown"
-        >
-          <Check className="size-7 text-white" strokeWidth={3} />
-        </span>
+        {/**
+         * The header, on its own field of green.
+         *
+         * Green is not in the palette anywhere else and is deliberate here: this
+         * is the one screen in the shop that reports an outcome rather than
+         * offering a choice, and the colour that means "done" is worth more on
+         * it than palette consistency.
+         */}
+        <div className="rounded-3xl border border-[#bbf7d0] bg-[#f0fdf4] px-6 py-10 text-center">
+          <span
+            aria-hidden
+            className="inline-flex size-14 items-center justify-center rounded-full bg-[#16a34a]"
+          >
+            <Check className="size-7 text-white" strokeWidth={3} />
+          </span>
 
-        <h2 className="text-display mt-6 text-[9vw] leading-[0.95] sm:text-[5vw] lg:text-[2.8vw]">
-          Thank you{name ? `, ${field("given-name")}` : ""}.
-        </h2>
+          <p className="text-marker mt-5 text-[#15803d]">Order confirmed</p>
 
-        <p className="mt-4 text-[17px] leading-relaxed font-medium text-ink/65">
-          Your order is placed. We have sent the details to{" "}
-          <span className="font-extrabold text-ink">{field("email")}</span>.
-        </p>
+          <h2 className="text-display mt-3 text-[8vw] leading-[1] sm:text-[4vw] lg:text-[2.4vw]">
+            Thank you{name ? `, ${name.split(" ")[0]}` : ""}!
+          </h2>
 
-        <dl className="mt-8 divide-y divide-ink/10 border-y border-ink/10">
-          <div className="flex flex-wrap justify-between gap-4 py-4">
-            <dt className="text-marker text-ink/45">Order number</dt>
-            <dd className="text-[15px] font-extrabold">{order.ref}</dd>
-          </div>
+          <p className="mx-auto mt-4 max-w-[46ch] text-[16px] leading-relaxed font-medium text-ink/65">
+            Your order is confirmed
+            {email ? (
+              <>
+                . We have sent the details to{" "}
+                <span className="font-extrabold text-ink">{email}</span>.
+              </>
+            ) : (
+              "."
+            )}
+          </p>
 
-          {/* What was bought. The summary panel is gone by this point, and an
-              order confirmation that never says what was ordered is the one
-              page in this flow someone comes back to looking for exactly that. */}
-          <div className="flex flex-wrap justify-between gap-6 py-4">
-            <dt className="text-marker text-ink/45">Order</dt>
-            <dd className="text-right text-[15px] font-bold">
+          {/* The one thing on this page somebody will be asked to read back down
+              a phone line, so it is boxed and set in a face where a 0 and an O
+              are not the same shape. */}
+          <p className="mt-6 inline-block rounded-xl border border-ink/15 bg-white px-5 py-3 font-mono text-[15px] font-bold">
+            Order number: <span className="text-ink">{order.ref}</span>
+          </p>
+        </div>
+
+        {/**
+         * Everything the order was, in four quarters.
+         *
+         * A two-column grid rather than the label-and-value list this used to
+         * be: the four things somebody checks on a confirmation — where it is
+         * going, how, what paid, and who it was sent to — are peers, and a list
+         * makes the last one look like a footnote to the first.
+         */}
+        <div className="mt-6 rounded-3xl border border-ink/15 px-6 py-6">
+          <h3 className="text-[17px] font-extrabold tracking-tight">Order details</h3>
+
+          <dl className="mt-5 grid gap-x-8 gap-y-6 sm:grid-cols-2">
+            <div>
+              <dt className="text-[13px] font-bold text-ink/45">Contact</dt>
+              <dd className="mt-1 text-[15px] font-bold break-words">
+                {email || <span className="text-ink/35">Not given</span>}
+              </dd>
+            </div>
+
+            <div>
+              <dt className="text-[13px] font-bold text-ink/45">Paid with</dt>
+              <dd className="mt-1 text-[15px] font-bold">
+                {method ?? <span className="text-ink/35">Not recorded</span>}
+              </dd>
+            </div>
+
+            <div>
+              <dt className="text-[13px] font-bold text-ink/45">Shipping address</dt>
+              <dd className="mt-1 text-[15px] font-bold not-italic">
+                {name ? <span className="block">{name}</span> : null}
+                {address.length ? (
+                  <span className="block text-ink/65">{address.join(", ")}</span>
+                ) : (
+                  <span className="text-ink/35">Not given</span>
+                )}
+              </dd>
+            </div>
+
+            <div>
+              <dt className="text-[13px] font-bold text-ink/45">Shipping method</dt>
+              <dd className="mt-1 text-[15px] font-bold">
+                {chosen ? (
+                  `${chosen.name} · ${chosen.detail}`
+                ) : (
+                  <span className="text-ink/35">Not chosen</span>
+                )}
+              </dd>
+            </div>
+          </dl>
+
+          {/* What was bought, under the four. A confirmation that never says
+              what was ordered is the one page in this flow someone comes back
+              to looking for exactly that. */}
+          <div className="mt-6 border-t border-ink/10 pt-5">
+            <dt className="text-[13px] font-bold text-ink/45">Order</dt>
+            <dd className="mt-1.5 text-[15px] font-bold">
               {order.lines.map((line) => (
                 <span key={line.slug} className="block">
-                  {line.name}{" "}
-                  <span className="text-ink/45">× {line.quantity}</span>
+                  {line.name} <span className="text-ink/45">× {line.quantity}</span>
                 </span>
               ))}
-              <span className="mt-1 block font-extrabold tabular-nums">
+              <span className="text-display mt-2 block text-[22px] tabular-nums">
                 {formatUSD(fromCents(order.total))}
               </span>
             </dd>
           </div>
-
-          <div className="flex flex-wrap justify-between gap-6 py-4">
-            <dt className="text-marker text-ink/45">Shipping to</dt>
-            <dd className="max-w-[46ch] text-right text-[15px] font-bold not-italic">
-              {name ? <span className="block">{name}</span> : null}
-              {address.map((line) => (
-                <span key={line} className="block text-ink/65">
-                  {line}
-                </span>
-              ))}
-            </dd>
-          </div>
-
-          {chosen ? (
-            <div className="flex flex-wrap justify-between gap-4 py-4">
-              <dt className="text-marker text-ink/45">Delivery</dt>
-              <dd className="text-[15px] font-bold">
-                {chosen.name} · {chosen.detail}
-              </dd>
-            </div>
-          ) : null}
-
-          {method ? (
-            <div className="flex flex-wrap justify-between gap-4 py-4">
-              <dt className="text-marker text-ink/45">Paid with</dt>
-              <dd className="text-[15px] font-bold">{method}</dd>
-            </div>
-          ) : null}
-        </dl>
+        </div>
 
         <Link
           href="/products"
-          className="rounded-squish mt-10 inline-flex items-center gap-3 bg-brown px-8 py-4.5 text-[17px] font-extrabold text-white transition hover:brightness-150 active:scale-[0.98]"
+          className="rounded-squish mt-8 inline-flex items-center gap-3 bg-brown px-8 py-4.5 text-[17px] font-extrabold text-white transition hover:brightness-150 active:scale-[0.98]"
         >
           Continue shopping
           <ArrowRight className="size-5" strokeWidth={3} />
@@ -397,10 +696,15 @@ export function CheckoutScreen({
           {/**
            * Express checkout.
            *
-           * The three wallets from the reference, drawn from the artwork each
-           * brand supplies. None is connected to anything, so all three are
-           * disabled — which is now the only thing saying so, and the page has
-           * no card field anywhere either.
+           * The three wallets, drawn from the artwork each brand supplies, and
+           * live once the form below them is filled. They are gated on exactly
+           * the same condition as Continue to shipping, because a wallet cannot
+           * skip collecting an address it was never given — the sheet has to be
+           * able to show where the order is going, and this screen is the only
+           * thing that knows.
+           *
+           * Dull before that, with the reason said once underneath rather than
+           * three times inside the buttons.
            */}
           <section aria-labelledby="express">
             <h2 id="express" className="text-marker text-center text-ink/40">
@@ -412,9 +716,12 @@ export function CheckoutScreen({
                 <li key={wallet.name}>
                   <button
                     type="button"
-                    disabled
-                    aria-label={`Pay with ${wallet.name} — not available yet`}
-                    className={`flex h-12 w-full items-center justify-center overflow-hidden rounded-xl ${wallet.border ? "border border-ink/15" : ""}`}
+                    onClick={() => setSheet(wallet)}
+                    aria-describedby="express-hint"
+                    aria-label={`Pay with ${wallet.name}`}
+                    className={`flex h-12 w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl transition hover:brightness-110 active:scale-[0.98] ${
+                      wallet.border ? "border border-ink/15" : ""
+                    }`}
                     style={{ background: wallet.background }}
                   >
                     <Image
@@ -428,6 +735,13 @@ export function CheckoutScreen({
                 </li>
               ))}
             </ul>
+
+            <p
+              id="express-hint"
+              className="mt-3 text-center text-[13px] font-semibold text-ink/45"
+            >
+              Pay in one step — no card details needed.
+            </p>
           </section>
 
           <div className="my-8 flex items-center gap-4">
@@ -478,17 +792,69 @@ export function CheckoutScreen({
               Shipping address
             </h2>
 
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <Select
+              id="country"
+              label="Country / Region"
+              options={COUNTRIES}
+              autoComplete="country-name"
+              className="mt-4"
+              value={field("country")}
+              onChange={set("country")}
+            />
+
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
               <Field id="given-name" label="First name" autoComplete="given-name" value={field("given-name")} onChange={set("given-name")} />
               <Field id="family-name" label="Last name" autoComplete="family-name" value={field("family-name")} onChange={set("family-name")} />
               <Field id="organization" label="Company (optional)" autoComplete="organization" className="sm:col-span-2" value={field("organization")} onChange={set("organization")} />
               <Field id="address-line1" label="Address" autoComplete="address-line1" className="sm:col-span-2" value={field("address-line1")} onChange={set("address-line1")} />
               <Field id="address-line2" label="Apartment, suite, etc. (optional)" autoComplete="address-line2" className="sm:col-span-2" value={field("address-line2")} onChange={set("address-line2")} />
               <Field id="address-level2" label="City" autoComplete="address-level2" value={field("address-level2")} onChange={set("address-level2")} />
-              <Field id="address-level1" label="State" autoComplete="address-level1" value={field("address-level1")} onChange={set("address-level1")} />
+              {/* A list where there is one to offer, and a free field where
+                  there is not. Every country's second-level division has a
+                  different name and a different set, and a US state list under a
+                  Canadian address is worse than no list at all. */}
+              {field("country") === "United States" ? (
+                <div>
+                  <label htmlFor="address-level1" className="sr-only">
+                    State
+                  </label>
+                  <select
+                    id="address-level1"
+                    name="address-level1"
+                    autoComplete="address-level1"
+                    value={field("address-level1")}
+                    onChange={(e) => set("address-level1")(e.target.value)}
+                    className={`${FIELD} appearance-none pr-8 ${
+                      field("address-level1") ? "" : "text-ink/35"
+                    }`}
+                  >
+                    <option value="">State</option>
+                    {US_STATES.map((state) => (
+                      <option key={state} value={state} className="text-ink">
+                        {state}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : (
+                <Field id="address-level1" label="State / Province" autoComplete="address-level1" value={field("address-level1")} onChange={set("address-level1")} />
+              )}
               <Field id="postal-code" label="ZIP code" autoComplete="postal-code" value={field("postal-code")} onChange={set("postal-code")} />
-              <Field id="tel" label="Phone" type="tel" autoComplete="tel" value={field("tel")} onChange={set("tel")} />
+              <Field id="tel" label="Phone" type="tel" autoComplete="tel" className="sm:col-span-2" value={field("tel")} onChange={set("tel")} />
             </div>
+
+            {/* Checked or not, it does nothing yet: there is nowhere to save an
+                address to until accounts hold one. It is here because the step
+                it belongs to is being built now, and adding the box later means
+                re-testing this form for the sake of one checkbox. */}
+            <label className="mt-3 flex items-center gap-3 text-[14px] font-semibold text-ink/65">
+              <input
+                type="checkbox"
+                name="save-address"
+                className="size-4 rounded border-ink/25 accent-brown"
+              />
+              Save this information for next time
+            </label>
           </section>
 
           {/**
@@ -514,7 +880,12 @@ export function CheckoutScreen({
         </form>
       ) : step === "Shipping" ? (
         <div className="mt-8">
-          <section aria-labelledby="delivery">
+          {review([
+            { label: "Contact", value: field("email"), to: "Information" },
+            { label: "Ship to", value: shipLine, to: "Information" },
+          ])}
+
+          <section aria-labelledby="delivery" className="mt-8">
             <h2 id="delivery" className="text-[19px] font-extrabold tracking-tight">
               Delivery method
             </h2>
@@ -584,87 +955,243 @@ export function CheckoutScreen({
         /**
          * Payment, and then the order.
          *
-         * The wallets are the payment methods: pick one and Place order comes
-         * on, the same way the two steps before this one work. There is no card
-         * form and there will not be one here — card details belong in the
-         * payment provider's own hosted fields, never in inputs of ours, and a
-         * real card number typed into a page that cannot process it is the one
-         * thing on this flow that could cost somebody something.
+         * Two ways to pay: a card, or Shop Pay — which hands off to the same
+         * sheet the express buttons at the top of the first step open, so the
+         * one wallet that appears in both places behaves the same in both.
+         *
+         * About the card fields. Nothing here reaches a payment network, and a
+         * card number typed into a page that cannot process it is the one thing
+         * on this flow that could cost somebody something. So the number arrives
+         * already filled with the test card every payment provider publishes for
+         * exactly this, it is held in component state and written nowhere else —
+         * not to storage, not to the order, not to a log — and the confirmation
+         * prints the last four only.
          *
          * Placing the order draws a reference and shows the confirmation. It
          * does not charge, write an order or send an email, because none of
          * those exist yet; what it does is complete the walk-through.
          */
         <div className="mt-8">
-          <section aria-labelledby="pay">
+          {review([
+            { label: "Contact", value: field("email"), to: "Information" },
+            { label: "Ship to", value: shipLine, to: "Information" },
+            {
+              label: "Method",
+              value: chosenDelivery
+                ? `${chosenDelivery.name} · ${chosenDelivery.price}`
+                : "",
+              to: "Shipping",
+            },
+          ])}
+
+          <section aria-labelledby="pay" className="mt-8">
             <h2 id="pay" className="text-[19px] font-extrabold tracking-tight">
               Payment
             </h2>
 
-            <ul className="mt-5 grid gap-3 sm:grid-cols-3">
-              {WALLETS.map((wallet) => (
-                <li key={wallet.name}>
-                  <button
-                    type="button"
-                    onClick={() => setMethod(wallet.name)}
-                    aria-pressed={method === wallet.name}
-                    aria-label={`Pay with ${wallet.name}`}
-                    className={`flex h-12 w-full items-center justify-center overflow-hidden rounded-xl transition ${
-                      method === wallet.name
-                        ? "ring-2 ring-ink ring-offset-2"
-                        : "hover:brightness-105"
-                    } ${wallet.border ? "border border-ink/15" : ""}`}
-                    style={{ background: wallet.background }}
-                  >
-                    <Image
-                      src={wallet.src}
-                      alt={wallet.name}
-                      width={wallet.width}
-                      height={wallet.height}
-                      className="h-full w-auto object-contain"
-                    />
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <div className="mt-4 divide-y divide-ink/10 overflow-hidden rounded-2xl border border-ink/15">
+              <div>
+                <label className="flex cursor-pointer items-center gap-3 px-4 py-3.5">
+                  <input
+                    type="radio"
+                    name="pay-with"
+                    checked={payWith === "card"}
+                    onChange={() => setPayWith("card")}
+                    className="size-4 accent-brown"
+                  />
+                  <span className="flex-1 text-[15px] font-extrabold">
+                    Credit card
+                  </span>
+                  <span className="flex gap-1.5">
+                    {["VISA", "MC", "AMEX"].map((brand) => (
+                      <span
+                        key={brand}
+                        className="rounded bg-ink/[0.06] px-2 py-1 text-[10px] font-extrabold tracking-wider text-ink/55"
+                      >
+                        {brand}
+                      </span>
+                    ))}
+                  </span>
+                </label>
 
-            {method ? (
-              <p className="mt-4 text-[14px] font-semibold text-ink/55">
-                Paying with <span className="font-extrabold text-ink">{method}</span>.
-              </p>
-            ) : (
-              <p className="mt-4 text-[14px] font-semibold text-ink/55">
-                Choose how you would like to pay.
-              </p>
-            )}
+                {payWith === "card" ? (
+                  <div className="space-y-3 border-t border-ink/10 px-4 py-4">
+                    <div className="relative">
+                      <label htmlFor="card-number" className="sr-only">
+                        Card number
+                      </label>
+                      <input
+                        id="card-number"
+                        inputMode="numeric"
+                        autoComplete="off"
+                        maxLength={19}
+                        value={card.number}
+                        onChange={(e) =>
+                          setCard((c) => ({ ...c, number: groupDigits(e.target.value) }))
+                        }
+                        placeholder="Card number"
+                        className={`${FIELD} pr-11 tabular-nums`}
+                      />
+                      <Lock
+                        aria-hidden
+                        className="pointer-events-none absolute top-1/2 right-4 size-4 -translate-y-1/2 text-ink/30"
+                        strokeWidth={2.5}
+                      />
+                    </div>
+
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div>
+                        <label htmlFor="card-expiry" className="sr-only">
+                          Expiry date
+                        </label>
+                        <input
+                          id="card-expiry"
+                          inputMode="numeric"
+                          autoComplete="off"
+                          maxLength={5}
+                          value={card.expiry}
+                          onChange={(e) =>
+                            setCard((c) => ({ ...c, expiry: expiryMask(e.target.value) }))
+                          }
+                          placeholder="MM/YY"
+                          className={`${FIELD} tabular-nums`}
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="card-cvc" className="sr-only">
+                          Security code
+                        </label>
+                        <input
+                          id="card-cvc"
+                          inputMode="numeric"
+                          autoComplete="off"
+                          maxLength={4}
+                          value={card.cvc}
+                          onChange={(e) =>
+                            setCard((c) => ({
+                              ...c,
+                              cvc: e.target.value.replace(/\D/g, "").slice(0, 4),
+                            }))
+                          }
+                          placeholder="CVC"
+                          className={`${FIELD} tabular-nums`}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label htmlFor="card-name" className="sr-only">
+                        Name on card
+                      </label>
+                      <input
+                        id="card-name"
+                        autoComplete="off"
+                        value={card.name}
+                        onChange={(e) => setCard((c) => ({ ...c, name: e.target.value }))}
+                        placeholder="Name on card"
+                        className={FIELD}
+                      />
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+
+              <label className="flex cursor-pointer items-center gap-3 px-4 py-3.5">
+                <input
+                  type="radio"
+                  name="pay-with"
+                  checked={payWith === "shoppay"}
+                  onChange={() => setPayWith("shoppay")}
+                  className="size-4 accent-brown"
+                />
+                <span className="text-[15px] font-extrabold">Shop Pay</span>
+                <span className="rounded-full bg-[#4221ac]/10 px-2.5 py-1 text-[11px] font-extrabold text-[#4221ac]">
+                  Installments or 1-click
+                </span>
+              </label>
+            </div>
+          </section>
+
+          <section aria-labelledby="billing" className="mt-8">
+            <h2 id="billing" className="text-[19px] font-extrabold tracking-tight">
+              Billing address
+            </h2>
+
+            <div className="mt-4 divide-y divide-ink/10 overflow-hidden rounded-2xl border border-ink/15">
+              <label className="flex cursor-pointer items-center gap-3 px-4 py-3.5">
+                <input
+                  type="radio"
+                  name="billing"
+                  checked={sameBilling}
+                  onChange={() => setSameBilling(true)}
+                  className="size-4 accent-brown"
+                />
+                <span className="text-[15px] font-extrabold">
+                  Same as shipping address
+                </span>
+              </label>
+
+              <div>
+                <label className="flex cursor-pointer items-center gap-3 px-4 py-3.5">
+                  <input
+                    type="radio"
+                    name="billing"
+                    checked={!sameBilling}
+                    onChange={() => setSameBilling(false)}
+                    className="size-4 accent-brown"
+                  />
+                  <span className="text-[15px] font-extrabold">
+                    Use a different billing address
+                  </span>
+                </label>
+
+                {/* Revealed, not linked to another step: choosing this and being
+                    shown nothing is a dead end, and the four lines a card needs
+                    are fewer than the shipping form asks for. */}
+                {!sameBilling ? (
+                  <div className="grid gap-3 border-t border-ink/10 px-4 py-4 sm:grid-cols-2">
+                    <Field id="billing-address" label="Address" className="sm:col-span-2" value={field("billing-address")} onChange={set("billing-address")} />
+                    <Field id="billing-city" label="City" value={field("billing-city")} onChange={set("billing-city")} />
+                    <Field id="billing-state" label="State" value={field("billing-state")} onChange={set("billing-state")} />
+                    <Field id="billing-zip" label="ZIP code" className="sm:col-span-2" value={field("billing-zip")} onChange={set("billing-zip")} />
+                  </div>
+                ) : null}
+              </div>
+            </div>
           </section>
 
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <button
               type="button"
               onClick={() => {
-                if (!method || lines.length === 0) return;
-                // A reference, drawn when the order is placed. Six characters,
-                // generated here rather than server-side because there is no
-                // order to number — this is what the confirmation shows.
-                const ref = Math.random().toString(36).slice(2, 8).toUpperCase();
-                setOrder({ ref: `DP-${ref}`, lines, total });
-                // The cart has been bought; emptying it is the last thing this
-                // flow owes it. A Buy Now never touched the cart, so it must
-                // not empty one either — that would delete things the visitor
-                // put aside and never agreed to buy.
-                if (!direct) cart.clear();
+                if (!canPay || paying || lines.length === 0) return;
+                if (payWith === "shoppay") {
+                  // The same sheet the express buttons open. Shop Pay is one
+                  // wallet whether it is picked at the top of the flow or the
+                  // bottom, so it gets one behaviour — its own wait included.
+                  setSheet(WALLETS[0]);
+                  return;
+                }
+                // The card takes the same pause the wallet does, for the same
+                // reason: a card that confirms on the same frame as the click
+                // is the one part of this flow that stops reading as a payment.
+                const digits = card.number.replace(/\D/g, "").slice(-4);
+                setPaying(true);
+                payTimer.current = setTimeout(() => {
+                  setPaying(false);
+                  place(`Card ···· ${digits}`, lines, total);
+                }, 1800);
               }}
-              disabled={!method}
-              aria-disabled={!method}
+              disabled={!canPay || paying}
+              aria-disabled={!canPay || paying}
               className={`rounded-squish inline-flex items-center gap-3 px-8 py-4.5 text-[17px] font-extrabold transition ${
-                method
+                canPay && !paying
                   ? "bg-blue text-white hover:brightness-110 active:scale-[0.98]"
                   : "cursor-not-allowed bg-ink/10 text-ink/35"
               }`}
             >
-              Place order
-              <ArrowRight className="size-5" strokeWidth={3} />
+              <Lock className="size-[18px]" strokeWidth={3} />
+              {paying ? "Paying…" : "Pay now"}
             </button>
 
             <button
@@ -805,6 +1332,63 @@ export function CheckoutScreen({
           </div>
         </div>
       </aside>
+
+      {/**
+       * The wallet sheet, last in the tree and fixed over everything.
+       *
+       * It is handed the contact and address already typed into the form rather
+       * than a stand-in profile: this is the visitor's own order, and a sheet
+       * that quotes somebody else's name is the first thing they would notice.
+       *
+       * Paying from here settles the delivery the wallet would have chosen —
+       * standard, free — so the confirmation has a delivery line like every
+       * other order and the total on the sheet is the total that was placed.
+       */}
+      {/**
+       * The card's wait, over the whole screen.
+       *
+       * The wallet shows this inside its own sheet; the card has no sheet, so it
+       * gets one for the length of the pause. Covering everything is the point —
+       * it takes the form out of reach while the payment is supposedly in flight,
+       * the same as the wallet does.
+       */}
+      {paying ? (
+        <div
+          role="status"
+          aria-live="polite"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-ink/55 px-4 backdrop-blur-[2px]"
+        >
+          <div className="w-full max-w-[400px] rounded-3xl bg-white shadow-2xl">
+            <Finalizing />
+          </div>
+        </div>
+      ) : null}
+
+      {sheet ? (
+        <WalletSheet
+          wallet={sheet}
+          name={
+            session?.user?.name ||
+            [field("given-name"), field("family-name")].filter(Boolean).join(" ")
+          }
+          email={session?.user?.email || field("email")}
+          address={[
+            field("address-line1"),
+            field("address-level2"),
+            field("address-level1"),
+            field("postal-code"),
+          ]
+            .filter(Boolean)
+            .join(", ")}
+          total={subtotal}
+          onCancel={() => setSheet(null)}
+          onPaid={() => {
+            setSheet(null);
+            setDelivery("standard");
+            place(`${sheet.name} · ${sheet.instrument}`, lines, subtotal);
+          }}
+        />
+      ) : null}
     </div>
   );
 }
