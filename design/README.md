@@ -6,7 +6,7 @@ loads is a derivative built from these and committed under
 
 | Source | Ships as | Made by |
 |---|---|---|
-| `Rounded cube stress squeeze squish Toy.png` | `public/products/blue-block.webp` | trim → square → pad → WebP |
+| `Rounded cube stress squeeze squish Toy.png` | `public/products/blue-block-1.webp` | trim → square → pad → WebP |
 | `Toasted Bread stress squeeze squish Toy.png` | `public/products/pillow-squish.webp` | trim → square → pad → WebP |
 | `Cheese cube stress squeeze squish Toy.png` | — superseded, see below | — |
 | `Marbled cube stress squeeze squish Toy.png` | `public/products/marble-cube.webp` | trim → square → pad → WebP |
@@ -16,7 +16,7 @@ loads is a derivative built from these and committed under
 | `Contact page.png` | `public/lifestyle/contact.webp` | WebP at 1400px wide |
 | `Product Gallery Cube/Rounded Cube1-3.png` | `public/products/blue-block-2…4.webp` | trim → square → pad → WebP |
 | `Product Gallery image Toasted/Toasted1-4.png` | `public/products/pillow-squish-2…5.webp` | trim → square → pad → WebP |
-| `Product Gallery Image Cheese/Cheese4.jpeg` | `public/products/cheese-cube.webp` | trim → square → pad → WebP |
+| `Product Gallery Image Cheese/Cheese4.jpeg` | `public/products/cheese-cube-1.webp` | trim → square → pad → WebP |
 | `Product Gallery Image Cheese/Cheese1-3.jpeg` | `public/products/cheese-cube-2…4.webp` | trim → square → pad → WebP |
 | `Product Gallery Image Marble/Marble1-3.png` | `public/products/marble-cube-2…4.webp` | trim → square → pad → WebP |
 
@@ -62,3 +62,14 @@ and light variants come from.
 
 Replacing any of these means regenerating its derivative — the site does not
 read this folder.
+
+**And give the derivative a new filename when you do.** The same rule the logo
+carries, for the same reason: artwork replaced under a name that already exists
+stays cached under that URL — by the dev server's image optimiser here, by a CDN
+in production, and by the browser of anyone who has already loaded the page. Both
+packshots that changed hit exactly this. They went out as `blue-block.webp` and
+`cheese-cube.webp`, kept serving the picture they used to hold, and are now
+`blue-block-1.webp` and `cheese-cube-1.webp` — a new URL nothing can have a stale
+copy of. A rail whose packshot has never been replaced keeps its unnumbered name
+(`pillow-squish.webp`, `marble-cube.webp`); the number appears when the artwork
+behind it does.

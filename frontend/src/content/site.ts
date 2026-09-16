@@ -163,7 +163,7 @@ export const site = {
         swatch: "#33b6d6",
         images: [
           {
-            src: "/products/blue-block.webp",
+            src: "/products/blue-block-1.webp",
             alt: "The Rounded Cube squishy tipped onto one corner: a translucent blue cube with softly rounded edges.",
           },
           {
@@ -241,7 +241,7 @@ export const site = {
         swatch: "#eeba3c",
         images: [
           {
-            src: "/products/cheese-cube.webp",
+            src: "/products/cheese-cube-1.webp",
             alt: "The Cheese Cube squishy on white, moulded with holes across every face.",
           },
           {
