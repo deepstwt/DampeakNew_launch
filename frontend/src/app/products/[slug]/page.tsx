@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { PRODUCTS, getProduct, primaryImage, site } from "@/content/site";
 import { SITE_URL } from "@/lib/site-url";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { ProductPhoto } from "@/components/ui/ProductPhoto";
+import { ProductGallery } from "@/components/ui/ProductGallery";
+import { BuyPanel } from "@/components/ui/BuyPanel";
+import { ProductHighlights } from "@/components/ui/ProductHighlights";
 import { SaveButton } from "@/components/ui/SaveButton";
 import { Nav } from "@/components/ui/Nav";
 import { Footer } from "@/components/ui/Footer";
@@ -25,11 +27,11 @@ export async function generateMetadata({
   if (!product) return {};
 
   /**
-   * The listing title, not the shelf name. "Cheese cube stress squeeze squish
-   * Toy" is what someone types into a search box; "Cheese Cube" is what we call
-   * it once you already know what it is.
+   * The product's name, which is also the listing title — "Cheese Cube Squeeze
+   * Toy" is both what the page calls it and what someone types into a search
+   * box. There is no second, shorter name to choose between any more.
    */
-  const title = product.fullName;
+  const title = product.name;
   const cover = primaryImage(product);
 
   return {
@@ -73,7 +75,7 @@ export default async function ProductPage({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
-    name: product.fullName,
+    name: product.name,
     // The opening section, which is the closest thing to a summary the copy has.
     description: copy[0].body.join(" "),
     ...(cover ? { image: cover.src } : {}),
@@ -118,27 +120,24 @@ export default async function ProductPage({
           />
 
 
-          {/* Not an even split: the picture carries this page and the copy
-              beside it is short, so 7/5 keeps the image large. */}
-          <div className="mt-10 grid gap-10 lg:grid-cols-[7fr_5fr] lg:gap-16">
-            {/**
-             * One photograph.
-             *
-             * A rail of four frames stood here — the shot that exists, and three
-             * placeholders for the ones that do not. `images` is still an array
-             * and `primaryImage` still answers "the one that stands for this
-             * product", so a gallery is a component away if there is ever more
-             * than one shot to put in it.
-             */}
-            <div className="relative aspect-square overflow-hidden rounded-3xl bg-ink/5">
-              <ProductPhoto
-                image={cover}
-                name={product.name}
-                slug={product.slug}
-                swatch={product.swatch}
-                priority
-              />
-            </div>
+          {/* An even split now. The picture used to take seven twelfths of the
+              row; with a thumbnail rail beside it and four headed sections of
+              copy below, it does not need to be the largest thing on screen. */}
+          <div className="mt-10 grid gap-10 lg:grid-cols-2 lg:gap-16">
+            <ProductGallery
+              images={product.images}
+              name={product.name}
+              slug={product.slug}
+              swatch={product.swatch}
+              overlay={
+                /* On the picture, top left. z-10 because the photograph fills
+                   the frame absolutely and would otherwise cover it. */
+                <SaveButton
+                  slug={product.slug}
+                  className="absolute top-4 left-4 z-10"
+                />
+              }
+            />
 
             {/* The case for it */}
             <div className="lg:pt-6">
@@ -158,47 +157,60 @@ export default async function ProductPage({
               </span>
 
               {/**
-               * The shelf name is the display heading; the full listing title
-               * sits under it, small. Set at this size the full name wraps to
-               * three lines and stops being a heading — but it still has to be on
-               * the page, because it is the name on the box and on the listing.
+               * One name, and it is this one.
+               *
+               * A short shelf name used to be the heading with the listing title
+               * repeated under it in small type — "Toasted Bread" above "Toasted
+               * Bread Squeeze Toy" — which reads as two similarly named products
+               * rather than as one product named once. The listing title won,
+               * because it is the one that also has to work in a search result.
+               *
+               * Sized to fit on one line, which is why the desktop sizes are px
+               * and not vw. From lg up this sits in a half-width column, and
+               * that column stops growing at 548px — half of a 1240px container
+               * — while a vw size does not: the type kept outgrowing the box, so
+               * the name broke over two lines on exactly the screens with the
+               * most room.
+               *
+               * Two steps because the column does not arrive at its full width
+               * until the container caps out. Measured against Inter at 900 with
+               * this utility's -0.045em tracking, the longest of the four names
+               * is 12.97em wide, so:
+               *
+               *   1024px wide  column 440px  32px → 415px  (94%)
+               *   1280px wide  column 548px  36px → 467px  (85%)
+               *
+               * One step of 36px everywhere would overflow at 1024 by 27px. The
+               * ceiling for this column is about 42px; anything above that wraps
+               * again, however wide the screen gets.
+               *
+               * Below lg the name has the full width and a vw size is right; on
+               * a phone 25 characters cannot be one line at any size worth
+               * reading, so it wraps — `text-balance` is what makes that two even
+               * lines rather than a long one and an orphan.
                */}
-              <h1 className="text-display mt-5 text-[12vw] leading-[0.9] sm:text-[7vw] lg:text-[3.6vw]">
+              <h1 className="text-display mt-5 text-[9vw] leading-[0.95] text-balance sm:text-[5vw] lg:text-[32px] xl:text-[36px]">
                 {product.name}
               </h1>
-
-              <p className="mt-3 text-[15px] font-bold text-ink/45">
-                {product.fullName}
-              </p>
 
               {product.price ? (
                 <p className="text-display mt-4 text-[28px]">{product.price}</p>
               ) : null}
 
-              <p className="mt-8 text-[19px] leading-relaxed font-medium text-ink/70">
-                {product.fact}
-              </p>
+              {/* Who it is for, what it does, what it is bought as — the same
+                  three on every product. They replace the single line of
+                  material copy that used to sit here. */}
+              <ProductHighlights className="mt-7" />
 
               {/**
-               * Buy Now — one destination.
+               * How many, and then Buy Now.
                *
-               * It used to fork: an Amazon listing if one existed, our own
-               * checkout if not. The listing URLs were four empty strings, so the
-               * Amazon half never ran, and with a checkout of our own the reason
-               * behind it — that the click was the last moment we could know
-               * someone was interested before Amazon took the relationship — no
-               * longer applies. The fork is gone rather than left waiting on
-               * data that would reopen a decision already made.
+               * Both live in BuyPanel because the button carries the number —
+               * quantity reaches the checkout in the href, so a stepper sitting
+               * apart from the link would be a control that changes nothing.
                */}
-              <Link
-                href={`/checkout?product=${product.slug}`}
-                className="rounded-full mt-10 inline-flex items-center gap-3 bg-blue px-9 py-4.5 text-[17px] font-extrabold text-white transition hover:brightness-110 active:scale-[0.98]"
-              >
-                Buy Now
-                <ArrowRight className="size-5" strokeWidth={2.6} />
-              </Link>
+              <BuyPanel slug={product.slug} />
 
-              <SaveButton slug={product.slug} className="mt-6" />
             </div>
           </div>
 

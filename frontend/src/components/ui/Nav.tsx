@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, Menu, X } from "lucide-react";
+import { ArrowUpRight, Menu, ShoppingBag, X } from "lucide-react";
 import { site } from "@/content/site";
 import { UserMenu } from "@/components/ui/UserMenu";
+import { useCart } from "@/lib/cart";
 
 /**
  * A conventional site header: wordmark, text links, Saved, one call to action, and
@@ -52,6 +53,43 @@ function NavLink({
   return (
     <Link href={href} className={style} onClick={onClick}>
       {children}
+    </Link>
+  );
+}
+
+/**
+ * The way to the cart, and how much is in it.
+ *
+ * The count is not rendered until the cart has been read from storage: the
+ * server has no way to know what is in it, so anything drawn before then is a
+ * badge that says 0 and then jumps. `suppressHydrationWarning` is deliberately
+ * not used — `ready` is what keeps the two renders identical.
+ */
+function CartLink() {
+  const { count, ready } = useCart();
+  const showing = ready && count > 0;
+
+  return (
+    <Link
+      href="/cart"
+      aria-label={
+        showing
+          ? `Cart, ${count} ${count === 1 ? "item" : "items"}`
+          : "Cart"
+      }
+      className="relative inline-flex size-11 items-center justify-center rounded-full text-ink transition-colors hover:bg-ink/5"
+    >
+      <ShoppingBag className="size-[22px]" strokeWidth={2.4} />
+      {showing ? (
+        <span
+          // The label above already carries the number for a screen reader;
+          // announcing it twice is how a badge becomes noise.
+          aria-hidden
+          className="absolute top-1 right-0.5 inline-flex min-w-5 items-center justify-center rounded-full bg-brown px-1.5 text-[11px] font-extrabold text-white tabular-nums"
+        >
+          {count}
+        </span>
+      ) : null}
     </Link>
   );
 }
@@ -128,8 +166,9 @@ export function Nav() {
         {/* Account control: Sign in, or the visitor's avatar with a menu. Reads
             the session in the browser, so the header is the same static HTML for
             everyone and does not have to become per-request. */}
-        <div className="ml-auto flex items-center gap-3 md:ml-4">
+        <div className="ml-auto flex items-center gap-1 md:ml-4 md:gap-2">
           <UserMenu />
+          <CartLink />
         </div>
 
         <NavLink

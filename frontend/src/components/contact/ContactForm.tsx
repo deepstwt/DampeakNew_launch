@@ -41,7 +41,7 @@ export function ContactForm() {
     .filter(Boolean)
     .join("\n");
 
-  const href = `mailto:${COMPANY.supportEmail}?subject=${encodeURIComponent(
+  const href = `mailto:${COMPANY.email}?subject=${encodeURIComponent(
     `${topic} — Dampeak`,
   )}&body=${encodeURIComponent(body)}`;
 
@@ -131,7 +131,7 @@ export function ContactForm() {
 
         <p className="mt-3 text-[13px] font-semibold text-ink/45">
           This opens the message in your own email app, addressed to{" "}
-          {COMPANY.supportEmail}.
+          {COMPANY.email}.
         </p>
       </div>
     </div>

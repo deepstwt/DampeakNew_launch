@@ -14,13 +14,28 @@ loads is a derivative built from these and committed under
 | `new_logo.png` | `public/brand/dampeak-brown.webp` | trim → resize (already had alpha) |
 | `ShopPay.jpeg` / `PayPal.jpeg` / `GPay.jpeg` | `public/brand/pay/*.webp` | trim → re-pad on the brand's own field |
 | `Contact page.png` | `public/lifestyle/contact.webp` | WebP at 1400px wide |
+| `Product Gallery Cube/Rounded Cube1-3.png` | `public/products/blue-block-2…4.webp` | trim → square → pad → WebP |
+| `Product Gallery image Toasted/Toasted1-4.png` | `public/products/pillow-squish-2…5.webp` | trim → square → pad → WebP |
+| `Product Gallery Image Cheese/Cheese1-3.png` | `public/products/cheese-cube-2…4.webp` | trim → square → pad → WebP |
+| `Product Gallery Image Marble/Marble1-3.png` | `public/products/marble-cube-2…4.webp` | trim → square → pad → WebP |
 
 **Products.** The four arrived at four aspect ratios with four different amounts
 of air around the product, and every image slot on the site is square. Each is
 trimmed of its white border, scaled into a 1200×1200 frame and re-padded to a
 6% margin, so a row of four reads as one shoot instead of four separate photos.
-Two of them include the retail box and a hand alongside the product, which is
-why the site contains rather than crops them.
+One of them (Toasted Bread) includes the retail box and a hand alongside the
+product, and the cheese shot sets the cube beside four miniatures — which is why
+the site contains rather than crops them. Crop any of these to fill a square and
+the part that explains the product is the part that goes.
+
+**Gallery sets.** The four `Product Gallery *` folders are the rest of each
+product's rail: the product alone, the product in a hand, and a second angle.
+They arrive at two ratios (1151×1366 and 1254×1254) with their own amounts of
+air, so they go through the same trim → square → pad as the packshots — without
+it, one frame of a gallery shows the product small in the middle and the next
+has it touching the edge. The packshot stays first in `images`, because that
+first shot is also the product's card, its share preview and its cart thumbnail;
+reordering the array changes all three.
 
 **Logo.** Deep blue on a near-white field. On a white header that field shows as
 a rectangle, so it is trimmed and cut out. The cut-out is a coverage map, not a

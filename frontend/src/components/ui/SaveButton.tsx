@@ -82,7 +82,15 @@ export function SaveButton({
         disabled={pending}
         aria-pressed={isSaved}
         aria-label={isSaved ? "Saved. Press to remove" : "Save this product"}
-        className="inline-flex items-center gap-2 rounded-full border border-ink/15 px-5 py-3 text-[15px] font-extrabold transition hover:border-ink/40 disabled:opacity-60"
+        /**
+         * White, not transparent.
+         *
+         * This sits in the corner of the product photograph, and all four of
+         * those are shot on white — a bordered pill with nothing behind it
+         * disappeared into them. The shadow is what separates it from the
+         * picture; the border alone did not.
+         */
+        className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-[15px] font-extrabold shadow-[0_2px_10px_rgba(11,11,15,0.12)] ring-1 ring-ink/10 transition hover:ring-ink/30 disabled:opacity-60"
       >
         <Heart
           className={`size-[18px] ${isSaved ? "fill-yellow text-yellow" : "text-ink/50"}`}
@@ -90,8 +98,13 @@ export function SaveButton({
         />
         {isSaved ? "Saved" : "Save"}
       </button>
+      {/* Dark, for the same reason the button is white: this lands on the
+          photograph, and yellow on a white packshot cannot be read. */}
       {error ? (
-        <p role="status" className="mt-2 text-[13px] font-semibold text-yellow">
+        <p
+          role="status"
+          className="mt-2 max-w-[24ch] rounded-xl bg-brown px-3 py-2 text-[13px] font-semibold text-white"
+        >
           {error}
         </p>
       ) : null}

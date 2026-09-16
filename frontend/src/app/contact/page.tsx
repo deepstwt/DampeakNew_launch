@@ -39,9 +39,9 @@ const CARDS = [
   {
     icon: Mail,
     title: "Email us",
-    lines: [COMPANY.supportEmail],
+    lines: [COMPANY.email],
     note: "Include your order number if you have one — it gets you a faster answer.",
-    href: `mailto:${COMPANY.supportEmail}`,
+    href: `mailto:${COMPANY.email}`,
   },
 ] as const;
 
@@ -183,6 +183,21 @@ export default function ContactPage() {
                   — items must be requested within 30 days of delivery, unused
                   and in their original condition.
                 </p>
+
+                {/* The address sits under the pre-authorisation line, not above
+                    it: a parcel posted here without being approved first is one
+                    we reject, and the order of these two paragraphs is the only
+                    thing telling a visitor that. */}
+                <p className="mt-5 border-t border-ink/10 pt-4 text-[14px] font-bold text-ink/50">
+                  Approved returns are mailed to
+                </p>
+                <address className="mt-2 text-[16px] leading-relaxed text-ink/65 not-italic">
+                  {COMPANY.address.map((line) => (
+                    <span key={line} className="block">
+                      {line}
+                    </span>
+                  ))}
+                </address>
               </div>
 
               <section className="mt-14 border-t border-ink/10 pt-10">

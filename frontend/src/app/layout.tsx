@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
+import { CartProvider } from "@/lib/cart";
 import { COMPANY } from "@/content/legal";
 import { SITE_URL } from "@/lib/site-url";
 import "./globals.css";
@@ -68,7 +69,7 @@ const ORG_JSONLD = {
     {
       "@type": "ContactPoint",
       contactType: "customer support",
-      email: COMPANY.supportEmail,
+      email: COMPANY.email,
       availableLanguage: ["en"],
     },
   ],
@@ -95,7 +96,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           Skip to content
         </a>
 
-        <SmoothScroll>{children}</SmoothScroll>
+        {/* The cart wraps everything because the header is on every page and
+            the header carries the count. It holds no secrets and makes no
+            requests — see lib/cart.tsx — so it costs a context, not a fetch. */}
+        <CartProvider>
+          <SmoothScroll>{children}</SmoothScroll>
+        </CartProvider>
 
         <script
           type="application/ld+json"
