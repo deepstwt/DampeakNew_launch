@@ -242,19 +242,19 @@ export const site = {
         images: [
           {
             src: "/products/cheese-cube.webp",
-            alt: "The Cheese Cube squishy, moulded with holes on every face, with four miniature cheese cubes in front of it.",
+            alt: "The Cheese Cube squishy on white, moulded with holes across every face.",
           },
           {
             src: "/products/cheese-cube-2.webp",
-            alt: "The Cheese Cube squishy alone on white, holes moulded into every face.",
+            alt: "One Cheese Cube squishy crushed in a fist, beside a second one left uncompressed.",
           },
           {
             src: "/products/cheese-cube-3.webp",
-            alt: "The Cheese Cube squishy gripped in one hand, its holes closing as it compresses.",
+            alt: "Three views of the Cheese Cube squishy: the cube itself, and it being squeezed from either side.",
           },
           {
             src: "/products/cheese-cube-4.webp",
-            alt: "The Cheese Cube squishy seen from above, the top face pitted with holes of different sizes.",
+            alt: "Three Cheese Cube squishies together, one of them pressed flat under a finger.",
           },
         ] as ProductPhoto[],
         price: "$14.99" as string | null,
