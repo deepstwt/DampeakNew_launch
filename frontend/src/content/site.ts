@@ -164,7 +164,7 @@ export const site = {
         images: [
           {
             src: "/products/blue-block.webp",
-            alt: "The Rounded Cube squishy: a translucent blue cube with softly rounded corners.",
+            alt: "The Rounded Cube squishy tipped onto one corner: a translucent blue cube with softly rounded edges.",
           },
           {
             src: "/products/blue-block-2.webp",
