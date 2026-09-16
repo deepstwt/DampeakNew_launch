@@ -165,14 +165,6 @@ const US_STATES = [
 /** The two payment choices on the last step. */
 type PayWith = "card" | "shoppay";
 
-/**
- * The card the flow starts with: the test number every payment provider
- * publishes for demonstrations, which is not a card that exists and cannot be
- * charged by anyone. It is prefilled rather than left blank on purpose — an
- * empty card field on a page like this is an invitation to type a real one.
- */
-const TEST_CARD = { number: "4242 4242 4242 4242", expiry: "12/28", cvc: "123" };
-
 /** 4242424242424242 → 4242 4242 4242 4242, as it is typed. */
 const groupDigits = (raw: string) =>
   raw
@@ -318,13 +310,16 @@ export function CheckoutScreen({
   const [payWith, setPayWith] = useState<PayWith>("card");
   const [sameBilling, setSameBilling] = useState(true);
   /**
-   * Component state, and nowhere else.
+   * Empty, and component state only.
    *
-   * Never written to storage, never put on the order, never logged. The order
-   * keeps the last four digits and only because a receipt has to say which card
-   * paid it.
+   * It started prefilled with the published test card so that nobody would be
+   * tempted to type a real one; it starts blank now because the fields are meant
+   * to be filled in as part of the walk-through. Nothing changes about where the
+   * number goes: it is never written to storage, never put on the order, never
+   * logged, and the order keeps the last four digits only because a receipt has
+   * to say which card paid it.
    */
-  const [card, setCard] = useState({ ...TEST_CARD, name: "" });
+  const [card, setCard] = useState({ number: "", expiry: "", cvc: "", name: "" });
   /** Held between pressing Pay now and the confirmation appearing. */
   const [paying, setPaying] = useState(false);
   const payTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -959,13 +954,11 @@ export function CheckoutScreen({
          * sheet the express buttons at the top of the first step open, so the
          * one wallet that appears in both places behaves the same in both.
          *
-         * About the card fields. Nothing here reaches a payment network, and a
-         * card number typed into a page that cannot process it is the one thing
-         * on this flow that could cost somebody something. So the number arrives
-         * already filled with the test card every payment provider publishes for
-         * exactly this, it is held in component state and written nowhere else —
-         * not to storage, not to the order, not to a log — and the confirmation
-         * prints the last four only.
+         * About the card fields. Nothing here reaches a payment network. The
+         * number is held in component state and written nowhere else — not to
+         * storage, not to the order, not to a log — and the confirmation prints
+         * the last four only. Nothing is validated beyond being long enough,
+         * because there is no bank at the other end to disagree with.
          *
          * Placing the order draws a reference and shows the confirmation. It
          * does not charge, write an order or send an email, because none of
