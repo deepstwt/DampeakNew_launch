@@ -3,9 +3,19 @@
  *
  * IMPORTANT — these are structured drafts, not legal advice. Every bracketed
  * [PLACEHOLDER] must be filled in, and the whole set must be reviewed by a
- * lawyer before launch. Dampeak sells to consumers, so the applicable regimes are
- * at least India's DPDP Act 2023 and the Consumer Protection (E-Commerce) Rules
- * 2020 — plus UK/EU GDPR the moment you ship there.
+ * lawyer before launch.
+ *
+ * The company is a Florida LLC selling to US consumers in USD, so the regimes
+ * that apply are US federal and Florida state consumer law — the FTC Act and
+ * its Mail, Internet, or Telephone Order Merchandise Rule, Florida's Deceptive
+ * and Unfair Trade Practices Act — plus state privacy law wherever customers
+ * are (California's CCPA/CPRA first among them), and UK/EU GDPR the moment you
+ * ship there.
+ *
+ * This file said India's DPDP Act and Consumer Protection (E-Commerce) Rules
+ * until the governing-law section was corrected. That was left over from an
+ * earlier reading of where the company sits; COMPANY.address is in Bradenton,
+ * Florida, the prices are USD and the phone is a US number.
  *
  * LEGAL_DRAFT rendered a visible notice on these pages saying exactly that. It
  * is off — turned off as a presentation decision, not because the review
@@ -27,7 +37,7 @@ export const COMPANY = {
    * do not know which of our inboxes their problem belongs to, and they should
    * not have to guess.
    */
-  email: "hello@dampeak.com",
+  email: "support@dampeak.com",
   /**
    * The support line and when it is answered.
    *
@@ -445,7 +455,8 @@ export const DOCS: Doc[] = [
       {
         heading: "Governing law",
         body: [
-          "These terms are governed by the laws of India. If you are a consumer resident elsewhere, you keep the protection of the mandatory laws of your country.",
+          `These terms are governed by the laws of the State of Florida and the federal laws of the United States, without regard to conflict-of-law rules. You and ${COMPANY.trading} agree that any dispute arising from them will be brought in the federal or state courts located in Florida, and you consent to venue and personal jurisdiction there.`,
+          "If you are a consumer resident outside the United States, you keep whatever protection the mandatory consumer laws of your own country give you. Nothing here takes that away.",
         ],
       },
     ],
