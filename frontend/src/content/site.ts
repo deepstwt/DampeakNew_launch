@@ -24,6 +24,8 @@
  * while the next one filled it. Squaring them is what makes a row of four look
  * like one shoot. The untouched originals are in design/ at the repo root.
  */
+import { COMPANY } from "@/content/legal";
+
 export type ProductPhoto = { src: string; alt: string };
 
 /**
@@ -242,7 +244,7 @@ export const site = {
         images: [
           {
             src: "/products/cheese-cube-1.webp",
-            alt: "The Cheese Cube squishy on white, moulded with holes across every face.",
+            alt: "The Cheese Cube squishy alone on white, moulded with holes across every face.",
           },
           {
             src: "/products/cheese-cube-2.webp",
@@ -399,7 +401,10 @@ export const site = {
     socials: [
       { label: "Instagram", href: "https://instagram.com" },
       { label: "TikTok", href: "https://tiktok.com" },
-      { label: "Email us", href: "mailto:hello@dampeak.com" },
+      // Read from COMPANY rather than typed again: this line was a second copy
+      // of the address, and a second copy is what made the site say two
+      // different inboxes the last time the address changed.
+      { label: "Email us", href: `mailto:${COMPANY.email}` },
     ],
   },
 } as const;

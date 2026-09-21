@@ -16,7 +16,8 @@ loads is a derivative built from these and committed under
 | `Contact page.png` | `public/lifestyle/contact.webp` | WebP at 1400px wide |
 | `Product Gallery Cube/Rounded Cube1-3.png` | `public/products/blue-block-2…4.webp` | trim → square → pad → WebP |
 | `Product Gallery image Toasted/Toasted1-4.png` | `public/products/pillow-squish-2…5.webp` | trim → square → pad → WebP |
-| `Product Gallery Image Cheese/Cheese4.jpeg` | `public/products/cheese-cube-1.webp` | trim → square → pad → WebP |
+| `Chesese_Main_Image.png` | `public/products/cheese-cube-1.webp` | trim → square → pad → WebP |
+| `Product Gallery Image Cheese/Cheese4.jpeg` | — superseded as the main image | — |
 | `Product Gallery Image Cheese/Cheese1-3.jpeg` | `public/products/cheese-cube-2…4.webp` | trim → square → pad → WebP |
 | `Product Gallery Image Marble/Marble1-3.png` | `public/products/marble-cube-2…4.webp` | trim → square → pad → WebP |
 
@@ -32,10 +33,13 @@ goes.
 The cheese is the exception: all four of its images are now photographs of the
 real product, and its render is superseded. `Cheese cube stress squeeze squish
 Toy.png` stays here as the source it was, but nothing is built from it any more.
-Its replacement (`Cheese4.jpeg`) carries a lot of white, so it trims to 775px
-and is enlarged into the frame rather than sitting smaller in it than the other
-three products — a consistent margin is what makes a row of four read as one
-shoot, and it is displayed at 548px at the very most.
+The main image is now `Chesese_Main_Image.png` — the cube alone, lit and shot
+square on. (The spelling of that filename is the handover's, kept as it arrived
+so the source can still be found by name.) Like `Cheese4.jpeg` before it, it
+carries a lot of white and trims to 811px, so it is enlarged into the frame
+rather than sitting smaller in it than the other three products — a consistent
+margin is what makes a row of four read as one shoot, and it is displayed at
+548px at the very most.
 
 **Gallery sets.** The four `Product Gallery *` folders are the rest of each
 product's rail: the product alone, the product in a hand, and a second angle.
