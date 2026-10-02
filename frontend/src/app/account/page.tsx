@@ -71,7 +71,7 @@ export default async function AccountPage() {
                 href="/products"
                 className="mt-8 inline-flex items-center gap-2 rounded-full bg-yellow px-8 py-4 text-[16px] font-extrabold text-ink transition hover:brightness-95"
               >
-                See all four
+                See all products
               </Link>
             </>
           ) : (

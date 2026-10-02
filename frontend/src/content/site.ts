@@ -149,6 +149,8 @@ export const site = {
       {
         id: "blue-block",
         slug: "blue-block",
+        // Off the site for now; set to false to bring it back — see PRODUCTS.
+        hidden: true,
         name: "Rounded Cube Squeeze Toy",
         fact: "Big enough to need a whole hand. Squeeze it flat, let go, and it takes its own time coming back.",
         description: squeezeCopy(
@@ -186,6 +188,8 @@ export const site = {
       {
         id: "pillow-squish",
         slug: "pillow-squish",
+        // Off the site for now; set to false to bring it back — see PRODUCTS.
+        hidden: true,
         name: "Toasted Bread Squeeze Toy",
         fact: "Matte foam, not plastic. It gives immediately, which makes it the one you reach for without thinking.",
         description: squeezeCopy(
@@ -227,6 +231,7 @@ export const site = {
       {
         id: "cheese-cube",
         slug: "cheese-cube",
+        hidden: false,
         name: "Cheese Cube Squeeze Toy",
         fact: "The moulded holes give your fingers somewhere to go, so it never lands in your hand the same way twice.",
         description: squeezeCopy(
@@ -264,6 +269,7 @@ export const site = {
       {
         id: "marble-cube",
         slug: "marble-cube",
+        hidden: false,
         name: "Marbled Cube Squeeze Toy",
         fact: "No two are marbled alike. Smooth all over, so it slides between your fingers rather than catching.",
         description: squeezeCopy(
@@ -304,7 +310,7 @@ export const site = {
   /** Section 2 — the lineup, given its own heading rather than sharing the hero's. */
   showcase: {
     heading: "Shop Your Relaxation",
-    cta: { label: "See all four", href: "/products" },
+    cta: { label: "See all products", href: "/products" },
   },
 
   quote: {
@@ -364,8 +370,9 @@ export const site = {
         title: "Shop",
         links: [
           { label: "All products", href: "/products" },
-          { label: "Rounded Cube Squeeze Toy", href: "/products/blue-block" },
-          { label: "Toasted Bread Squeeze Toy", href: "/products/pillow-squish" },
+          // Hidden products — uncomment together with `hidden: false` above.
+          // { label: "Rounded Cube Squeeze Toy", href: "/products/blue-block" },
+          // { label: "Toasted Bread Squeeze Toy", href: "/products/pillow-squish" },
           { label: "Cheese Cube Squeeze Toy", href: "/products/cheese-cube" },
           { label: "Marbled Cube Squeeze Toy", href: "/products/marble-cube" },
         ],
@@ -413,8 +420,14 @@ export const site = {
  * The catalogue. Products live under hero.showcase because the hero is where the
  * spread is presented; this alias is what the rest of the app should import, so
  * moving them later is a one-line change here rather than a find-and-replace.
+ *
+ * A product with `hidden: true` is left out here, and so out of everything that
+ * reads the catalogue: the cards, the hero toy, its own page (which 404s), the
+ * sitemap, the cart, Buy Now and the saved list. Its copy and photographs stay
+ * where they are, so bringing it back is flipping the flag to false — plus its
+ * footer link, which is written out by hand.
  */
-export const PRODUCTS = site.hero.showcase;
+export const PRODUCTS = site.hero.showcase.filter((p) => !p.hidden);
 
 export const getProduct = (slug: string) =>
   PRODUCTS.find((p) => p.slug === slug);
