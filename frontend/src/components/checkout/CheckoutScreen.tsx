@@ -526,15 +526,8 @@ export function CheckoutScreen({
           </h2>
 
           <p className="mx-auto mt-4 max-w-[46ch] text-[16px] leading-relaxed font-medium text-ink/65">
-            Your order is confirmed
-            {email ? (
-              <>
-                . We have sent the details to{" "}
-                <span className="font-extrabold text-ink">{email}</span>.
-              </>
-            ) : (
-              "."
-            )}
+            Your order is confirmed. Keep your order number below — quote it if
+            you get in touch with us.
           </p>
 
           {/* The one thing on this page somebody will be asked to read back down
