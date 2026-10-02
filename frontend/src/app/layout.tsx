@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     template: "%s — Dampeak",
   },
   description:
-    "Thoughtfully designed products that make everyday life easier and better — from comfort, to relaxation, to fun. Four stress squeeze squish toys: Rounded Cube, Toasted Bread, Cheese Cube and Marbled Cube.",
+    "Thoughtfully designed products that make everyday life easier and better — from comfort, to relaxation, to fun. Stress squeeze squish toys, made for the moments your hands need something to do.",
   applicationName: "Dampeak",
   alternates: { canonical: "/" },
   openGraph: {
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     url: SITE_URL,
     title: "Dampeak — Made for Better Everyday",
     description:
-      "Four stress squeeze squish toys, made for the moments your hands need something to do.",
+      "Stress squeeze squish toys, made for the moments your hands need something to do.",
   },
   // TODO: drop a 1200x630 PNG at public/og.png and add
   //   openGraph.images / twitter.images pointing at it.
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     card: "summary",
     title: "Dampeak — Made for Better Everyday",
     description:
-      "Four stress squeeze squish toys, made for the moments your hands need something to do.",
+      "Stress squeeze squish toys, made for the moments your hands need something to do.",
   },
   robots: {
     index: true,

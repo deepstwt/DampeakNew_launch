@@ -1,5 +1,5 @@
 import { ArrowRight } from "lucide-react";
-import { site } from "@/content/site";
+import { PRODUCTS, site } from "@/content/site";
 import { ProductCard } from "@/components/ui/ProductCard";
 
 /**
@@ -12,7 +12,7 @@ import { ProductCard } from "@/components/ui/ProductCard";
  * the category page cannot drift apart in look or behaviour.
  */
 export function Showcase() {
-  const { showcase, hero } = site;
+  const { showcase } = site;
 
   return (
     <section id="products" className="bg-cream px-4 py-20 md:px-6 md:py-28">
@@ -21,7 +21,7 @@ export function Showcase() {
       </h2>
 
       <div className="mt-14 grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4 lg:gap-6">
-        {hero.showcase.map((item, i) => (
+        {PRODUCTS.map((item, i) => (
           <ProductCard key={item.id} item={item} priority={i === 0} />
         ))}
       </div>

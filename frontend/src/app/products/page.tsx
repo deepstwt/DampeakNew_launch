@@ -19,7 +19,7 @@ import { Footer } from "@/components/ui/Footer";
 
 export const metadata: Metadata = {
   title: "Shop Your Relaxation",
-  description: `All four ${site.name} stress squeeze squish toys — ${PRODUCTS.map((p) => p.name).join(", ")}.`,
+  description: `All ${site.name} stress squeeze squish toys — ${PRODUCTS.map((p) => p.name).join(", ")}.`,
   alternates: { canonical: "/products" },
   openGraph: {
     title: `Shop Your Relaxation — ${site.name}`,
