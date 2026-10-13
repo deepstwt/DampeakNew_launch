@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Menu, ShoppingBag, X } from "lucide-react";
 import { site } from "@/content/site";
+import { BrandRule } from "@/components/ui/BrandRule";
 import { UserMenu } from "@/components/ui/UserMenu";
 import { useCart } from "@/lib/cart";
 
@@ -41,7 +42,7 @@ function NavLink({
 }) {
   const style =
     className ??
-    "text-[15px] font-semibold text-ink/65 transition-colors hover:text-ink";
+    "text-[15px] font-semibold text-white/70 transition-colors hover:text-white";
 
   if (href.includes("#")) {
     return (
@@ -77,7 +78,7 @@ function CartLink() {
           ? `Cart, ${count} ${count === 1 ? "item" : "items"}`
           : "Cart"
       }
-      className="relative inline-flex size-11 items-center justify-center rounded-full text-ink transition-colors hover:bg-ink/5"
+      className="relative inline-flex size-11 items-center justify-center rounded-full text-white transition-colors hover:bg-white/10"
     >
       <ShoppingBag className="size-[22px]" strokeWidth={2.4} />
       {showing ? (
@@ -85,7 +86,9 @@ function CartLink() {
           // The label above already carries the number for a screen reader;
           // announcing it twice is how a badge becomes noise.
           aria-hidden
-          className="absolute top-1 right-0.5 inline-flex min-w-5 items-center justify-center rounded-full bg-brown px-1.5 text-[11px] font-extrabold text-white tabular-nums"
+          // Yellow on brown. The badge was brown on white; on a brown header it
+          // would be a count you cannot see.
+          className="absolute top-1 right-0.5 inline-flex min-w-5 items-center justify-center rounded-full bg-yellow px-1.5 text-[11px] font-extrabold text-ink tabular-nums"
         >
           {count}
         </span>
@@ -109,30 +112,26 @@ export function Nav() {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-50 bg-white/85 backdrop-blur-xl">
-      {/**
-       * Spectrum: the whole brand in one 6px rule — brown, white, yellow.
-       *
-       * The order is not arbitrary. A rule this thin loses any band that matches
-       * the surface it sits against, and the header under this one is white, so
-       * white goes in the middle where brown and yellow bound it on both sides.
-       * At either end it would read as a rule with a piece missing.
-       *
-       * Flanking is not quite enough on its own — the white band still runs into
-       * the white header below it — so the rule carries a hairline along its
-       * bottom edge. It only shows under the white band; against brown and
-       * yellow there is nothing to see.
-       */}
-      <div className="flex h-1.5 border-b border-ink/15" aria-hidden>
-        <span className="flex-1 bg-brown" />
-        <span className="flex-1 bg-white" />
-        <span className="flex-1 bg-yellow" />
-      </div>
+    /**
+     * A dark header, on every page.
+     *
+     * It was white, and against the hero it read as a seam rather than a
+     * header: the photograph opens on a warm chocolate brown and a white band
+     * sitting straight on top of it is the one hard edge on the page.
+     *
+     * The brown is the photograph's own, sampled from the strip the header sits
+     * against — see --color-cocoa. Brand brown was tried first and is darker
+     * and redder than the artwork; the join showed as a step. A header that is
+     * nearly the right colour is worse than one that is plainly a different
+     * one, so this matches exactly instead.
+     */
+    <header className="bg-cocoa sticky top-0 z-50 text-white">
+      <BrandRule />
 
       {/* The row is shorter than it looks: the logo is a two-line lockup, so it
           needs more height than the wordmark it replaced, and the vertical
           padding comes down to pay for it. */}
-      <div className="flex items-center gap-4 border-b border-ink/10 px-4 py-2.5 md:px-6 md:py-3">
+      <div className="flex items-center gap-4 px-4 py-2.5 md:px-6 md:py-3">
         <Link href="/" className="shrink-0">
           {/* The filename carries the colourway on purpose. Replacing artwork in
               place leaves the old file cached under the same URL — by the dev
@@ -173,7 +172,7 @@ export function Nav() {
 
         <NavLink
           href="/products"
-          className="rounded-squish inline-flex items-center gap-2 bg-ink px-5 py-3 text-[14px] font-extrabold text-white transition-transform active:scale-[0.96] md:px-6 md:py-3.5 md:text-[15px]"
+          className="rounded-squish inline-flex items-center gap-2 bg-yellow px-5 py-3 text-[14px] font-extrabold text-ink transition-transform active:scale-[0.96] md:px-6 md:py-3.5 md:text-[15px]"
         >
           Shop
           <ArrowUpRight className="size-[18px]" strokeWidth={3} />
@@ -185,7 +184,7 @@ export function Nav() {
           aria-expanded={open}
           aria-controls="site-menu"
           aria-label={open ? "Close menu" : "Open menu"}
-          className="-mr-1 inline-flex size-11 items-center justify-center rounded-full text-ink transition-colors hover:bg-ink/5 md:hidden"
+          className="-mr-1 inline-flex size-11 items-center justify-center rounded-full text-white transition-colors hover:bg-white/10 md:hidden"
         >
           {open ? (
             <X className="size-6" strokeWidth={2.5} />
@@ -201,7 +200,7 @@ export function Nav() {
         <nav
           id="site-menu"
           aria-label="Main"
-          className="border-b border-ink/10 bg-white px-4 pb-4 md:hidden"
+          className="bg-cocoa px-4 pb-4 md:hidden"
         >
           <ul className="flex flex-col">
             {site.nav.map((item) => (
@@ -209,7 +208,7 @@ export function Nav() {
                 <NavLink
                   href={item.href}
                   onClick={() => setOpen(false)}
-                  className="block border-b border-ink/5 py-4 text-[17px] font-bold text-ink"
+                  className="block border-b border-white/10 py-4 text-[17px] font-bold text-white"
                 >
                   {item.label}
                 </NavLink>
