@@ -336,8 +336,8 @@ export const site = {
      * copy left would lay it over him and make him look past it at nothing.
      */
     image: {
-      src: "/lifestyle/soft-moments.webp",
-      alt: "A man sitting outside in an evening garden, squeezing a yellow squishy in one hand.",
+      src: "/lifestyle/cosy-woman.webp",
+      alt: "A woman curled up on a sofa, holding a Cheese Cube squishy against her cheek.",
     },
   },
 

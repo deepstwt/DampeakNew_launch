@@ -8,6 +8,15 @@ export type ShowcaseItem = (typeof site.hero.showcase)[number];
 type Props = {
   item: ShowcaseItem;
   priority?: boolean;
+  /**
+   * What the card is standing on.
+   *
+   * "dark" is the default and means ink type — the products page and every
+   * white surface. "light" is for the cards on the home page's photographic
+   * backdrop, where ink would be lost in the brown. Only the caption changes;
+   * the picture and its shadow are the same either way.
+   */
+  tone?: "dark" | "light";
 };
 
 /**
@@ -40,16 +49,34 @@ const LIFT = {
   ].join(", "),
 };
 
-export function ProductCard({ item, priority }: Props) {
+export function ProductCard({ item, priority, tone = "dark" }: Props) {
+  const onLight = tone === "light";
   const href = `/products/${item.slug}`;
 
   return (
-    <figure>
+    /**
+     * On a light surface the card is just a picture with words under it. On the
+     * photographic backdrop it has to become a panel, because the field it sits
+     * on is brown at the top and yellow at the bottom — white captions clear the
+     * brown and vanish into the yellow, and no single text colour clears both.
+     * Giving the caption its own white ground settles it wherever the wave
+     * happens to fall, which is the point: the wave moves with the viewport and
+     * the type cannot be made to dodge it.
+     */
+    <figure
+      className={
+        onLight ? "rounded-[28px] bg-white p-3 pb-4 shadow-[0_18px_40px_rgba(11,11,15,0.18)]" : ""
+      }
+    >
       <div className="relative aspect-square">
         <Link href={href} tabIndex={-1} aria-hidden className="block size-full">
           <div
-            className="relative size-full overflow-hidden rounded-3xl bg-ink/5"
-            style={LIFT}
+            className={`relative size-full overflow-hidden bg-ink/5 ${
+              onLight ? "rounded-[20px]" : "rounded-3xl"
+            }`}
+            // Inside a panel the picture is flush with it, so the lift belongs
+            // to the panel and stacking a second one here reads as a sticker.
+            style={onLight ? undefined : LIFT}
           >
             <ProductPhoto
               image={primaryImage(item)}
@@ -62,7 +89,7 @@ export function ProductCard({ item, priority }: Props) {
         </Link>
       </div>
 
-      <figcaption className="mt-4">
+      <figcaption className={onLight ? "mt-3.5 px-1" : "mt-4"}>
         <span className="flex items-center gap-2.5">
           {/* The product's own colour, not its brand accent. The accents were
               assigned when the tile beside them was a flat block and nothing on
