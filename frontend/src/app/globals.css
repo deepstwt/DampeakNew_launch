@@ -10,7 +10,14 @@
    * sitting here waiting to be used again by accident.
    */
   --color-blue: #1f3cff;
-  --color-yellow: #ffce00;
+  /**
+   * Yellow, taken from the hero photograph rather than chosen beside it.
+   *
+   * It was #ffce00 — a harder, greener yellow that sat next to the artwork's
+   * own and never quite agreed with it. This is the artwork's: the single
+   * biggest colour in the frame, twelve per cent of it. Ink clears 12:1 on it.
+   */
+  --color-yellow: #fecf4e;
   --color-white: #ffffff;
 
   --color-ink: #0b0b0f;
@@ -23,13 +30,49 @@
    * white page from running for three screens, and brown is the dark end that
    * closes a page.
    *
-   * Brown is nearly black and slightly red, which is what makes the pairing
-   * work: white type clears 16:1 on it, the brand yellow clears 11:1, and cream
-   * clears 14:1, so anything in the palette can sit on it. Cream is warm enough
-   * to read as a colour rather than as off-white, and ink type clears 15:1 on it.
+   * Brown is the photography's brown, not a brown picked to go with it. It was
+   * #350806 — nearly black, slightly red — and against the artwork every join
+   * showed, because the pictures' brown is a true milk chocolate.
+   *
+   * The exact value is the top edge of the cosy-squish shot, which is the one
+   * place a flat brown meets a photographed one: the quote section sits
+   * directly on top of that image, and at the hero's #6a3117 the join read as a
+   * line across the full width. Both are the same brown to the eye on their own;
+   * side by side at a hard edge, ten points of green is a seam.
+   *
+   * Lighter than what it replaces, so the contrast it carries is lower and
+   * still comfortable: white type clears 9:1 on it and yellow clears 6:1,
+   * which is AA for both at any size. Cream is warm enough to read as a colour
+   * rather than as off-white, and ink type clears 15:1 on it.
    */
   --color-cream: #eee49c;
-  --color-brown: #350806;
+  --color-brown: #6d3b1d;
+
+  /**
+   * The header's brown, and only the header's.
+   *
+   * Sampled from the top edge of the hero backdrop — the twenty-four pixels the
+   * header actually sits against — so the two read as one surface rather than as
+   * a band above a picture. The brown above is the middle of the same family;
+   * this is its light end, because the set is lit from the top.
+   *
+   * It is tied to that file. Replace public/lifestyle/hero-waves.webp and this
+   * value has to be resampled, or the seam comes back.
+   */
+  --color-cocoa: #814820;
+
+  /**
+   * The deep end of the same chocolate, for the footer.
+   *
+   * Also from the cosy-squish photograph — the brown in its shadows rather than
+   * the brown of its field, which is the one above. The footer sits directly
+   * under that picture and was the same mid brown as the quote section, so the
+   * page ended on three bands of one colour with a photograph in the middle.
+   * Going a step darker at the bottom is what gives the page a floor.
+   *
+   * White clears 11:1 on it and the brand yellow clears 7:1.
+   */
+  --color-brown-deep: #622f11;
 
   --font-sans: var(--font-sans);
 }
@@ -87,6 +130,24 @@
   font-weight: 900;
   line-height: 0.92;
   letter-spacing: -0.045em;
+}
+
+/**
+ * Display type at mid sizes.
+ *
+ * text-display's -0.045em and 0.92 leading are optical settings for the sizes
+ * it was written for — the quote at 100px, the hero at 96px — where that much
+ * negative tracking is what stops huge words falling apart. Reused at 50-70px
+ * the same numbers crush the letters together and the heading reads as
+ * compressed rather than as confident.
+ *
+ * Tracking should open as size comes down. This is the same face and the same
+ * weight with the optical settings a mid-size heading actually wants.
+ */
+@utility text-display-mid {
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
 }
 
 @utility text-heavy {

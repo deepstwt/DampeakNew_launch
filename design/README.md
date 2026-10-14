@@ -8,7 +8,7 @@ loads is a derivative built from these and committed under
 |---|---|---|
 | `Rounded cube stress squeeze squish Toy.png` | `public/products/blue-block-1.webp` | trim → square → pad → WebP |
 | `Toasted Bread stress squeeze squish Toy.png` | `public/products/pillow-squish.webp` | trim → square → pad → WebP |
-| `Cheese cube stress squeeze squish Toy.png` | — superseded, see below | — |
+| `Cheese cube stress squeeze squish Toy.png` | — superseded, see Home page | — |
 | `Marbled cube stress squeeze squish Toy.png` | `public/products/marble-cube.webp` | trim → square → pad → WebP |
 | `New Logo.jpg` | `public/brand/dampeak.webp` | trim → cut out to transparency |
 | `new_logo.png` | `public/brand/dampeak-brown.webp` | trim → resize (already had alpha) |
@@ -20,6 +20,13 @@ loads is a derivative built from these and committed under
 | `Product Gallery Image Cheese/Cheese4.jpeg` | — superseded as the main image | — |
 | `Product Gallery Image Cheese/Cheese1-3.jpeg` | `public/products/cheese-cube-2…4.webp` | trim → square → pad → WebP |
 | `Product Gallery Image Marble/Marble1-3.png` | `public/products/marble-cube-2…4.webp` | trim → square → pad → WebP |
+| `Abstract Golden Waves on Chocolate Brown.png` | `public/lifestyle/hero-waves.webp` | WebP at full size |
+| `Warm Golden Waves on Cocoa Brown.png` | `public/lifestyle/showcase-backdrop.webp` | WebP at full size |
+| `Swiss Cheese Cube on Pedestal.png` | `public/products/hero-cheese-podium.webp` | trim → WebP (already had alpha) |
+| `Glossy Marbled Cube Stack on Podium.png` | `public/products/hero-marbled-podium.webp` | trim → WebP (already had alpha) |
+| `Cozy Woman Hugging Kawaii Cheese Cube.png` | `public/lifestyle/cosy-woman.webp` | trim → WebP (already had alpha) |
+| `Cozy Kawaii Squishy Portrait.png` | — superseded, see Home page | — |
+| `Product Gallery image Toasted/Cheese Cube and Marbled Cubes.png` | — superseded, see Home page | — |
 
 **Products.** The four arrived at four aspect ratios with four different amounts
 of air around the product, and every image slot on the site is square. Each is
@@ -49,6 +56,23 @@ it, one frame of a gallery shows the product small in the middle and the next
 has it touching the edge. The packshot stays first in `images`, because that
 first shot is also the product's card, its share preview and its cart thumbnail;
 reordering the array changes all three.
+
+**Home page.** The hero and the two sections under it are built in layers rather
+than from one flat picture each: a backdrop that covers the section, and the
+subjects — the two podium shots, the woman — placed on it as cut-outs. Three
+earlier files composed those together and are kept here but no longer built
+from: `Cheese cube stress squeeze squish Toy.png`, `Cozy Kawaii Squishy
+Portrait.png` and `Cheese Cube and Marbled Cubes.png`. Composed artwork fixes
+the layout at whatever aspect ratio it was drawn at, which on a phone meant
+choosing between keeping the subject in frame and keeping room for the words.
+
+The subjects arrive with transparency already, so they are only trimmed of their
+empty margin. The backdrops are converted whole — they are meant to be cropped
+by `object-cover`, so trimming them would be removing the room they need.
+
+`--color-cocoa` in globals.css is sampled from the top twenty-four pixels of
+`hero-waves.webp`, because the header sits directly on it. Replace that file and
+the value has to be resampled.
 
 **Logo.** Deep blue on a near-white field. On a white header that field shows as
 a rectangle, so it is trimmed and cut out. The cut-out is a coverage map, not a

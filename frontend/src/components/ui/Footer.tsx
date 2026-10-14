@@ -8,7 +8,7 @@ export function Footer() {
   const year = 2026; // Static: a live year would break hydration on New Year's Eve.
 
   return (
-    <footer className="relative overflow-hidden bg-brown text-white">
+    <footer className="bg-brown-deep relative overflow-hidden text-white">
       {/**
        * Spectrum, mirroring the nav — the page opens and closes on the same rule,
        * in the same three colours.
@@ -21,6 +21,9 @@ export function Footer() {
        * Same hairline as the nav's, inverted: it separates the brown band from
        * the brown below it and disappears against the other two.
        */}
+      {/* Brand brown in the middle, which is now a step lighter than the footer
+          under it — against bg-brown-deep it reads, where the footer's own
+          colour would have been a gap in the rule. */}
       <div className="flex h-1.5 border-b border-white/25" aria-hidden>
         <span className="flex-1 bg-yellow" />
         <span className="flex-1 bg-brown" />

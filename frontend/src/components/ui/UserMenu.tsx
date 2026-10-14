@@ -43,7 +43,7 @@ export function UserMenu() {
   }, [open]);
 
   if (isPending) {
-    return <div aria-hidden className="size-10 shrink-0 rounded-full bg-ink/10" />;
+    return <div aria-hidden className="size-10 shrink-0 rounded-full bg-white/15" />;
   }
 
   const user = session?.user;
@@ -54,7 +54,8 @@ export function UserMenu() {
         <button
           type="button"
           onClick={() => setAskSignIn(true)}
-          className="text-[15px] font-semibold text-ink/65 transition-colors hover:text-ink"
+          // The header is brown now; ink here would be a link you cannot read.
+          className="text-[15px] font-semibold text-white/70 transition-colors hover:text-white"
         >
           Sign in
         </button>
@@ -78,7 +79,7 @@ export function UserMenu() {
         aria-expanded={open}
         aria-haspopup="menu"
         aria-label={`Account: ${user.name ?? user.email ?? "signed in"}`}
-        className="block size-10 overflow-hidden rounded-full ring-1 ring-ink/15 transition hover:ring-ink/40"
+        className="block size-10 overflow-hidden rounded-full ring-1 ring-white/25 transition hover:ring-white/60"
       >
         {user.image ? (
           // A plain <img>: Google's avatar host would have to be allowlisted in
